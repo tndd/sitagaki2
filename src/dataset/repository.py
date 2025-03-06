@@ -2,8 +2,10 @@ from pathlib import Path
 
 import polars as pl
 
+from dataset.schema import OHCLV
 
-def _read_df(name: str) -> pl.DataFrame:
+
+def _read_df(name: str) -> OHCLV:
     """
     dataset/dataディレクトリ下のcsvファイルの読み出し。
     日付で昇順に並び替える。
