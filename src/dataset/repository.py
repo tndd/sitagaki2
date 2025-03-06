@@ -1,22 +1,15 @@
-from os import path
+from pathlib import Path
 
-import pandas as pd
-
-# 現在のスクリプトファイルのディレクトリパス
-SELF_PATH = path.dirname(path.abspath(__file__))
+import polars as pl
 
 
-def _read_df(name: str):
+def _read_df(name: str) -> pl.DataFrame:
     """
-    dataset/dataディレクトリ下のcsvファイルの読み出し
+    dataset/dataディレクトリ下のcsvファイルの読み出し。
+    日付で昇順に並び替える。
     """
-    data_path = path.join(SELF_PATH, "data", f"{name}.csv")
-    return pd.read_csv(
-        data_path,
-        parse_dates=["Date"],
-        date_format="%m/%d/%Y",
-        index_col="Date",
-    )
+    data_path = Path(__file__).parent / "data" / f"{name}.csv"
+    return pl.read_csv(data_path).sort("Date")
 
 
 def read_df_aapl():
