@@ -7,7 +7,6 @@ requires-python = ">=3.13"
 dependencies = [
     "ipykernel>=6.29.5",
     "pandas>=2.2.3",
-    "pandas-ta>=0.3.14b0",
     "polars>=1.24.0",
     "pytest>=8.3.5",
     "ruff>=0.9.9",
