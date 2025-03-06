@@ -14,6 +14,7 @@ def _read_df(name: str) -> OHCLV:
     return (
         pl.read_csv(data_path)
         .with_columns(pl.col("Date").str.to_date("%m/%d/%Y"))
+        .select(["Date", "Open", "High", "Low", "Close", "Volume"])
         .sort("Date")
     )
 

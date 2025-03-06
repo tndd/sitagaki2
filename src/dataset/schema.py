@@ -1,13 +1,15 @@
 from typing import TypeAlias
 
-from polars import DataFrame
+import polars as pl
 
-OHCLV: TypeAlias = DataFrame
-"""
-date:   dt
-open:   f64
-high:   f64
-low:    f64
-close:  f64
-volume: i64
-"""
+OHCLV: TypeAlias = pl.DataFrame
+OHCLV_SCHEMA = pl.Schema(
+    {
+        "Date": pl.Date,
+        "Open": pl.Float64,
+        "High": pl.Float64,
+        "Low": pl.Float64,
+        "Close": pl.Float64,
+        "Volume": pl.Int64,
+    }
+)
