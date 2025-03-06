@@ -9,7 +9,11 @@ def _read_df(name: str) -> pl.DataFrame:
     日付で昇順に並び替える。
     """
     data_path = Path(__file__).parent / "data" / f"{name}.csv"
-    return pl.read_csv(data_path).sort("Date")
+    return (
+        pl.read_csv(data_path)
+        .with_columns(pl.col("Date").str.to_date("%m/%d/%Y"))
+        .sort("Date")
+    )
 
 
 def read_df_aapl():
