@@ -7,7 +7,7 @@ from common.baseclass import PLDF
 OHCLV: TypeAlias = DataFrame
 OHCLV_PLDF = PLDF(
     schema=Schema(
-        {
+        schema={
             "Date": Date,
             "Open": Float64,
             "High": Float64,

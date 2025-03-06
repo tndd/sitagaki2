@@ -8,8 +8,9 @@ class PLDF:
     schema: Schema
     origins: list["PLDF"] | None
 
+    @property
     def columns(self):
         """
         カラム名のリストを取得する
         """
-        pass
+        return self.schema.names()
