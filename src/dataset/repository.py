@@ -2,7 +2,7 @@ from pathlib import Path
 
 import polars as pl
 
-from dataset.schema import OHCLV
+from dataset.schema import OHCLV, OHCLV_PLDF
 
 
 def _read_df(name: str) -> OHCLV:
@@ -14,7 +14,7 @@ def _read_df(name: str) -> OHCLV:
     return (
         pl.read_csv(data_path)
         .with_columns(pl.col("Date").str.to_date("%m/%d/%Y"))
-        .select(["Date", "Open", "High", "Low", "Close", "Volume"])
+        .select(OHCLV_PLDF.columns)
         .sort("Date")
     )
 
