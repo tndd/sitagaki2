@@ -9,3 +9,4 @@ dependencies = [
     "polars>=1.24.0",
     "ruff>=0.9.9",
 ]
+addopts = "--import-mode=importlib"
