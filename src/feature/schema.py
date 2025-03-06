@@ -10,11 +10,11 @@ OFS_OHCLV_PLDF = PLDF(
     schema=Schema(
         {
             "Date": Date,
-            "OpenOfs": Float64,     # 始値の昨日からの対数差分
-            "HighOfs": Float64,     # 始値からの高値の対数差分
-            "LowOfs": Float64,      # 始値からの安値の対数差分
-            "CloseOfs": Float64,    # 始値から終値の対数差分
-            "VolumeOfs": Float64,   # 取引量の昨日からの対数差分
+            "OpenOfs": Float64,  #      # 始値の昨日からの対数差分
+            "HighOfs": Float64,  #      # 始値からの高値の対数差分
+            "LowOfs": Float64,  #       # 始値からの安値の対数差分
+            "CloseOfs": Float64,  #     # 始値から終値の対数差分
+            "VolumeOfs": Float64,  #    # 取引量の昨日からの対数差分
         }
     ),
     origins=[OHCLV_PLDF],
