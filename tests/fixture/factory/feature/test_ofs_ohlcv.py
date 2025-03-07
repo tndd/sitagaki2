@@ -1,5 +1,5 @@
 from feature.schema import OFS_OHLCV
-from fixtures.factory.feature.ofs_ohlcv import factory_ofs_ohlcv
+from fixture.factory.feature.ofs_ohlcv import factory_ofs_ohlcv
 
 
 def test_factory_ofs_ohlcv():
