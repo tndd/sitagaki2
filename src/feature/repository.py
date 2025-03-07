@@ -43,7 +43,7 @@ def _log_valiation_high_low_close_from_open(df: OHCLV):
     ).select([f"{col}Ofs" for col in COLS_HLC])
 
 
-def derive_ofs_ohclv(df: OHCLV) -> OFS_OHCLV:
+def derive_df_ofs_ohclv(df: OHCLV) -> OFS_OHCLV:
     return (
         pl.concat(
             [
@@ -60,5 +60,5 @@ def derive_ofs_ohclv(df: OHCLV) -> OFS_OHCLV:
 
 if __name__ == "__main__":
     df = read_df_aapl()
-    df_ofs = derive_ofs_ohclv(df)
+    df_ofs = derive_df_ofs_ohclv(df)
     print(df_ofs)
