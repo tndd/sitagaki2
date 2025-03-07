@@ -5,7 +5,7 @@ import polars as pl
 from dataset.schema import OHLCV
 
 
-def factory_ohclv() -> OHLCV:
+def factory_ohlcv() -> OHLCV:
     return pl.DataFrame(
         {
             "Date": [date(2000, 1, d) for d in range(1, 5)],
