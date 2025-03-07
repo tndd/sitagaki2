@@ -4,8 +4,8 @@ from polars import DataFrame, Date, Float64, Int64, Schema
 
 from common.baseclass import PLDF
 
-OHCLV: TypeAlias = DataFrame
-OHCLV_PLDF = PLDF(
+OHLCV: TypeAlias = DataFrame
+OHLCV_PLDF = PLDF(
     schema=Schema(
         schema={
             "Date": Date,

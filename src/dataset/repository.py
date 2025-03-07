@@ -2,10 +2,10 @@ from pathlib import Path
 
 import polars as pl
 
-from dataset.schema import OHCLV, OHCLV_PLDF
+from dataset.schema import OHLCV, OHLCV_PLDF
 
 
-def _read_df(name: str) -> OHCLV:
+def _read_df(name: str) -> OHLCV:
     """
     dataset/dataディレクトリ下のcsvファイルの読み出し。
     日付で昇順に並び替える。
@@ -14,7 +14,7 @@ def _read_df(name: str) -> OHCLV:
     return (
         pl.read_csv(data_path)
         .with_columns(pl.col("Date").str.to_date("%m/%d/%Y"))
-        .select(OHCLV_PLDF.columns)
+        .select(OHLCV_PLDF.columns)
         .sort("Date")
     )
 

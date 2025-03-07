@@ -1,13 +1,13 @@
 import polars as pl
 
 from dataset.repository import read_df_aapl
-from dataset.schema import OHCLV
-from feature.schema import OFS_OHCLV, OFS_OHCLV_PLDF
+from dataset.schema import OHLCV
+from feature.schema import OFS_OHCLV, OFS_OHLCV_PLDF
 
 COLS_HLC = ("High", "Low", "Close")
 
 
-def _log_valiation_volume_from_open(df: OHCLV):
+def _log_valiation_volume_from_open(df: OHLCV):
     """
     前日を基準としたOpenとVolumeの対数差分。
     対数比の値にはbasis point単位を使用。
@@ -25,7 +25,7 @@ def _log_valiation_volume_from_open(df: OHCLV):
     )
 
 
-def _log_valiation_high_low_close_from_open(df: OHCLV):
+def _log_valiation_high_low_close_from_open(df: OHLCV):
     """
     当日Openを基準としたHigh,Low,Closeの対数差分。
     対数比の値にはbasis point単位を使用。
@@ -43,7 +43,7 @@ def _log_valiation_high_low_close_from_open(df: OHCLV):
     ).select([f"{col}Ofs" for col in COLS_HLC])
 
 
-def derive_df_ofs_ohclv(df: OHCLV) -> OFS_OHCLV:
+def derive_df_ofs_ohclv(df: OHLCV) -> OFS_OHCLV:
     return (
         pl.concat(
             [
@@ -54,7 +54,7 @@ def derive_df_ofs_ohclv(df: OHCLV) -> OFS_OHCLV:
             how="horizontal",
         )
         .slice(1)  # 結合して1行目を削除（shiftでNaNになるため）
-        .select(OFS_OHCLV_PLDF.columns)
+        .select(OFS_OHLCV_PLDF.columns)
     )
 
 

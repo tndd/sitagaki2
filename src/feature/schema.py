@@ -3,10 +3,10 @@ from typing import TypeAlias
 from polars import DataFrame, Date, Float64, Schema
 
 from common.baseclass import PLDF
-from dataset.schema import OHCLV_PLDF
+from dataset.schema import OHLCV_PLDF
 
 OFS_OHCLV: TypeAlias = DataFrame
-OFS_OHCLV_PLDF = PLDF(
+OFS_OHLCV_PLDF = PLDF(
     schema=Schema(
         {
             "Date": Date,
@@ -17,5 +17,5 @@ OFS_OHCLV_PLDF = PLDF(
             "VolumeOfs": Float64,  #    # 取引量の昨日からの対数差分
         }
     ),
-    origins=[OHCLV_PLDF],
+    origins=[OHLCV_PLDF],
 )

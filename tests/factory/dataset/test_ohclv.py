@@ -4,7 +4,7 @@ from dataset.schema import OHLCV, OHLCV_PLDF
 from fixture.factory.dataset.ohclv import factory_ohclv
 
 
-def test_factory_ohclv():
+def test_factory_ohlcv():
     ohclv = factory_ohclv()
     assert isinstance(ohclv, OHLCV)
     # データの検証
