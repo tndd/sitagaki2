@@ -10,6 +10,7 @@ COLS_HLC = ("High", "Low", "Close")
 def _log_valiation_volume_from_open(df: OHCLV):
     """
     前日を基準としたOpenとVolumeの対数差分。
+    対数比の値にはbasis point単位を使用。
 
     DF:
         OpenOfs     f64     前日Openからの対数差分
@@ -27,6 +28,7 @@ def _log_valiation_volume_from_open(df: OHCLV):
 def _log_valiation_high_low_close_from_open(df: OHCLV):
     """
     当日Openを基準としたHigh,Low,Closeの対数差分。
+    対数比の値にはbasis point単位を使用。
 
     DF:
         HighOfs     f64     当日OpenからHighへの対数差分
