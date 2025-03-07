@@ -1,7 +1,7 @@
 from datetime import date
 
 from dataset.schema import OHLCV, OHLCV_PLDF
-from fixture.factory.dataset.ohlcv import factory_ohlcv
+from fixtures.factory.dataset.ohlcv import factory_ohlcv
 
 
 def test_factory_ohlcv():
