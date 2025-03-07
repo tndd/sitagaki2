@@ -1,7 +1,7 @@
-from feature.schema import OFS_OHCLV
-from fixture.factory.feature.ofs_ohlcv import factory_ofs_ohclv
+from feature.schema import OFS_OHLCV
+from fixture.factory.feature.ofs_ohlcv import factory_ofs_ohlcv
 
 
-def test_factory_ofs_ohclv():
-    ofs_ohlcv = factory_ofs_ohclv()
-    assert isinstance(ofs_ohlcv, OFS_OHCLV)
+def test_factory_ofs_ohlcv():
+    ofs_ohlcv = factory_ofs_ohlcv()
+    assert isinstance(ofs_ohlcv, OFS_OHLCV)

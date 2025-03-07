@@ -5,7 +5,7 @@ from polars import DataFrame, Date, Float64, Schema
 from common.baseclass import PLDF
 from dataset.schema import OHLCV_PLDF
 
-OFS_OHCLV: TypeAlias = DataFrame
+OFS_OHLCV: TypeAlias = DataFrame
 OFS_OHLCV_PLDF = PLDF(
     schema=Schema(
         {

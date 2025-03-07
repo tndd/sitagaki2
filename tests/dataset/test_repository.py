@@ -4,7 +4,7 @@ from dataset.schema import OHLCV, OHLCV_PLDF
 
 def test_read_df_aapl():
     df = read_df_aapl()
-    # OHCLVであること(Polars dataframe)
+    # OHLCVであること(Polars dataframe)
     assert isinstance(df, OHLCV)
     # データが空でない
     assert len(df) > 0

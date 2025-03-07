@@ -2,7 +2,7 @@ import polars as pl
 
 from dataset.repository import read_df_aapl
 from dataset.schema import OHLCV
-from feature.schema import OFS_OHCLV, OFS_OHLCV_PLDF
+from feature.schema import OFS_OHLCV, OFS_OHLCV_PLDF
 
 COLS_HLC = ("High", "Low", "Close")
 
@@ -43,7 +43,7 @@ def _log_valiation_high_low_close_from_open(df: OHLCV):
     ).select([f"{col}Ofs" for col in COLS_HLC])
 
 
-def derive_df_ofs_ohclv(df: OHLCV) -> OFS_OHCLV:
+def derive_df_ofs_ohlcv(df: OHLCV) -> OFS_OHLCV:
     return (
         pl.concat(
             [
@@ -60,5 +60,5 @@ def derive_df_ofs_ohclv(df: OHLCV) -> OFS_OHCLV:
 
 if __name__ == "__main__":
     df = read_df_aapl()
-    df_ofs = derive_df_ofs_ohclv(df)
+    df_ofs = derive_df_ofs_ohlcv(df)
     print(df_ofs)
