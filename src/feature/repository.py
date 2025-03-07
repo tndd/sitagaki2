@@ -26,7 +26,7 @@ def _log_valiation_high_low_close_from_open(df: OHCLV):
     )
 
 
-def calc_ofs_ohclv(df: OHCLV) -> OFS_OHCLV:
+def derive_ofs_ohclv(df: OHCLV) -> OFS_OHCLV:
     df_ofs_ov = _log_valiation_volume_from_open(df)
     df_ofs_hlc = _log_valiation_high_low_close_from_open(df)
     # 結合して1行目を削除（shiftでNaNになるため）
@@ -46,5 +46,5 @@ def calc_ofs_ohclv(df: OHCLV) -> OFS_OHCLV:
 
 if __name__ == "__main__":
     df = read_df_aapl()
-    df_ofs = calc_ofs_ohclv(df)
+    df_ofs = derive_ofs_ohclv(df)
     print(df_ofs)
