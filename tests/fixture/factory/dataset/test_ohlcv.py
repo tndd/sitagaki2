@@ -38,11 +38,11 @@ def test_factory_ohlcv():
     ]
     # Openの内容確認 (100ずつ増える。ただし最後は101.0でCloseと同じ値)
     assert ohlcv["Open"].to_list() == [100.0, 200.0, 300.0, 101.0]
-    # Highの内容確認を追加 (Openを基準に5%ずつ上昇)
+    # Highの内容確認を追加 (Openを基準に5%ずつ日毎に上昇幅が上昇)
     assert ohlcv["High"].to_list() == [105.0, 210.0, 345.0, 120.0]
-    # Lowの内容確認を追加 (Openを基準に5%ずつ下落)
+    # Lowの内容確認を追加 (Openを基準に5%ずつ日毎に下落幅が下落)
     assert ohlcv["Low"].to_list() == [95.0, 190.0, 255.0, 80.0]
-    # Closeの内容確認を追加 (Openを基準に1%ずつ上昇。ただし最後はOpenと同じ価格となる)
+    # Closeの内容確認を追加 (Openを基準に1%ずつ上昇幅が上昇。ただし最後はOpenと同じ価格となる)
     assert ohlcv["Close"].to_list() == [101.0, 204.0, 309.0, 101.0]
     # Volumeの内容確認 (1000から日毎に100ずつ上昇。ただし最終日は初めと同じ値)
     assert ohlcv["Volume"].to_list() == [1000, 1100, 1200, 1000]
