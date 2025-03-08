@@ -5,22 +5,24 @@ from dataset.schema import OHLCV
 from feature.schema import OFS_OHLCV, OFS_OHLCV_PLDF
 
 COLS_HLC = ("High", "Low", "Close")
+SCALE = 10000
 
 
 def _log_valiation_volume_from_open(df: OHLCV):
     """
-    前日を基準としたOpenとVolumeの対数差分。
+    前日を基準としたCloseとVolumeの対数差分。
     対数比の値にはbasis point単位を使用。
 
     DF:
-        OpenOfs     f64     前日Openからの対数差分
-        VolumeOfs   f64     前日Volumeからの対数差分
+        PrevCloseOfs    f64     前日Openからの対数差分
+        PrevVolumeOfs     f64     前日Volumeからの対数差分
     """
     return df.select(
         [
-            (pl.col("Open") / pl.col("Open").shift(1)).log().alias("OpenOfs") * 10000,
-            (pl.col("Volume") / pl.col("Volume").shift(1)).log().alias("VolumeOfs")
-            * 10000,
+            (pl.col("Close") / pl.col("Close").shift(1)).log().alias("PrevCloseOfs")
+            * SCALE,
+            (pl.col("Volume") / pl.col("Volume").shift(1)).log().alias("PrevVolumeOfs")
+            * SCALE,
         ]
     )
 
@@ -37,7 +39,7 @@ def _log_valiation_high_low_close_from_open(df: OHLCV):
     """
     return df.with_columns(
         [
-            (pl.col(col) / pl.col("Open")).log().alias(f"{col}Ofs") * 10000
+            (pl.col(col) / pl.col("Open")).log().alias(f"{col}Ofs") * SCALE
             for col in COLS_HLC
         ]
     ).select([f"{col}Ofs" for col in COLS_HLC])
