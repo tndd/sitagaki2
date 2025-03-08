@@ -1,5 +1,5 @@
-from dataset.repository import read_df_aapl
-from dataset.schema import OHLCV, OHLCV_PLDF
+from dataset.ohlcv.repository import read_df_aapl
+from dataset.ohlcv.schema import OHLCV, OHLCV_PLDF
 
 
 def test_read_df_aapl():

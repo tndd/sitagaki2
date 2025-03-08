@@ -1,7 +1,7 @@
 import polars as pl
 
-from dataset.repository import read_df_aapl
-from dataset.schema import OHLCV
+from dataset.ohlcv.repository import read_df_aapl
+from dataset.ohlcv.schema import OHLCV
 from feature.schema import OFS_OHLCV, OFS_OHLCV_PLDF
 
 COLS_HLC = ("High", "Low", "Close")

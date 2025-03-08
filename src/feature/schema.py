@@ -3,7 +3,7 @@ from typing import TypeAlias
 from polars import DataFrame, Datetime, Float64, Schema
 
 from common.baseclass import PLDF
-from dataset.schema import OHLCV_PLDF
+from dataset.ohlcv.schema import OHLCV_PLDF
 
 OFS_OHLCV: TypeAlias = DataFrame
 OFS_OHLCV_PLDF = PLDF(

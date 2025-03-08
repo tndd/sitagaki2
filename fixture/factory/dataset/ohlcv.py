@@ -2,7 +2,7 @@ from datetime import datetime
 
 import polars as pl
 
-from dataset.schema import OHLCV
+from dataset.ohlcv.schema import OHLCV
 
 
 def factory_ohlcv() -> OHLCV:
