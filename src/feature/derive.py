@@ -15,7 +15,7 @@ def _log_valiation_volume_from_open(df: OHLCV):
 
     DF:
         PrevCloseOfs    f64     前日Openからの対数差分
-        PrevVolumeOfs     f64     前日Volumeからの対数差分
+        PrevVolumeOfs   f64     前日Volumeからの対数差分
     """
     return df.select(
         [
