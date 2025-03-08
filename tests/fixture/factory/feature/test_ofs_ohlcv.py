@@ -1,4 +1,4 @@
-from feature.schema import OFS_OHLCV
+from feature.ofs_ohlcv.schema import OFS_OHLCV
 from fixture.factory.feature.ofs_ohlcv import factory_ofs_ohlcv
 
 

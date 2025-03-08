@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from feature.derive import derive_df_ofs_ohlcv
+from feature.ofs_ohlcv.derive import derive_df_ofs_ohlcv
 from fixture.common.const import APX_ZERO
 from fixture.factory.dataset.ohlcv import factory_ohlcv
 
