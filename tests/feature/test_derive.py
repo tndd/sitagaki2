@@ -1,4 +1,4 @@
-from feature.repository import derive_df_ofs_ohlcv
+from feature.derive import derive_df_ofs_ohlcv
 from fixture.factory.dataset.ohlcv import factory_ohlcv
 
 
