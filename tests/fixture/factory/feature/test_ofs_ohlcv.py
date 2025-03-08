@@ -8,6 +8,7 @@ def test_factory_ofs_ohlcv():
         ofs_ohlcvの内容については、derive_ofs_ohlcvの方で検証する。
         factoryの方は、インスタンスができてるかどうか？という最低限のテスト。
 
+    NOTE: fixtureのテスト実装方針
         fixtureの基本方針として、fixtureについてのテストは最低限とする。
         機能の品質は、各関数ごとのテストで担保されるべきという思想。
         二重テスト状態はなるべく避けたい。
