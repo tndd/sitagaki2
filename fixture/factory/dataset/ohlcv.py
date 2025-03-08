@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import datetime
 
 import polars as pl
 
@@ -15,7 +15,7 @@ def factory_ohlcv() -> OHLCV:
     """
     return pl.DataFrame(
         {
-            "Date": [date(2000, 1, d) for d in range(1, 5)],
+            "Date": [datetime(2000, 1, d) for d in range(1, 5)],
             "Open": [100.0, 200.0, 300.0, 101.0],
             "High": [105.0, 210.0, 345.0, 120.0],
             "Low": [95.0, 190.0, 255.0, 80.0],

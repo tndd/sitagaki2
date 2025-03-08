@@ -13,7 +13,7 @@ def _read_df(name: str) -> OHLCV:
     data_path = Path(__file__).parent / "data" / f"{name}.csv"
     return (
         pl.read_csv(data_path)
-        .with_columns(pl.col("Date").str.to_date("%m/%d/%Y"))
+        .with_columns(pl.col("Date").str.to_datetime("%m/%d/%Y"))
         .select(OHLCV_PLDF.columns)
         .sort("Date")
     )

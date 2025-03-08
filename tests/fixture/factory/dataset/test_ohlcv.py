@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import datetime
 
 from dataset.schema import OHLCV, OHLCV_PLDF
 from fixture.factory.dataset.ohlcv import factory_ohlcv
@@ -31,10 +31,10 @@ def test_factory_ohlcv():
     assert len(ohlcv) == 4
     # 日付の内容確認
     assert ohlcv["Date"].to_list() == [
-        date(2000, 1, 1),
-        date(2000, 1, 2),
-        date(2000, 1, 3),
-        date(2000, 1, 4),
+        datetime(2000, 1, 1),
+        datetime(2000, 1, 2),
+        datetime(2000, 1, 3),
+        datetime(2000, 1, 4),
     ]
     # Openの内容確認 (100ずつ増える。ただし最後は101.0でCloseと同じ値)
     assert ohlcv["Open"].to_list() == [100.0, 200.0, 300.0, 101.0]
