@@ -5,6 +5,12 @@ from fixture.factory.dataset.ohlcv import factory_ohlcv
 
 
 def test_factory_ohlcv():
+    """
+    MEMO: fixtureにも関わらず詳細なテストを行なってる理由
+        ここは本体部分の処理というよりもfactoryが、
+        要求される値でオブジェクトを作ってるか？という観点でテストされてるから。
+        そうでもなければfixtureでこれほど長いテストを行うのは規約違反だ。
+    """
     ohlcv = factory_ohlcv()
     assert isinstance(ohlcv, OHLCV)
     # データの検証
