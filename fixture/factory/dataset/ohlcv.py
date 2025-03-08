@@ -32,12 +32,10 @@ def factory_ohlcv_cycle(start_date="2000-01-01", length=100) -> OHLCV:
     base_prices = np.concatenate(
         [np.linspace(100, 105, 30), np.linspace(105, 95, 40), np.linspace(95, 110, 30)]
     )
-
     dates = [
         datetime.strptime(start_date, "%Y-%m-%d") + timedelta(days=i)
         for i in range(length)
     ]
-
     ohlc_data = []
     prev_close = 100.0
     for i in range(length):
@@ -49,12 +47,10 @@ def factory_ohlcv_cycle(start_date="2000-01-01", length=100) -> OHLCV:
             open_price = prev_close * 0.99
         else:
             open_price = prev_close
-
         close_price = base_prices[i] + np.random.normal(0, 0.5)
         high = max(open_price, close_price) + abs(np.random.normal(0.2, 0.1))
         low = min(open_price, close_price) - abs(np.random.normal(0.2, 0.1))
         volume = int(np.random.uniform(10000, 50000))
-
         ohlc_data.append(
             {
                 "Date": dates[i],
@@ -66,7 +62,6 @@ def factory_ohlcv_cycle(start_date="2000-01-01", length=100) -> OHLCV:
             }
         )
         prev_close = close_price
-
     return pl.DataFrame(ohlc_data)
 
 
