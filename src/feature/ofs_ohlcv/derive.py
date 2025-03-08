@@ -1,11 +1,11 @@
 import polars as pl
 
+from common.const import SCALE_BP
 from dataset.ohlcv.repository import read_df_aapl
 from dataset.ohlcv.schema import OHLCV
 from feature.ofs_ohlcv.schema import OFS_OHLCV, OFS_OHLCV_PLDF
 
 COLS_HLC = ("High", "Low", "Close")
-SCALE = 10000
 
 
 def _log_valiation_volume_from_open(df: OHLCV):
@@ -20,9 +20,9 @@ def _log_valiation_volume_from_open(df: OHLCV):
     return df.select(
         [
             (pl.col("Close") / pl.col("Close").shift(1)).log().alias("PrevCloseOfs")
-            * SCALE,
+            * SCALE_BP,
             (pl.col("Volume") / pl.col("Volume").shift(1)).log().alias("PrevVolumeOfs")
-            * SCALE,
+            * SCALE_BP,
         ]
     )
 
@@ -39,7 +39,7 @@ def _log_valiation_high_low_close_from_open(df: OHLCV):
     """
     return df.with_columns(
         [
-            (pl.col(col) / pl.col("Open")).log().alias(f"{col}Ofs") * SCALE
+            (pl.col(col) / pl.col("Open")).log().alias(f"{col}Ofs") * SCALE_BP
             for col in COLS_HLC
         ]
     ).select([f"{col}Ofs" for col in COLS_HLC])
