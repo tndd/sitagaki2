@@ -27,6 +27,12 @@ def test_factory_ohlcv():
         date(2000, 1, 4),
     ]
     # Openの内容確認
-    assert ohlcv["Open"].to_list() == [100.0, 200.0, 300.0, 400.0]
+    assert ohlcv["Open"].to_list() == [100.0, 200.0, 300.0, 100.0]
+    # Highの内容確認を追加
+    assert ohlcv["High"].to_list() == [105.0, 210.0, 345.0, 120.0]
+    # Lowの内容確認を追加
+    assert ohlcv["Low"].to_list() == [95.0, 190.0, 255.0, 80.0]
+    # Closeの内容確認を追加
+    assert ohlcv["Close"].to_list() == [101.0, 204.0, 309.0, 100.0]
     # Volumeの内容確認
-    assert ohlcv["Volume"].to_list() == [1000, 1100, 1200, 1300]
+    assert ohlcv["Volume"].to_list() == [1000, 1100, 1200, 1000]
