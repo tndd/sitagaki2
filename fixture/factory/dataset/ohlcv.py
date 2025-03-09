@@ -1,7 +1,6 @@
 from datetime import datetime, timedelta
 
 import numpy as np
-import plotly.express as px
 import polars as pl
 
 from dataset.ohlcv.schema import OHLCV
@@ -68,7 +67,3 @@ def factory_ohlcv_cycle(start_date="2000-01-01", length=100) -> OHLCV:
 if __name__ == "__main__":
     df = factory_ohlcv_cycle()
     print(df)
-
-    # Plotlyバージョン
-    fig = px.line(df, x="Date", y="Close")
-    fig.show()
