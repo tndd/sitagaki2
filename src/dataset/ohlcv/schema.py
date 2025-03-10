@@ -1,14 +1,14 @@
 from typing import TypeAlias
 
-from polars import DataFrame, Date, Float64, Int64, Schema
+from polars import DataFrame, Datetime, Float64, Int64, Schema
 
 from common.baseclass import PLDF
 
-OHCLV: TypeAlias = DataFrame
-OHCLV_PLDF = PLDF(
+OHLCV: TypeAlias = DataFrame
+OHLCV_PLDF = PLDF(
     schema=Schema(
-        schema={
-            "Date": Date,
+        {
+            "Date": Datetime(time_unit="us"),
             "Open": Float64,
             "High": Float64,
             "Low": Float64,
