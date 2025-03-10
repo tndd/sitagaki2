@@ -1,7 +1,7 @@
 from datetime import datetime
 
 from dataset.ohlcv.schema import OHLCV, OHLCV_PLDF
-from fixture.factory.dataset.ohlcv import factory_ohlcv
+from fixture.factory.dataset.ohlcv import factory_ohlcv, factory_ohlcv_cycle
 
 
 def test_factory_ohlcv():
@@ -46,3 +46,8 @@ def test_factory_ohlcv():
     assert ohlcv["Close"].to_list() == [101.0, 204.0, 309.0, 101.0]
     # Volumeの内容確認 (1000から日毎に100ずつ上昇。ただし最終日は初めと同じ値)
     assert ohlcv["Volume"].to_list() == [1000, 1100, 1200, 1000]
+
+
+def test_factory_ohlcv_cycle():
+    ohlvc_cycle = factory_ohlcv_cycle()
+    assert isinstance(ohlvc_cycle, OHLCV)
