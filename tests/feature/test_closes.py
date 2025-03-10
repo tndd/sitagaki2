@@ -1,7 +1,5 @@
 from math import log
 
-import pytest
-
 from common.const import SCALE_BP
 from feature.closes.derive import derive_closes_n4
 from feature.closes.schema import CLOSES_N4_PLDF
@@ -22,25 +20,17 @@ def test_derive_closes_n4():
     first_row = result.row(0, named=True)
     # 入力データから期待される値を計算
     close_values = df.get_column("Close").to_list()
-    # 各カラムの期待値計算
-    expected_now = log(close_values[5] / close_values[4]) * SCALE_BP
-    expected_lag1 = log(close_values[4] / close_values[3]) * SCALE_BP
-    expected_lag2 = log(close_values[3] / close_values[2]) * SCALE_BP
-    expected_lag3 = log(close_values[2] / close_values[1]) * SCALE_BP
-    expected_lag4 = log(close_values[1] / close_values[0]) * SCALE_BP
-    # assert
-    assert first_row["now"] == pytest.approx(expected_now, abs=1e-9)
-    assert first_row["lag_1"] == pytest.approx(expected_lag1, abs=1e-9)
-    assert first_row["lag_2"] == pytest.approx(expected_lag2, abs=1e-9)
-    assert first_row["lag_3"] == pytest.approx(expected_lag3, abs=1e-9)
-    assert first_row["lag_4"] == pytest.approx(expected_lag4, abs=1e-9)
-    assert first_row["lag_4"] == pytest.approx(expected_lag4, abs=1e-9)
+    assert first_row["now"] == log(close_values[5] / close_values[4]) * SCALE_BP
+    assert first_row["lag_1"] == log(close_values[4] / close_values[3]) * SCALE_BP
+    assert first_row["lag_2"] == log(close_values[3] / close_values[2]) * SCALE_BP
+    assert first_row["lag_3"] == log(close_values[2] / close_values[1]) * SCALE_BP
+    assert first_row["lag_4"] == log(close_values[1] / close_values[0]) * SCALE_BP
 
     ### 差分の伝播(shift)チェック ###
     rows = result.rows(named=True)
     # 3ステップ分、値がshiftしてるか？
     for i in range(3):
-        assert rows[i]["now"] == pytest.approx(rows[i + 1]["lag_1"], abs=1e-9)
-        assert rows[i]["lag_1"] == pytest.approx(rows[i + 1]["lag_2"], abs=1e-9)
-        assert rows[i]["lag_2"] == pytest.approx(rows[i + 1]["lag_3"], abs=1e-9)
-        assert rows[i]["lag_3"] == pytest.approx(rows[i + 1]["lag_4"], abs=1e-9)
+        assert rows[i]["now"] == rows[i + 1]["lag_1"]
+        assert rows[i]["lag_1"] == rows[i + 1]["lag_2"]
+        assert rows[i]["lag_2"] == rows[i + 1]["lag_3"]
+        assert rows[i]["lag_3"] == rows[i + 1]["lag_4"]
