@@ -36,5 +36,11 @@ def test_derive_closes_n4():
     assert first_row["lag_4"] == pytest.approx(expected_lag4, abs=1e-9)
     assert first_row["lag_4"] == pytest.approx(expected_lag4, abs=1e-9)
 
-    ### 差分の伝播チェック ###
-    
+    ### 差分の伝播(shift)チェック ###
+    rows = result.rows(named=True)
+    # 3ステップ分、値がshiftしてるか？
+    for i in range(3):
+        assert rows[i]["now"] == pytest.approx(rows[i + 1]["lag_1"], abs=1e-9)
+        assert rows[i]["lag_1"] == pytest.approx(rows[i + 1]["lag_2"], abs=1e-9)
+        assert rows[i]["lag_2"] == pytest.approx(rows[i + 1]["lag_3"], abs=1e-9)
+        assert rows[i]["lag_3"] == pytest.approx(rows[i + 1]["lag_4"], abs=1e-9)
