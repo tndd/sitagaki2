@@ -10,11 +10,12 @@ CLOSES:
     Closeを基準とした、直前と今の値動きの履歴を表す。
     値動きは対数比bpで表す。
 
-    CLOSES_N{n}の"n"部分は、データセットの値動きを表すカラムの数を表す。
+    CLOSES_N{n}の"n"部分は、何日前まで終値を遡らせるかを表す。
 """
 
-CLOSES_N5: TypeAlias = DataFrame
-CLOSES_N5_PLDF = PLDF(
+# 4日分の終値履歴
+CLOSES_N4: TypeAlias = DataFrame
+CLOSES_N4_PLDF = PLDF(
     schema=Schema(
         {
             "Date": Datetime(time_unit="us"),
