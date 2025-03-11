@@ -27,3 +27,6 @@ where = ["src", "."]
 
 [tool.pytest.ini_options]
 addopts = "--import-mode=importlib"
+
+[tool.ruff]
+select = ["E", "F", "W", "I", "B", "Q", "C4", "PL"]
