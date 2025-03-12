@@ -29,4 +29,5 @@ where = ["src", "."]
 addopts = "--import-mode=importlib"
 
 [tool.ruff]
-select = ["E", "F", "W", "I", "B", "Q", "C4", "PL"]
+select = ["E", "F", "W", "I", "B", "C4", "PL"]
+ignore = []
