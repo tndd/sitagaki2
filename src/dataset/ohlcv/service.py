@@ -2,7 +2,7 @@ from pathlib import Path
 
 import polars as pl
 
-from dataset.ohlcv.schema import OHLCV, OHLCV_PLDF
+from dataset.ohlcv.schema import OHLCV
 
 
 def read_df(name: str) -> OHLCV:
@@ -11,9 +11,10 @@ def read_df(name: str) -> OHLCV:
     日付で昇順に並び替える。
     """
     data_path = Path(__file__).parent / "data" / f"{name}.csv"
-    return (
+    df = (
         pl.read_csv(data_path)
         .with_columns(pl.col("Date").str.to_datetime("%m/%d/%Y"))
-        .select(OHLCV_PLDF.columns)
+        .select(OHLCV.columns)
         .sort("Date")
     )
+    return OHLCV(df)
