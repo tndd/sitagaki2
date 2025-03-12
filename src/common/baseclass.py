@@ -1,13 +1,12 @@
-from dataclasses import dataclass
-
 from polars import DataFrame, Schema
 
 
-@dataclass
 class PLDF:
-    df: DataFrame
     schema: Schema
     origins: list["PLDF"] | None = None
+
+    def __init__(self, df: DataFrame) -> None:
+        self.df: DataFrame = df
 
     @property
     def columns(self):
