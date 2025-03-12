@@ -8,9 +8,9 @@ class PLDF:
     def __init__(self, df: DataFrame) -> None:
         self.df: DataFrame = df
 
-    @property
-    def columns(self):
+    @classmethod
+    def get_col_names(cls):
         """
         カラム名のリストを取得する
         """
-        return self.schema.names()
+        return cls.schema.names()
