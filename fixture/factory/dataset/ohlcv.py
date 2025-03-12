@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 import numpy as np
 import polars as pl
 
-from dataset.ohlcv.schema import OHLCV
+from dataset.ohlcv.schema import OHLCV, OHLCV_PLDF
 
 
 def factory_ohlcv() -> OHLCV:
@@ -62,6 +62,34 @@ def factory_ohlcv_cycle(start_date="2000-01-01", length=100) -> OHLCV:
         )
         prev_close = close_price
     return pl.DataFrame(ohlc_data)
+
+
+def factory_ohlcv_brown(num_rows: int = 10_0000) -> OHLCV:
+    """ランダムなOHLCVデータを生成する関数"""
+
+    # ベース日時の生成（1分足を想定）
+    start_date = pl.datetime(2000, 1, 1)  # ←引数を個別に指定
+    base_date = pl.datetime_range(
+        start=start_date,
+        end=start_date + pl.duration(minutes=num_rows - 1),
+        interval="1m",
+        eager=True,
+    ).alias("Date")
+
+    # ランダムな価格変動（幾何ブラウン運動を模倣）
+    returns = np.random.normal(0, 0.0001, num_rows)
+    close_prices = 100.0 * np.exp(np.cumsum(returns))
+
+    return pl.DataFrame(
+        {
+            "Date": base_date,
+            "Open": close_prices * np.random.uniform(0.99, 1.01, num_rows),
+            "High": close_prices * np.random.uniform(1.0, 1.02, num_rows),
+            "Low": close_prices * np.random.uniform(0.98, 1.0, num_rows),
+            "Close": close_prices,
+            "Volume": np.random.normal(1_000_000, 100_000, num_rows).astype(np.int64),
+        }
+    ).cast(OHLCV_PLDF.schema)
 
 
 if __name__ == "__main__":

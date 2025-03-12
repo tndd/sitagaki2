@@ -1,7 +1,11 @@
 from datetime import datetime
 
 from dataset.ohlcv.schema import OHLCV, OHLCV_PLDF
-from fixture.factory.dataset.ohlcv import factory_ohlcv, factory_ohlcv_cycle
+from fixture.factory.dataset.ohlcv import (
+    factory_ohlcv,
+    factory_ohlcv_brown,
+    factory_ohlcv_cycle,
+)
 
 
 def test_factory_ohlcv():
@@ -51,3 +55,8 @@ def test_factory_ohlcv():
 def test_factory_ohlcv_cycle():
     ohlvc_cycle = factory_ohlcv_cycle()
     assert isinstance(ohlvc_cycle, OHLCV)
+
+
+def test_factory_ohlcv_brown():
+    ohlcv = factory_ohlcv_brown()
+    assert isinstance(ohlcv, OHLCV)
