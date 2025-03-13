@@ -1,7 +1,8 @@
-from feature.closes.schema import CLOSES_N4, CLOSES_N4_PLDF
+from feature.closes.schema import ClosesN4
 from fixture.factory.feature.closes import factory_closes_n4
 
 
 def test_factory_closes_n4():
-    assert isinstance(factory_closes_n4(), CLOSES_N4)
-    assert factory_closes_n4().schema == CLOSES_N4_PLDF.schema
+    closes_n4 = factory_closes_n4()
+    assert isinstance(closes_n4, ClosesN4)
+    assert closes_n4.df.schema == ClosesN4.schema

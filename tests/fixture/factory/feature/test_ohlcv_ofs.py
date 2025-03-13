@@ -15,3 +15,4 @@ def test_factory_ofs_ohlcv():
     """
     ofs_ohlcv = factory_ofs_ohlcv()
     assert isinstance(ofs_ohlcv, OhlcvOfs)
+    assert ofs_ohlcv.df.schema == OhlcvOfs.schema

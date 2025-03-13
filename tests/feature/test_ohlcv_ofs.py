@@ -3,6 +3,7 @@ from math import log
 
 from common.const import SCALE_BP
 from feature.ohlcv_ofs.derive import derive_df_ohlcv_ofs
+from feature.ohlcv_ofs.schema import OhlcvOfs
 from fixture.common.const import APX_ZERO
 from fixture.factory.dataset.ohlcv import factory_ohlcv
 
@@ -10,6 +11,9 @@ from fixture.factory.dataset.ohlcv import factory_ohlcv
 def test_derive_df_ohlcv_ofs():
     ohlcv = factory_ohlcv()
     ohlcv_ofs = derive_df_ohlcv_ofs(ohlcv)
+    assert isinstance(ohlcv_ofs, OhlcvOfs)
+    # dfのスキーマとクラスのスキーマを比べる
+    assert ohlcv_ofs.df.schema == OhlcvOfs.schema
     # derive前の4件から１つ減って3件となってるか?
     assert len(ohlcv_ofs.df) == 3
     # 2000-01-01は削除されてるから2000-01-02から始まってるか?

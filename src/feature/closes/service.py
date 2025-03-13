@@ -4,7 +4,7 @@ from common.const import SCALE_BP
 from dataset.ohlcv.schema import Ohlcv
 
 
-def derive_closes(df: Ohlcv, n: int):
+def derive_closes(ohlcv: Ohlcv, n: int):
     # 基準となるシフト量を動的に生成
     base_shifts = [pl.col("Close").shift(i) for i in range(n + 2)]
 
@@ -17,4 +17,4 @@ def derive_closes(df: Ohlcv, n: int):
         for i in range(n + 1)
     ]
 
-    return df.select([pl.col("Date")] + lag_exprs).slice(n + 1)
+    return ohlcv.df.select([pl.col("Date")] + lag_exprs).slice(n + 1)

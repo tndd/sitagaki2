@@ -1,5 +1,3 @@
-from typing import TypeAlias
-
 from polars import DataFrame, Datetime, Float64, Schema
 
 from common.baseclass import Pldf
@@ -13,10 +11,9 @@ CLOSES:
     CLOSES_N{n}の"n"部分は、何日前まで終値を遡らせるかを表す。
 """
 
-# 4日分の終値履歴
-CLOSES_N4: TypeAlias = DataFrame
-CLOSES_N4_PLDF = Pldf(
-    schema=Schema(
+
+class ClosesN4(Pldf):
+    schema = Schema(
         {
             "Date": Datetime(time_unit="us"),
             "now": Float64,  #          # 1日前(前日)を基準とした、今の終値との対数bp
@@ -25,6 +22,8 @@ CLOSES_N4_PLDF = Pldf(
             "lag_3": Float64,  #        # ~
             "lag_4": Float64,  #        # ~
         }
-    ),
-    origins=[Ohlcv],
-)
+    )
+    origins = [Ohlcv]
+
+    def __init__(self, df: DataFrame) -> None:
+        super().__init__(df)

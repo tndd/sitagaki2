@@ -1,7 +1,7 @@
 from dataset.ohlcv.schema import Ohlcv
-from feature.closes.schema import CLOSES_N4, CLOSES_N4_PLDF
+from feature.closes.schema import ClosesN4
 from feature.closes.service import derive_closes
 
 
-def derive_closes_n4(df: Ohlcv) -> CLOSES_N4:
-    return derive_closes(df, 4).select(CLOSES_N4_PLDF.get_col_names)
+def derive_closes_n4(ohlcv: Ohlcv) -> ClosesN4:
+    return ClosesN4(derive_closes(ohlcv, 4).select(ClosesN4.get_col_names()))

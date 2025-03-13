@@ -2,24 +2,24 @@ from math import log
 
 from common.const import SCALE_BP
 from feature.closes.derive import derive_closes_n4
-from feature.closes.schema import CLOSES_N4_PLDF
+from feature.closes.schema import ClosesN4
 from fixture.factory.dataset.ohlcv import factory_ohlcv_cycle
 
 
 def test_derive_closes_n4():
     # テストデータの準備
-    df = factory_ohlcv_cycle()
+    ohlcv = factory_ohlcv_cycle()
     # テスト対象の関数を実行
-    result = derive_closes_n4(df)
+    closes_n4 = derive_closes_n4(ohlcv)
     # スキーマの検証
-    assert result.schema == CLOSES_N4_PLDF.schema
+    assert closes_n4.df.schema == ClosesN4.schema
     # 行数の検証 (100行入力 → 100 - 5 = 95行)
-    assert result.shape == (95, 6)
+    assert closes_n4.df.shape == (95, 6)
 
     ### 始行の内容チェック　###
-    first_row = result.row(0, named=True)
+    first_row = closes_n4.df.row(0, named=True)
     # 入力データから期待される値を計算
-    close_values = df.get_column("Close").to_list()
+    close_values = ohlcv.df.get_column("Close").to_list()
     assert first_row["now"] == log(close_values[5] / close_values[4]) * SCALE_BP
     assert first_row["lag_1"] == log(close_values[4] / close_values[3]) * SCALE_BP
     assert first_row["lag_2"] == log(close_values[3] / close_values[2]) * SCALE_BP
@@ -27,7 +27,7 @@ def test_derive_closes_n4():
     assert first_row["lag_4"] == log(close_values[1] / close_values[0]) * SCALE_BP
 
     ### 差分の伝播(shift)チェック ###
-    rows = result.rows(named=True)
+    rows = closes_n4.df.rows(named=True)
     # 3ステップ分、値がshiftしてるか？
     for i in range(3):
         assert rows[i]["now"] == rows[i + 1]["lag_1"]
