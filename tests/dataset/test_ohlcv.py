@@ -1,14 +1,14 @@
 from dataset.ohlcv.repository import read_df_aapl
-from dataset.ohlcv.schema import OHLCV, OHLCV_PLDF
+from dataset.ohlcv.schema import Ohlcv
 
 
 def test_read_df_aapl():
-    df = read_df_aapl()
+    ohlcv = read_df_aapl()
     # OHLCVであること(Polars dataframe)
-    assert isinstance(df, OHLCV)
+    assert isinstance(ohlcv, Ohlcv)
     # データが空でない
-    assert len(df) > 0
+    assert len(ohlcv.df) > 0
     # スキーマの完全一致チェック
-    assert df.schema == OHLCV_PLDF.schema
+    assert ohlcv.df.schema == Ohlcv.SCHEMA
     # Dateが日付順にソートされていること"
-    assert df["Date"].is_sorted()
+    assert ohlcv.df["Date"].is_sorted()

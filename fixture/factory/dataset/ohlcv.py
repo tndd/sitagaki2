@@ -3,10 +3,10 @@ from datetime import datetime, timedelta
 import numpy as np
 import polars as pl
 
-from dataset.ohlcv.schema import OHLCV, OHLCV_PLDF
+from dataset.ohlcv.schema import Ohlcv
 
 
-def factory_ohlcv() -> OHLCV:
+def factory_ohlcv() -> Ohlcv:
     """
     Open:   100ずつ増える。ただし最後は101.0でCloseと同じ値
     High:   Openを基準に5%ずつ日毎に上昇幅が上昇
@@ -14,19 +14,21 @@ def factory_ohlcv() -> OHLCV:
     Close:  Openを基準に日毎に1%ずつ上昇幅が上昇。ただし最後はOpenと同じ価格となる
     Volume: 1000から日毎に100ずつ上昇。ただし最終日は初めと同じ値
     """
-    return pl.DataFrame(
-        {
-            "Date": [datetime(2000, 1, d) for d in range(1, 5)],
-            "Open": [100.0, 200.0, 300.0, 101.0],
-            "High": [105.0, 210.0, 345.0, 120.0],
-            "Low": [95.0, 190.0, 255.0, 80.0],
-            "Close": [101.0, 204.0, 309.0, 101.0],
-            "Volume": [1000, 1100, 1200, 1000],
-        }
+    return Ohlcv(
+        pl.DataFrame(
+            {
+                "Date": [datetime(2000, 1, d) for d in range(1, 5)],
+                "Open": [100.0, 200.0, 300.0, 101.0],
+                "High": [105.0, 210.0, 345.0, 120.0],
+                "Low": [95.0, 190.0, 255.0, 80.0],
+                "Close": [101.0, 204.0, 309.0, 101.0],
+                "Volume": [1000, 1100, 1200, 1000],
+            }
+        )
     )
 
 
-def factory_ohlcv_cycle(start_date="2000-01-01", length=100) -> OHLCV:
+def factory_ohlcv_cycle(start_date="2000-01-01", length=100) -> Ohlcv:
     # 基本の価格パターン（階段状に上昇）
     base_prices = np.concatenate(
         [np.linspace(100, 105, 30), np.linspace(105, 95, 40), np.linspace(95, 110, 30)]
@@ -61,10 +63,10 @@ def factory_ohlcv_cycle(start_date="2000-01-01", length=100) -> OHLCV:
             }
         )
         prev_close = close_price
-    return pl.DataFrame(ohlc_data)
+    return Ohlcv(pl.DataFrame(ohlc_data))
 
 
-def factory_ohlcv_brown(num_rows: int = 10_0000) -> OHLCV:
+def factory_ohlcv_brown(num_rows: int = 10_0000) -> Ohlcv:
     """ランダムなOHLCVデータを生成する関数"""
 
     # ベース日時の生成（1分足を想定）
@@ -80,18 +82,22 @@ def factory_ohlcv_brown(num_rows: int = 10_0000) -> OHLCV:
     returns = np.random.normal(0, 0.0001, num_rows)
     close_prices = 100.0 * np.exp(np.cumsum(returns))
 
-    return pl.DataFrame(
-        {
-            "Date": base_date,
-            "Open": close_prices * np.random.uniform(0.99, 1.01, num_rows),
-            "High": close_prices * np.random.uniform(1.0, 1.02, num_rows),
-            "Low": close_prices * np.random.uniform(0.98, 1.0, num_rows),
-            "Close": close_prices,
-            "Volume": np.random.normal(1_000_000, 100_000, num_rows).astype(np.int64),
-        }
-    ).cast(OHLCV_PLDF.schema)
+    return Ohlcv(
+        pl.DataFrame(
+            {
+                "Date": base_date,
+                "Open": close_prices * np.random.uniform(0.99, 1.01, num_rows),
+                "High": close_prices * np.random.uniform(1.0, 1.02, num_rows),
+                "Low": close_prices * np.random.uniform(0.98, 1.0, num_rows),
+                "Close": close_prices,
+                "Volume": np.random.normal(1_000_000, 100_000, num_rows).astype(
+                    np.int64
+                ),
+            }
+        ).cast(Ohlcv.SCHEMA)
+    )
 
 
 if __name__ == "__main__":
-    df = factory_ohlcv_cycle()
-    print(df)
+    ohlcv = factory_ohlcv()
+    print(ohlcv.df)

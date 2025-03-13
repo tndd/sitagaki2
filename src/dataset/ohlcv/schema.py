@@ -1,12 +1,10 @@
-from typing import TypeAlias
-
 from polars import DataFrame, Datetime, Float64, Int64, Schema
 
-from common.baseclass import PLDF
+from common.base import Pldf
 
-OHLCV: TypeAlias = DataFrame
-OHLCV_PLDF = PLDF(
-    schema=Schema(
+
+class Ohlcv(Pldf):
+    SCHEMA = Schema(
         {
             "Date": Datetime(time_unit="us"),
             "Open": Float64,
@@ -15,6 +13,7 @@ OHLCV_PLDF = PLDF(
             "Close": Float64,
             "Volume": Int64,
         }
-    ),
-    origins=None,
-)
+    )
+
+    def __init__(self, df: DataFrame):
+        self.df = df
