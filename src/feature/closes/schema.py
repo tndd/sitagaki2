@@ -13,7 +13,7 @@ CLOSES:
 
 
 class ClosesN4(Pldf):
-    schema = Schema(
+    SCHEMA = Schema(
         {
             "Date": Datetime(time_unit="us"),
             "now": Float64,  #          # 1日前(前日)を基準とした、今の終値との対数bp
@@ -23,7 +23,7 @@ class ClosesN4(Pldf):
             "lag_4": Float64,  #        # ~
         }
     )
-    origins = [Ohlcv]
+    ORIGIN = [Ohlcv]
 
     def __init__(self, df: DataFrame) -> None:
         super().__init__(df)

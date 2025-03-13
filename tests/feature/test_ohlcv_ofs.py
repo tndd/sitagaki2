@@ -13,7 +13,7 @@ def test_derive_df_ohlcv_ofs():
     ohlcv_ofs = derive_df_ohlcv_ofs(ohlcv)
     assert isinstance(ohlcv_ofs, OhlcvOfs)
     # dfのスキーマとクラスのスキーマを比べる
-    assert ohlcv_ofs.df.schema == OhlcvOfs.schema
+    assert ohlcv_ofs.df.schema == OhlcvOfs.SCHEMA
     # derive前の4件から１つ減って3件となってるか?
     assert len(ohlcv_ofs.df) == 3
     # 2000-01-01は削除されてるから2000-01-02から始まってるか?

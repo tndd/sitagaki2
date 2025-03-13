@@ -5,14 +5,14 @@ from common.baseclass import Pldf
 
 def test_PLDF():
     # クラス変数の定義
-    Pldf.schema = Schema(
+    Pldf.SCHEMA = Schema(
         {
             "A_DT": Date,
             "B_FL": Float64,
             "C_IN": Int64,
         }
     )
-    Pldf.origins = None
+    Pldf.ORIGIN = None
     # インスタンス変数dfを宣言しつつ実体化
     pldf = Pldf(df=DataFrame())
     assert isinstance(pldf, Pldf)

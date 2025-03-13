@@ -18,7 +18,7 @@ def test_factory_ohlcv():
     ohlcv = factory_ohlcv()
     assert isinstance(ohlcv, Ohlcv)
     # スキーマの完全一致チェック
-    assert ohlcv.df.schema == Ohlcv.schema
+    assert ohlcv.df.schema == Ohlcv.SCHEMA
     # Dateが日付順にソートされていること"
     assert ohlcv.df["Date"].is_sorted()
     # 値の順序関係は妥当か？

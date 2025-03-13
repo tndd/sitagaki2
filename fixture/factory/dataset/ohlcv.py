@@ -94,7 +94,7 @@ def factory_ohlcv_brown(num_rows: int = 10_0000) -> Ohlcv:
                     np.int64
                 ),
             }
-        ).cast(Ohlcv.schema)
+        ).cast(Ohlcv.SCHEMA)
     )
 
 

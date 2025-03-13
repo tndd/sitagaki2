@@ -5,7 +5,7 @@ from dataset.ohlcv.schema import Ohlcv
 
 
 class OhlcvOfs(Pldf):
-    schema = Schema(
+    SCHEMA = Schema(
         {
             "Date": Datetime(time_unit="us"),
             "PrevCloseOfs": Float64,  #     # 前ステップからの終値の対数差分
@@ -15,7 +15,7 @@ class OhlcvOfs(Pldf):
             "CloseOfs": Float64,  #         # 始値から終値の対数差分
         }
     )
-    origins = [Ohlcv]
+    ORIGIN = [Ohlcv]
 
     def __init__(self, df: DataFrame) -> None:
         super().__init__(df)

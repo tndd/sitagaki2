@@ -4,7 +4,7 @@ from common.baseclass import Pldf
 
 
 class Ohlcv(Pldf):
-    schema = Schema(
+    SCHEMA = Schema(
         {
             "Date": Datetime(time_unit="us"),
             "Open": Float64,

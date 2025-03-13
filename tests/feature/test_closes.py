@@ -12,7 +12,7 @@ def test_derive_closes_n4():
     # テスト対象の関数を実行
     closes_n4 = derive_closes_n4(ohlcv)
     # スキーマの検証
-    assert closes_n4.df.schema == ClosesN4.schema
+    assert closes_n4.df.schema == ClosesN4.SCHEMA
     # 行数の検証 (100行入力 → 100 - 5 = 95行)
     assert closes_n4.df.shape == (95, 6)
 

@@ -2,8 +2,8 @@ from polars import DataFrame, Schema
 
 
 class Pldf:
-    schema: Schema
-    origins: list["Pldf"] | None = None
+    SCHEMA: Schema
+    ORIGIN: list["Pldf"] | None = None
 
     def __init__(self, df: DataFrame) -> None:
         self.df: DataFrame = df
@@ -13,4 +13,4 @@ class Pldf:
         """
         カラム名のリストを取得する
         """
-        return cls.schema.names()
+        return cls.SCHEMA.names()

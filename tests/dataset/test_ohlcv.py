@@ -9,6 +9,6 @@ def test_read_df_aapl():
     # データが空でない
     assert len(ohlcv.df) > 0
     # スキーマの完全一致チェック
-    assert ohlcv.schema == Ohlcv.schema
+    assert ohlcv.df.schema == Ohlcv.SCHEMA
     # Dateが日付順にソートされていること"
     assert ohlcv.df["Date"].is_sorted()
