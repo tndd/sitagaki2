@@ -1,15 +1,16 @@
+from dataset.ohlcv.schema import Ohlcv
 from dataset.ohlcv.service import read_df
 
 
-def read_df_aapl():
+def read_df_aapl() -> Ohlcv:
     return read_df("AAPL")
 
 
-def read_df_amd():
+def read_df_amd() -> Ohlcv:
     return read_df("AMD")
 
 
-def read_df_sbux():
+def read_df_sbux() -> Ohlcv:
     return read_df("SBUX")
 
 

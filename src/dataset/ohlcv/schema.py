@@ -17,3 +17,7 @@ class Ohlcv(Pldf):
 
     def __init__(self, df: DataFrame):
         self.df = df
+
+    @staticmethod
+    def get_col_names_hlc() -> tuple[str]:
+        return ("High", "Low", "Close")

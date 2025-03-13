@@ -1,12 +1,10 @@
-import polars as pl
+from polars import DataFrame, col
 
 from common.const import SCALE_BP
 from dataset.ohlcv.schema import Ohlcv
 
-COLS_HLC = ("High", "Low", "Close")
 
-
-def log_valiation_volume_from_open(df: Ohlcv):
+def log_valiation_volume_from_open(df: Ohlcv) -> DataFrame:
     """
     前日を基準としたCloseとVolumeの対数差分。
     対数比の値にはbasis point単位を使用。
@@ -17,15 +15,15 @@ def log_valiation_volume_from_open(df: Ohlcv):
     """
     return df.select(
         [
-            (pl.col("Close") / pl.col("Close").shift(1)).log().alias("PrevCloseOfs")
+            (col("Close") / col("Close").shift(1)).log().alias("PrevCloseOfs")
             * SCALE_BP,
-            (pl.col("Volume") / pl.col("Volume").shift(1)).log().alias("PrevVolumeOfs")
+            (col("Volume") / col("Volume").shift(1)).log().alias("PrevVolumeOfs")
             * SCALE_BP,
         ]
     )
 
 
-def log_valiation_high_low_close_from_open(df: Ohlcv):
+def log_valiation_high_low_close_from_open(df: Ohlcv) -> DataFrame:
     """
     当日Openを基準としたHigh,Low,Closeの対数差分。
     対数比の値にはbasis point単位を使用。
@@ -35,9 +33,10 @@ def log_valiation_high_low_close_from_open(df: Ohlcv):
         LowOfs      f64     当日OpenからLowへの対数差分
         CloseOfs    f64     当日OpenからのCloseへの対数差分
     """
+    col_names_hlc = Ohlcv.get_col_names_hlc()
     return df.with_columns(
         [
-            (pl.col(col) / pl.col("Open")).log().alias(f"{col}Ofs") * SCALE_BP
-            for col in COLS_HLC
+            (col(col_name) / col("Open")).log().alias(f"{col_name}Ofs") * SCALE_BP
+            for col_name in col_names_hlc
         ]
-    ).select([f"{col}Ofs" for col in COLS_HLC])
+    ).select([f"{col}Ofs" for col in col_names_hlc])
