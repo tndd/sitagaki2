@@ -1,6 +1,6 @@
 from polars import DataFrame, Datetime, Float64, Int64, Schema
 
-from common.baseclass import Pldf
+from common.base import Pldf
 
 
 class Ohlcv(Pldf):

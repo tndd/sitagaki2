@@ -1,6 +1,6 @@
 from polars import DataFrame, Datetime, Float64, Schema
 
-from common.baseclass import Pldf
+from common.base import Pldf
 from dataset.ohlcv.schema import Ohlcv
 
 
