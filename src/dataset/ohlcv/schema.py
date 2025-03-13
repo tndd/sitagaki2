@@ -1,9 +1,9 @@
 from polars import DataFrame, Datetime, Float64, Int64, Schema
 
-from common.baseclass import PLDF
+from common.baseclass import Pldf
 
 
-class Ohlcv(PLDF):
+class Ohlcv(Pldf):
     schema = Schema(
         {
             "Date": Datetime(time_unit="us"),

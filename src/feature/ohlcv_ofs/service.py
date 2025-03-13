@@ -1,12 +1,12 @@
 import polars as pl
 
 from common.const import SCALE_BP
-from dataset.ohlcv.schema import OHLCV
+from dataset.ohlcv.schema import Ohlcv
 
 COLS_HLC = ("High", "Low", "Close")
 
 
-def log_valiation_volume_from_open(df: OHLCV):
+def log_valiation_volume_from_open(df: Ohlcv):
     """
     前日を基準としたCloseとVolumeの対数差分。
     対数比の値にはbasis point単位を使用。
@@ -25,7 +25,7 @@ def log_valiation_volume_from_open(df: OHLCV):
     )
 
 
-def log_valiation_high_low_close_from_open(df: OHLCV):
+def log_valiation_high_low_close_from_open(df: Ohlcv):
     """
     当日Openを基準としたHigh,Low,Closeの対数差分。
     対数比の値にはbasis point単位を使用。

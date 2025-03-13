@@ -1,5 +1,5 @@
-from feature.ofs_ohlcv.schema import OFS_OHLCV
-from fixture.factory.feature.ofs_ohlcv import factory_ofs_ohlcv
+from feature.ohlcv_ofs.schema import OhlcvOfs
+from fixture.factory.feature.ohlcv_ofs import factory_ofs_ohlcv
 
 
 def test_factory_ofs_ohlcv():
@@ -14,4 +14,4 @@ def test_factory_ofs_ohlcv():
         二重テスト状態はなるべく避けたい。
     """
     ofs_ohlcv = factory_ofs_ohlcv()
-    assert isinstance(ofs_ohlcv, OFS_OHLCV)
+    assert isinstance(ofs_ohlcv, OhlcvOfs)

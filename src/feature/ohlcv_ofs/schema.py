@@ -1,13 +1,11 @@
-from typing import TypeAlias
-
 from polars import DataFrame, Datetime, Float64, Schema
 
-from common.baseclass import PLDF
-from dataset.ohlcv.schema import OHLCV_PLDF
+from common.baseclass import Pldf
+from dataset.ohlcv.schema import Ohlcv
 
-OFS_OHLCV: TypeAlias = DataFrame
-OFS_OHLCV_PLDF = PLDF(
-    schema=Schema(
+
+class OhlcvOfs(Pldf):
+    schema = Schema(
         {
             "Date": Datetime(time_unit="us"),
             "PrevCloseOfs": Float64,  #     # 前ステップからの終値の対数差分
@@ -16,6 +14,8 @@ OFS_OHLCV_PLDF = PLDF(
             "LowOfs": Float64,  #           # 始値からの安値の対数差分
             "CloseOfs": Float64,  #         # 始値から終値の対数差分
         }
-    ),
-    origins=[OHLCV_PLDF],
-)
+    )
+    origins = [Ohlcv]
+
+    def __init__(self, df: DataFrame) -> None:
+        super().__init__(df)

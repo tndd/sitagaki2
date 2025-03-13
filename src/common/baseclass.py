@@ -1,9 +1,9 @@
 from polars import DataFrame, Schema
 
 
-class PLDF:
+class Pldf:
     schema: Schema
-    origins: list["PLDF"] | None = None
+    origins: list["Pldf"] | None = None
 
     def __init__(self, df: DataFrame) -> None:
         self.df: DataFrame = df

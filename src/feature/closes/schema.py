@@ -2,8 +2,8 @@ from typing import TypeAlias
 
 from polars import DataFrame, Datetime, Float64, Schema
 
-from common.baseclass import PLDF
-from dataset.ohlcv.schema import OHLCV_PLDF
+from common.baseclass import Pldf
+from dataset.ohlcv.schema import Ohlcv
 
 """
 CLOSES:
@@ -15,7 +15,7 @@ CLOSES:
 
 # 4日分の終値履歴
 CLOSES_N4: TypeAlias = DataFrame
-CLOSES_N4_PLDF = PLDF(
+CLOSES_N4_PLDF = Pldf(
     schema=Schema(
         {
             "Date": Datetime(time_unit="us"),
@@ -26,5 +26,5 @@ CLOSES_N4_PLDF = PLDF(
             "lag_4": Float64,  #        # ~
         }
     ),
-    origins=[OHLCV_PLDF],
+    origins=[Ohlcv],
 )

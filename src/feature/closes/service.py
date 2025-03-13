@@ -1,10 +1,10 @@
 import polars as pl
 
 from common.const import SCALE_BP
-from dataset.ohlcv.schema import OHLCV
+from dataset.ohlcv.schema import Ohlcv
 
 
-def derive_closes(df: OHLCV, n: int):
+def derive_closes(df: Ohlcv, n: int):
     # 基準となるシフト量を動的に生成
     base_shifts = [pl.col("Close").shift(i) for i in range(n + 2)]
 
