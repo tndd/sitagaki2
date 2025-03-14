@@ -1,4 +1,4 @@
-## ドメイン構成
+# ドメイン構成
 
 dataset
 
@@ -26,3 +26,17 @@ strategy
 trade
 
 - strategyの戦略を実際の取引行動に落とし込む
+
+# 検討
+
+## eval
+
+- dataset,featureのデータの質の評価
+- modelの性能評価
+
+疑問点:
+
+- これの所属
+  - 評価というのは基本的に本番運用の際には使用されない機能。
+  - だからこそfixture下となるか？
+  - それか、dataset,feature,modelそれぞれにこれらの機能を個別実装？
