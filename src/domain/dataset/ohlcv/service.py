@@ -2,7 +2,7 @@ from pathlib import Path
 
 import polars as pl
 
-from dataset.ohlcv.schema import Ohlcv
+from domain.dataset.ohlcv.schema import Ohlcv
 
 
 def read_df(name: str) -> Ohlcv:

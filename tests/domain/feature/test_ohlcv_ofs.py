@@ -1,9 +1,9 @@
 from datetime import datetime
 from math import log
 
-from common.const import SCALE_BP
-from feature.ohlcv_ofs.derive import derive_df_ohlcv_ofs
-from feature.ohlcv_ofs.schema import OhlcvOfs
+from domain.common.const import SCALE_BP
+from domain.feature.ohlcv_ofs.derive import derive_df_ohlcv_ofs
+from domain.feature.ohlcv_ofs.schema import OhlcvOfs
 from fixture.common.const import APX_ZERO
 from fixture.factory.dataset.ohlcv import factory_ohlcv
 

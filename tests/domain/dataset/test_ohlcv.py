@@ -1,5 +1,5 @@
-from dataset.ohlcv.repository import read_df_aapl
-from dataset.ohlcv.schema import Ohlcv
+from domain.dataset.ohlcv.repository import read_df_aapl
+from domain.dataset.ohlcv.schema import Ohlcv
 
 
 def test_read_df_aapl():

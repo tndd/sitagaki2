@@ -1,9 +1,9 @@
 import polars as pl
 
-from dataset.ohlcv.repository import read_df_aapl
-from dataset.ohlcv.schema import Ohlcv
-from feature.ohlcv_ofs.schema import OhlcvOfs
-from feature.ohlcv_ofs.service import (
+from domain.dataset.ohlcv.repository import read_df_aapl
+from domain.dataset.ohlcv.schema import Ohlcv
+from domain.feature.ohlcv_ofs.schema import OhlcvOfs
+from domain.feature.ohlcv_ofs.service import (
     log_valiation_high_low_close_from_open,
     log_valiation_volume_from_open,
 )

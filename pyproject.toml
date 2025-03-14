@@ -22,9 +22,6 @@ dependencies = [
     "setuptools>=75.9.1",
 ]
 
-[tool.setuptools.packages.find]
-where = ["src", "."]
-
 [tool.pytest.ini_options]
 addopts = "--import-mode=importlib"
 

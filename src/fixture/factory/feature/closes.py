@@ -1,5 +1,5 @@
-from feature.closes.derive import derive_closes_n4
-from feature.closes.schema import ClosesN4
+from domain.feature.closes.derive import derive_closes_n4
+from domain.feature.closes.schema import ClosesN4
 from fixture.factory.dataset.ohlcv import factory_ohlcv_cycle
 
 

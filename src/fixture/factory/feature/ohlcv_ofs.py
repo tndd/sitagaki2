@@ -1,5 +1,5 @@
-from feature.ohlcv_ofs.derive import derive_df_ohlcv_ofs
-from feature.ohlcv_ofs.schema import OhlcvOfs
+from domain.feature.ohlcv_ofs.derive import derive_df_ohlcv_ofs
+from domain.feature.ohlcv_ofs.schema import OhlcvOfs
 from fixture.factory.dataset.ohlcv import factory_ohlcv
 
 

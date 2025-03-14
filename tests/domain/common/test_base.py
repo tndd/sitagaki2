@@ -1,6 +1,6 @@
 from polars import DataFrame, Date, Float64, Int64, Schema
 
-from common.base import Pldf
+from domain.common.base import Pldf
 
 
 def test_PLDF():

@@ -1,7 +1,7 @@
 from polars import DataFrame, Datetime, Float64, Schema
 
-from common.base import Pldf
-from dataset.ohlcv.schema import Ohlcv
+from domain.common.base import Pldf
+from domain.dataset.ohlcv.schema import Ohlcv
 
 """
 CLOSES:

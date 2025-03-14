@@ -1,7 +1,7 @@
 from polars import DataFrame, col
 
-from common.const import SCALE_BP
-from dataset.ohlcv.schema import Ohlcv
+from domain.common.const import SCALE_BP
+from domain.dataset.ohlcv.schema import Ohlcv
 
 
 def derive_closes(ohlcv: Ohlcv, n: int) -> DataFrame:
