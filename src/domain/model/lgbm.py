@@ -1,4 +1,7 @@
-from lightgbm import Booster, early_stopping, train
+from dataclasses import dataclass
+
+from lightgbm import Booster, Dataset, early_stopping, train
+from sklearn.model_selection import train_test_split
 
 from domain.feature.closes.schema import ClosesN4
 
@@ -13,6 +16,25 @@ params_base = {
     "bagging_freq": 5,  #           #  バギングの頻度
     "verbose": -1,  #               #  ログを非表示
 }
+
+
+@dataclass
+class DataForModel:
+    train: Dataset
+    valid: Dataset
+
+    @classmethod
+    def from_xy(cls, X, y, test_size=0.2, random_state=42):
+        """
+        注意: データは昇順に並んでるという前提
+        """
+        X_train, X_test, y_train, y_test = train_test_split(
+            X, y, test_size=test_size, shuffle=False, random_state=random_state
+        )
+        data_train = Dataset(X_train, label=y_train)
+        data_valid = Dataset(X_test, label=y_test, reference=data_train)
+
+        return cls(data_train, data_valid)
 
 
 def train_model_lgbm_closes_n4(train_set: ClosesN4, valid_set: ClosesN4) -> Booster:
