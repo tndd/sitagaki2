@@ -23,7 +23,7 @@ dependencies = [
 ]
 
 [tool.setuptools.packages.find]
-where = ["src", "."]
+where = ["src"]     # 一応明示しておく
 
 [tool.pytest.ini_options]
 addopts = "--import-mode=importlib"

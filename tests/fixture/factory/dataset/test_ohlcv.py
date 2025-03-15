@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from dataset.ohlcv.schema import Ohlcv
+from domain.dataset.ohlcv.schema import Ohlcv
 from fixture.factory.dataset.ohlcv import (
     factory_ohlcv,
     factory_ohlcv_brown,
