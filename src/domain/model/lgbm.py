@@ -16,6 +16,7 @@ params_base = {
 
 
 def train_model_lgbm_closes_n4(train_set: ClosesN4, valid_set: ClosesN4) -> Booster:
+    # TODO: 入力はtrain_setのみというシンプルな形に
     return train(
         params_base,
         train_set.df,
