@@ -17,7 +17,7 @@
         },
         {
             "path": "src",
-            "color": "green",
+            "color": "red",
             "symbol": "",
         },
         {
@@ -40,5 +40,29 @@
             "color": "green",
             "symbol": "",
         },
+        {
+            "path": "notebook/",
+            "symbol": "📙",
+            "color": "gray"
+        },
+        {
+            "path": "notebook",
+            "symbol": "",
+            "color": "green"
+        },
+        {
+            "path": "docs/",
+            "symbol": "📘",
+            "color": "gray"
+        },
+        {
+            "path": "docs",
+            "symbol": "",
+            "color": "green"
+        },
     ],
+    "workbench.colorCustomizations": {
+        "folderPathColor.custom1": "#ffe1a8",
+        "folderPathColor.custom2": "#b7d2ff",
+    },
 }
