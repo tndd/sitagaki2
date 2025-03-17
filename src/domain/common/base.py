@@ -1,29 +1,18 @@
 from dataclasses import dataclass
 
-from polars import DataFrame, Schema, Series
+from numpy import ndarray
+from polars import DataFrame, Schema
 
 
 @dataclass
-class DatasetSV:
+class DatasetSv:
     """
     教師ありデータセットのフォーマット
-    (SuperVised)
+    (Supervised)
     """
 
-    train: DataFrame
-    label: Series
-
-
-@dataclass
-class DatasetSVML:
-    """
-    複数ラベルの
-    教師ありデータセットのフォーマット
-    (SuperVised MultiLabel)
-    """
-
-    train: DataFrame
-    labels: DataFrame
+    train: ndarray
+    label: ndarray
 
 
 class Pldf:
@@ -38,23 +27,42 @@ class Pldf:
     SCHEMA: Schema
     ORIGIN: list["Pldf"] | None = None
 
-    def __init__(self, df: DataFrame) -> None:
+    def __init__(
+        self,
+        df: DataFrame,
+        label: str | list[str] | None = None,
+    ) -> None:
+        """
+        df:
+            polars dataframeはここに格納される。
+
+        label:
+            教師データのラベル名を指定する。
+            ラベルがない場合は、何も入れない。
+        """
         self.df: DataFrame = df
+        self.label = label
 
     @classmethod
-    def get_col_names(cls):
+    def get_col_names(cls) -> list[str]:
         """
         カラム名のリストを取得する
         """
         return cls.SCHEMA.names()
 
-    def get_dataset_sv(self, label: str):
+    def get_dataset_sv(self) -> DatasetSv:
         """
         指定されたlabelを教師データカラムに。
         そしてその他のカラムを学習データとして、
         教師あり学習トレーニング用のDatasetSVに加工して返す。
         """
-        return DatasetSV(
-            train=self.df.select(self.df.columns.exclude([label])),
-            label=self.df[label],
-        )
+        if self.label is None:
+            # labels未定義状態でget_dataset_sv()を使った場合はエラーで落とす
+            raise ValueError("There is no label in this schema.")
+        elif isinstance(self.label, list):
+            raise ValueError("WIP: Labelがlist型の動作は未定義。")
+        else:
+            return DatasetSv(
+                train=self.df.select(self.df.columns.exclude([self.label])).to_numpy(),
+                label=self.df[self.label].to_numpy(),
+            )

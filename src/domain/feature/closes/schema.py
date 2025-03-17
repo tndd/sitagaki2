@@ -26,4 +26,7 @@ class ClosesN4(Pldf):
     ORIGIN = [Ohlcv]
 
     def __init__(self, df: DataFrame) -> None:
-        super().__init__(df)
+        super().__init__(
+            df,
+            label="now",
+        )
