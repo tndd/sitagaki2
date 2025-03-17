@@ -1,7 +1,7 @@
 from polars import DataFrame, col
 
-from domain.common.const import SCALE_BP
 from domain.dataset.ohlcv.schema import Ohlcv
+from domain.feature.common.const import SCALE_BP
 
 
 def log_valiation_volume_from_open(df: Ohlcv) -> DataFrame:
