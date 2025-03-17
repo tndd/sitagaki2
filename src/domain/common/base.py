@@ -2,6 +2,7 @@ from dataclasses import dataclass
 
 from numpy import ndarray
 from polars import DataFrame, Schema
+from sklearn.model_selection import train_test_split
 
 
 @dataclass
@@ -11,8 +12,19 @@ class DatasetSv:
     (Supervised)
     """
 
-    train: ndarray
-    label: ndarray
+    X: ndarray
+    y: ndarray
+
+
+@dataclass
+class DatasetSvSplited:
+    """
+    訓練と検証のために分割された、
+    教師ありデータセットのフォーマット
+    """
+
+    train: DatasetSv
+    test: DatasetSv
 
 
 class Pldf:
@@ -63,6 +75,32 @@ class Pldf:
             raise ValueError("WIP: Labelがlist型の動作は未定義。")
         else:
             return DatasetSv(
-                train=self.df.select(self.df.columns.exclude([self.label])).to_numpy(),
-                label=self.df[self.label].to_numpy(),
+                X=self.df.select(self.df.columns.exclude([self.label])).to_numpy(),
+                y=self.df[self.label].to_numpy(),
             )
+
+    def get_dataset_sv_splited(
+        self,
+        test_size: int = 0.2,
+        shuffle: bool = False,
+        random_state: int = 42,
+    ) -> DatasetSvSplited:
+        """
+        訓練用とテスト用にデータが分割されたDatasetSvを返す
+
+        原則的には時系列を考慮し、シャッフルはしない。
+        テストサイズは20%。
+        """
+        dssv = self.get_dataset_sv()
+        # 時系列を考慮したデータ分割
+        X_train, X_test, y_train, y_test = train_test_split(
+            dssv.X,
+            dssv.y,
+            test_size=test_size,
+            shuffle=shuffle,
+            random_state=random_state,
+        )
+        return DatasetSvSplited(
+            train=DatasetSv(X=X_train, y=y_train),
+            test=DatasetSv(X=X_test, y=y_test),
+        )
