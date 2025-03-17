@@ -6,7 +6,7 @@ from sklearn.model_selection import train_test_split
 
 
 @dataclass
-class DatasetSv:
+class LabeledDataset:
     """
     教師ありデータセットのフォーマット
     (Supervised)
@@ -26,14 +26,14 @@ class DatasetSv:
 
 
 @dataclass
-class DatasetSvSplited:
+class LabeledDatasetSplit:
     """
     訓練と検証のために分割された、
     教師ありデータセットのフォーマット
     """
 
-    train: DatasetSv
-    test: DatasetSv
+    train: LabeledDataset
+    test: LabeledDataset
 
 
 class Pldf:
@@ -71,36 +71,36 @@ class Pldf:
         """
         return cls.SCHEMA.names()
 
-    def get_dataset_sv(self) -> DatasetSv:
+    def get_labeled_dataset(self) -> LabeledDataset:
         """
         指定されたlabelを教師データカラムに。
         そしてその他のカラムを学習データとして、
         教師あり学習トレーニング用のDatasetSVに加工して返す。
         """
         if self.label is None:
-            # labels未定義状態でget_dataset_sv()を使った場合はエラーで落とす
+            # labels未定義状態で、この関数を呼んだ場合はエラーで落とす
             raise ValueError("There is no label in this schema.")
         elif isinstance(self.label, list):
             raise ValueError("WIP: Labelがlist型の動作は未定義。")
         else:
-            return DatasetSv(
+            return LabeledDataset(
                 X=self.df.select(self.df.columns.exclude([self.label])).to_numpy(),
                 y=self.df[self.label].to_numpy(),
             )
 
-    def get_dataset_sv_splited(
+    def get_labeled_dataset_split(
         self,
         test_size: int = 0.2,
         shuffle: bool = False,
         random_state: int = 42,
-    ) -> DatasetSvSplited:
+    ) -> LabeledDatasetSplit:
         """
         訓練用とテスト用にデータが分割されたDatasetSvを返す
 
         原則的には時系列を考慮し、シャッフルはしない。
         テストサイズは20%。
         """
-        dssv = self.get_dataset_sv()
+        dssv = self.get_labeled_dataset()
         # 時系列を考慮したデータ分割
         X_train, X_test, y_train, y_test = train_test_split(
             dssv.X,
@@ -109,7 +109,7 @@ class Pldf:
             shuffle=shuffle,
             random_state=random_state,
         )
-        return DatasetSvSplited(
-            train=DatasetSv(X=X_train, y=y_train),
-            test=DatasetSv(X=X_test, y=y_test),
+        return LabeledDatasetSplit(
+            train=LabeledDataset(X=X_train, y=y_train),
+            test=LabeledDataset(X=X_test, y=y_test),
         )
