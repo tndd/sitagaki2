@@ -10,6 +10,15 @@ class DatasetSv:
     """
     教師ありデータセットのフォーマット
     (Supervised)
+
+    X:
+        学習データの特徴量を表す。
+        大文字なのは、値が複数であることを表すため。
+
+    y:
+        目的変数である教師データを表す。
+        小文字なのは、原則的には目的変数が単数であることを表すため。
+        (yは複数形を取り得ることもあり得る)
     """
 
     X: ndarray
@@ -53,7 +62,7 @@ class Pldf:
             ラベルがない場合は、何も入れない。
         """
         self.df: DataFrame = df
-        self.label = label
+        self.label: str | list[str] | None = label
 
     @classmethod
     def get_col_names(cls) -> list[str]:
