@@ -40,10 +40,12 @@ class LabeledDatasetSplit:
 class Pldf:
     """
     Polars dataframeを扱うための抽象クラス
-
-    DFをそのまま使うと、単なるDataframe型となってしまい、
-    データの把握が困難になるため。
     スキーマ定義と親の情報を持つ。
+
+    Pldfの存在意義:
+        DFをそのまま使うと、
+        単なるDataframe型となってしまい、
+        データの把握が困難になるため。
     """
 
     SCHEMA: Schema
