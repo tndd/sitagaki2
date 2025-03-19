@@ -1,9 +1,12 @@
+from numpy import ndarray
+from pandas import DataFrame as DataFramePd
 from polars import DataFrame, Date, Float64, Int64, Schema
 
-from domain.common.design import Pldf
+from domain.common.design import LabeledDataset, Pldf
+from fixture.factory.feature.closes import factory_closes_n4
 
 
-def test_PLDF():
+def test_pldf():
     # クラス変数の定義
     Pldf.SCHEMA = Schema(
         {
@@ -18,3 +21,14 @@ def test_PLDF():
     assert isinstance(pldf, Pldf)
     # カラム名が定義の通りの並びになってるか？
     assert pldf.get_col_names() == ["A_DT", "B_FL", "C_IN"]
+
+
+def test_pldf_get_labeled_dataset():
+    closes_pldf = factory_closes_n4()
+    # まずテスト対象がPldfであるかを確認
+    assert isinstance(closes_pldf, Pldf)
+    # LabeledDatasetの取得
+    labeled_ds = closes_pldf.get_labeled_dataset()
+    assert isinstance(labeled_ds, LabeledDataset)
+    assert isinstance(labeled_ds.X, DataFramePd)
+    assert isinstance(labeled_ds.y, ndarray)

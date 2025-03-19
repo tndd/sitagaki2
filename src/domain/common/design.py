@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 
 from numpy import ndarray
+from pandas import DataFrame as DataFramePD
 from polars import DataFrame, Schema
 from sklearn.model_selection import train_test_split
 
@@ -21,7 +22,7 @@ class LabeledDataset:
         (yは複数形を取り得ることもあり得る)
     """
 
-    X: ndarray
+    X: DataFramePD
     y: ndarray
 
 
@@ -84,7 +85,7 @@ class Pldf:
             raise ValueError("WIP: Labelがlist型の動作は未定義。")
         else:
             return LabeledDataset(
-                X=self.df.select(self.df.columns.exclude([self.label])).to_numpy(),
+                X=self.df.drop(self.label).to_pandas(),
                 y=self.df[self.label].to_numpy(),
             )
 
