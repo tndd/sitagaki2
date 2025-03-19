@@ -2,7 +2,7 @@ from numpy import ndarray
 from pandas import DataFrame as DataFramePd
 from polars import DataFrame, Date, Float64, Int64, Schema
 
-from domain.common.design import LabeledDataset, Pldf
+from domain.common.design import LabeledDataset, LabeledDatasetSplit, Pldf
 from fixture.factory.feature.closes import factory_closes_n4
 
 
@@ -33,7 +33,6 @@ def test_pldf_practical():
     # まずテスト対象がPldfであるかを確認
     closes_pldf = factory_closes_n4()
     assert isinstance(closes_pldf, Pldf)
-
     ### get_labeled_datasetの検証 ###
     labeled_ds = closes_pldf.get_labeled_dataset()
     assert isinstance(labeled_ds, LabeledDataset)
@@ -41,3 +40,10 @@ def test_pldf_practical():
     assert isinstance(labeled_ds.y, ndarray)
     # Xからexclude指定されてるDate、そしてlabel指定されてるnowが場外されてるか？
     assert (labeled_ds.X.columns == ["lag_1", "lag_2", "lag_3", "lag_4"]).all()
+    ### get_labeled_dataset_split ###
+    lds_splt = closes_pldf.get_labeled_dataset_split()
+    assert isinstance(lds_splt, LabeledDatasetSplit)
+    # trainとtestが8:2に分割されてるか
+    # WARN: factoryの内容に依存し過ぎたテスト
+    assert lds_splt.train.y.shape[0] == 76
+    assert lds_splt.test.y.shape[0] == 19
