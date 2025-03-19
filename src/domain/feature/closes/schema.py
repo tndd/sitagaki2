@@ -30,4 +30,5 @@ class ClosesN4(Pldf):
         super().__init__(
             df,
             label="now",
+            exclude="Date",
         )
