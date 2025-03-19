@@ -56,26 +56,41 @@ class Pldf:
         exclude: str | list[str] | None = None,
     ) -> None:
         """
-        df: pl.DataFrame
-            polars dataframeはここに格納される。
+        Args:
+            df: pl.DataFrame
+                polars dataframeはここに格納される。
 
-        label: list[str]
-            教師データのラベル名を指定する。
-            ラベルがない場合は、何も入れない。
+            label: list[str]
+                教師データのラベル名を指定する。
+                ラベルがない場合は、何も入れない。
 
-        exclude: list[str]
-            特徴量としては含めない項目を指定する。
-            想定としては、Dateのような日付データなど。
+            exclude: list[str]
+                特徴量としては含めない項目を指定する。
+                想定としては、Dateのような日付データなど。
+
+        注意:
+            labelとexcludeの入力型:
+                入力の段階では、str, list, Noneの3つを取り得る。
+                しかし内部的には一貫的にlistとして扱う。
+
         """
         self.df: DataFrame = df
-        self.label: str | list[str] | None = label
-        # excludeを常にリストに翻訳
+        # label
+        if label is None:
+            self.label = []
+        elif isinstance(label, str):
+            self.label = [label]
+        elif isinstance(label, list):
+            self.label = label
+        else:
+            raise TypeError(f"不正なlabel => {label}")
+        # exclude
         if exclude is None:
             self.exclude = []
         elif isinstance(exclude, str):
             self.exclude = [exclude]
-        elif isinstance(exclude, (list, tuple, set)):
-            self.exclude = list(exclude)
+        elif isinstance(exclude, list):
+            self.exclude = exclude
         else:
             raise TypeError(f"不正なexclude => {exclude}")
 
@@ -92,16 +107,16 @@ class Pldf:
         そしてその他のカラムを学習データとして、
         教師あり学習トレーニング用のDatasetSVに加工して返す。
         """
-        if self.label is None:
+        if len(self.label) == 0:
             # labels未定義状態で、この関数を呼んだ場合はエラーで落とす
             raise ValueError("There is no label in this schema.")
-        elif isinstance(self.label, list):
-            raise ValueError("WIP: Labelがlist型の動作は未定義。")
-        else:
+        elif len(self.label) == 1:
             return LabeledDataset(
                 X=self.df.drop(self.label).to_pandas(),
                 y=self.df[self.label].to_numpy(),
             )
+        else:
+            raise ValueError("WIP: Labelが複数の場合の動作は未定義")
 
     def get_labeled_dataset_split(
         self,
