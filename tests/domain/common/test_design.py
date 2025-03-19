@@ -7,6 +7,9 @@ from fixture.factory.feature.closes import factory_closes_n4
 
 
 def test_pldf():
+    """
+    pldfの簡易テスト
+    """
     # クラス変数の定義
     Pldf.SCHEMA = Schema(
         {
@@ -23,9 +26,12 @@ def test_pldf():
     assert pldf.get_col_names() == ["A_DT", "B_FL", "C_IN"]
 
 
-def test_pldf_get_labeled_dataset():
-    closes_pldf = factory_closes_n4()
+def test_pldf_practical():
+    """
+    より実践的なpldfの詳細テスト
+    """
     # まずテスト対象がPldfであるかを確認
+    closes_pldf = factory_closes_n4()
     assert isinstance(closes_pldf, Pldf)
     # LabeledDatasetの取得
     labeled_ds = closes_pldf.get_labeled_dataset()
