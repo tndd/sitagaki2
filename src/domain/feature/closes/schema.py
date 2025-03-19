@@ -13,6 +13,7 @@ CLOSES:
 
 
 class ClosesN4(Pldf):
+    # TODO: Dateは機械学習時には除外されうる
     SCHEMA = Schema(
         {
             "Date": Datetime(time_unit="us"),
