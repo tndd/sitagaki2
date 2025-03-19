@@ -53,17 +53,31 @@ class Pldf:
         self,
         df: DataFrame,
         label: str | list[str] | None = None,
+        exclude: str | list[str] | None = None,
     ) -> None:
         """
-        df:
+        df: pl.DataFrame
             polars dataframeはここに格納される。
 
-        label:
+        label: list[str]
             教師データのラベル名を指定する。
             ラベルがない場合は、何も入れない。
+
+        exclude: list[str]
+            特徴量としては含めない項目を指定する。
+            想定としては、Dateのような日付データなど。
         """
         self.df: DataFrame = df
         self.label: str | list[str] | None = label
+        # excludeを常にリストに翻訳
+        if exclude is None:
+            self.exclude = []
+        elif isinstance(exclude, str):
+            self.exclude = [exclude]
+        elif isinstance(exclude, (list, tuple, set)):
+            self.exclude = list(exclude)
+        else:
+            raise TypeError(f"不正なexclude => {exclude}")
 
     @classmethod
     def get_col_names(cls) -> list[str]:
