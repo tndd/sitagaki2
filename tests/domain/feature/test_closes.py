@@ -15,6 +15,8 @@ def test_derive_closes_n4():
     assert closes_n4.df.schema == ClosesN4.SCHEMA
     # 行数の検証 (100行入力 → 100 - 5 = 95行)
     assert closes_n4.df.shape == (95, 6)
+    # excludeが設定されてるか？
+    assert closes_n4.exclude == ["Date"]
 
     ### 始行の内容チェック　###
     first_row = closes_n4.df.row(0, named=True)
