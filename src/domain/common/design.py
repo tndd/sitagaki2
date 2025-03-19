@@ -114,7 +114,7 @@ class Pldf:
             raise ValueError("There is no label in this schema.")
         elif len(self.label) == 1:
             return LabeledDataset(
-                X=self.df.drop(self.label).to_pandas(),
+                X=self.df.drop(self.label + self.exclude).to_pandas(),
                 y=self.df[self.label].to_numpy(),
             )
         else:

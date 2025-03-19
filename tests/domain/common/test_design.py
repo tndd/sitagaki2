@@ -33,8 +33,11 @@ def test_pldf_practical():
     # まずテスト対象がPldfであるかを確認
     closes_pldf = factory_closes_n4()
     assert isinstance(closes_pldf, Pldf)
-    # LabeledDatasetの取得
+
+    ### get_labeled_datasetの検証 ###
     labeled_ds = closes_pldf.get_labeled_dataset()
     assert isinstance(labeled_ds, LabeledDataset)
     assert isinstance(labeled_ds.X, DataFramePd)
     assert isinstance(labeled_ds.y, ndarray)
+    # Xからexclude指定されてるDate、そしてlabel指定されてるnowが場外されてるか？
+    assert (labeled_ds.X.columns == ["lag_1", "lag_2", "lag_3", "lag_4"]).all()
