@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 
+from lightgbm import Dataset
 from numpy import ndarray
 from pandas import DataFrame as DataFramePD
 from polars import DataFrame, Schema
@@ -25,6 +26,9 @@ class LabeledDataset:
     X: DataFramePD
     y: ndarray
 
+    def to_lgb(self) -> Dataset:
+        return Dataset(self.X, self.y)
+
 
 @dataclass
 class LabeledDatasetSplit:
@@ -35,6 +39,11 @@ class LabeledDatasetSplit:
 
     train: LabeledDataset
     test: LabeledDataset
+
+    def to_lgb_train_test(self) -> tuple[Dataset, Dataset]:
+        lgb_train = self.train.to_lgb()
+        lgb_test = Dataset(self.test.X, self.test.y, self.train.X)
+        return lgb_train, lgb_test
 
 
 class Pldf:
