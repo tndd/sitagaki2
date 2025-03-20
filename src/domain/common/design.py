@@ -40,7 +40,7 @@ class LabeledDatasetSplit:
     train: LabeledDataset
     test: LabeledDataset
 
-    def to_lgb_train_test(self) -> tuple[Dataset, Dataset]:
+    def get_lgb_train_test(self) -> tuple[Dataset, Dataset]:
         lgb_train = self.train.to_lgb()
         lgb_test = Dataset(
             self.test.X,

@@ -16,7 +16,7 @@ def train_model_lgbm_closes_n4(dataset: ClosesN4) -> Booster:
         "verbose": -1,  #               #  ログを非表示
     }
     lds = dataset.get_labeled_dataset_split()
-    lgb_train, lgb_test = lds.to_lgb_train_test()
+    lgb_train, lgb_test = lds.get_lgb_train_test()
     return train(
         params,
         lgb_train,

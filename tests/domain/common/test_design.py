@@ -1,3 +1,4 @@
+from lightgbm import Dataset
 from numpy import ndarray
 from pandas import DataFrame as DataFramePd
 from polars import DataFrame, Date, Float64, Int64, Schema
@@ -6,6 +7,7 @@ from domain.common.design import LabeledDataset, LabeledDatasetSplit, Pldf
 from fixture.factory.feature.closes import factory_closes_n4
 
 
+### Pldf ###
 def test_pldf():
     """
     pldfの簡易テスト
@@ -26,10 +28,7 @@ def test_pldf():
     assert pldf.get_col_names() == ["A_DT", "B_FL", "C_IN"]
 
 
-def test_pldf_practical():
-    """
-    より実践的なpldfの詳細テスト
-    """
+def test_pldf_get_labeled_dataset():
     # まずテスト対象がPldfであるかを確認
     closes_pldf = factory_closes_n4()
     assert isinstance(closes_pldf, Pldf)
@@ -40,10 +39,32 @@ def test_pldf_practical():
     assert isinstance(labeled_ds.y, ndarray)
     # Xからexclude指定されてるDate、そしてlabel指定されてるnowが場外されてるか？
     assert (labeled_ds.X.columns == ["lag_1", "lag_2", "lag_3", "lag_4"]).all()
-    ### get_labeled_dataset_split ###
+
+
+def test_pldf_get_labeled_dataset_split():
+    # まずテスト対象がPldfであるかを確認
+    closes_pldf = factory_closes_n4()
     lds_splt = closes_pldf.get_labeled_dataset_split()
     assert isinstance(lds_splt, LabeledDatasetSplit)
     # trainとtestが8:2に分割されてるか
     # WARN: factoryの内容に依存し過ぎたテスト
     assert lds_splt.train.y.shape[0] == 76
     assert lds_splt.test.y.shape[0] == 19
+
+
+### LabeledDataset ###
+def test_labeled_dataset():
+    closes_pldf = factory_closes_n4()
+    ld = closes_pldf.get_labeled_dataset()
+    dataset = ld.to_lgb()
+    assert isinstance(dataset, Dataset)
+
+
+### LabeledDatasetSpli ###
+def test_labeled_dataset_split():
+    closes_pldf = factory_closes_n4()
+    lds = closes_pldf.get_labeled_dataset_split()
+    # to_lgb_train_test
+    train, test = lds.get_lgb_train_test()
+    assert isinstance(train, Dataset)
+    assert isinstance(test, Dataset)
