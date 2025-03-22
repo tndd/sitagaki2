@@ -49,10 +49,12 @@ def factory_ohlcv_1000() -> Ohlcv:
     N_DECIMAL = 3
     # 再現性のためにシードを固定
     np.random.seed(42)
-    # ohlcv生成
-    dates = pd.date_range(start="2023-01-01", periods=1000, freq="D").astype(
-        "datetime64[us]"
-    )
+    # ohlcvの部品
+    dates = pd.date_range(
+        start="2023-01-01",
+        periods=1000,
+        freq="D",
+    ).astype("datetime64[us]")  # pd.date_rangeはデフォルトではnsに変換してしまう
     open_prices = np.round(np.random.uniform(100, 200, size=1000), N_DECIMAL)
     high_prices = np.round(open_prices + np.random.uniform(0, 10, size=1000), N_DECIMAL)
     low_prices = np.round(open_prices - np.random.uniform(0, 10, size=1000), N_DECIMAL)
