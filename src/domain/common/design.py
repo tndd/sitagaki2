@@ -2,7 +2,6 @@ from dataclasses import dataclass
 
 from lightgbm import Dataset
 from numpy import ndarray
-from pandas import DataFrame as DataFramePD
 from polars import DataFrame, Schema
 from sklearn.model_selection import train_test_split
 
@@ -23,7 +22,7 @@ class LabeledDataset:
         (yは複数形を取り得ることもあり得る)
     """
 
-    X: DataFramePD
+    X: ndarray
     y: ndarray
 
     def to_lgb(self) -> Dataset:
@@ -128,7 +127,7 @@ class Pldf:
         elif len(self.label) == 1:
             # ラベルが１次元の場合
             return LabeledDataset(
-                X=self.df.drop(self.label + self.exclude).to_pandas(),
+                X=self.df.drop(self.label + self.exclude).to_numpy(),
                 y=self.df[self.label]
                 .to_numpy()
                 .ravel(),  # 1dラベルと確定しているので、ravelで警告を抑制
