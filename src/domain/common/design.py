@@ -43,9 +43,9 @@ class LabeledDatasetSplit:
     def get_lgb_train_test(self) -> tuple[Dataset, Dataset]:
         lgb_train = self.train.to_lgb()
         lgb_test = Dataset(
-            self.test.X,
-            self.test.y,
-            lgb_train,
+            data=self.test.X,
+            label=self.test.y,
+            reference=lgb_train,
         )
         return lgb_train, lgb_test
 
@@ -126,11 +126,15 @@ class Pldf:
             # labels未定義状態で、この関数を呼んだ場合はエラーで落とす
             raise ValueError("There is no label in this schema.")
         elif len(self.label) == 1:
+            # ラベルが１次元の場合
             return LabeledDataset(
                 X=self.df.drop(self.label + self.exclude).to_pandas(),
-                y=self.df[self.label].to_numpy(),
+                y=self.df[self.label]
+                .to_numpy()
+                .ravel(),  # 1dラベルと確定しているので、ravelで警告を抑制
             )
         else:
+            # 多次元ラベルの場合
             raise ValueError("WIP: Labelが複数の場合の動作は未定義")
 
     def get_labeled_dataset_split(
