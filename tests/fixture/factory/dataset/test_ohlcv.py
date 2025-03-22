@@ -3,6 +3,7 @@ from datetime import datetime
 from domain.dataset.ohlcv.schema import Ohlcv
 from fixture.factory.dataset.ohlcv import (
     factory_ohlcv,
+    factory_ohlcv_1000,
     factory_ohlcv_brown,
     factory_ohlcv_cycle,
 )
@@ -50,6 +51,62 @@ def test_factory_ohlcv():
     assert ohlcv.df["Close"].to_list() == [101.0, 204.0, 309.0, 101.0]
     # Volumeの内容確認 (1000から日毎に100ずつ上昇。ただし最終日は初めと同じ値)
     assert ohlcv.df["Volume"].to_list() == [1000, 1100, 1200, 1000]
+
+
+def test_factory_ohlcv_1000():
+    ohlcv = factory_ohlcv_1000()
+
+    assert isinstance(ohlcv, Ohlcv)
+    assert ohlcv.df.schema == Ohlcv.SCHEMA
+    assert ohlcv.df.height == 1000
+
+    # head5の期待される値
+    expected_data = [
+        {
+            "Date": datetime(2023, 1, 1),
+            "Open": 137.454,
+            "High": 139.305,
+            "Low": 134.837,
+            "Close": 139.181,
+            "Volume": 5713,
+        },
+        {
+            "Date": datetime(2023, 1, 2),
+            "Open": 195.071,
+            "High": 200.49,
+            "Low": 192.601,
+            "Close": 198.038,
+            "Volume": 4092,
+        },
+        {
+            "Date": datetime(2023, 1, 3),
+            "Open": 173.199,
+            "High": 181.928,
+            "Low": 164.136,
+            "Close": 170.704,
+            "Volume": 5159,
+        },
+        {
+            "Date": datetime(2023, 1, 4),
+            "Open": 159.866,
+            "High": 167.188,
+            "Low": 157.371,
+            "Close": 161.115,
+            "Volume": 7308,
+        },
+        {
+            "Date": datetime(2023, 1, 5),
+            "Open": 115.602,
+            "High": 123.668,
+            "Low": 112.883,
+            "Close": 116.319,
+            "Volume": 8478,
+        },
+    ]
+    # 検証元のデータからheadの５行取得して検証
+    actual_data = ohlcv.df.head(5).rows(named=True)
+    for expected, actual in zip(expected_data, actual_data, strict=True):
+        assert expected == actual
 
 
 def test_factory_ohlcv_cycle():

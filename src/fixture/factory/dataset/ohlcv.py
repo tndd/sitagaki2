@@ -1,6 +1,7 @@
 from datetime import datetime, timedelta
 
 import numpy as np
+import pandas as pd
 import polars as pl
 
 from domain.dataset.ohlcv.schema import Ohlcv
@@ -23,6 +24,52 @@ def factory_ohlcv() -> Ohlcv:
                 "Low": [95.0, 190.0, 255.0, 80.0],
                 "Close": [101.0, 204.0, 309.0, 101.0],
                 "Volume": [1000, 1100, 1200, 1000],
+            }
+        )
+    )
+
+
+def factory_ohlcv_1000() -> Ohlcv:
+    """
+    固定の1000件のOHLCVデータを生成する
+
+    > head()
+    ┌─────────────────────┬─────────┬─────────┬─────────┬─────────┬────────┐
+    │ Date                ┆ Open    ┆ High    ┆ Low     ┆ Close   ┆ Volume │
+    │ ---                 ┆ ---     ┆ ---     ┆ ---     ┆ ---     ┆ ---    │
+    │ datetime[ns]        ┆ f64     ┆ f64     ┆ f64     ┆ f64     ┆ i64    │
+    ╞═════════════════════╪═════════╪═════════╪═════════╪═════════╪════════╡
+    │ 2023-01-01 00:00:00 ┆ 137.454 ┆ 139.305 ┆ 134.837 ┆ 139.181 ┆ 5713   │
+    │ 2023-01-02 00:00:00 ┆ 195.071 ┆ 200.49  ┆ 192.601 ┆ 198.038 ┆ 4092   │
+    │ 2023-01-03 00:00:00 ┆ 173.199 ┆ 181.928 ┆ 164.136 ┆ 170.704 ┆ 5159   │
+    │ 2023-01-04 00:00:00 ┆ 159.866 ┆ 167.188 ┆ 157.371 ┆ 161.115 ┆ 7308   │
+    │ 2023-01-05 00:00:00 ┆ 115.602 ┆ 123.668 ┆ 112.883 ┆ 116.319 ┆ 8478   │
+    └─────────────────────┴─────────┴─────────┴─────────┴─────────┴────────┘
+    """
+    N_DECIMAL = 3
+    # 再現性のためにシードを固定
+    np.random.seed(42)
+    # ohlcv生成
+    dates = pd.date_range(start="2023-01-01", periods=1000, freq="D").astype(
+        "datetime64[us]"
+    )
+    open_prices = np.round(np.random.uniform(100, 200, size=1000), N_DECIMAL)
+    high_prices = np.round(open_prices + np.random.uniform(0, 10, size=1000), N_DECIMAL)
+    low_prices = np.round(open_prices - np.random.uniform(0, 10, size=1000), N_DECIMAL)
+    close_prices = np.round(
+        open_prices + np.random.uniform(-5, 5, size=1000), N_DECIMAL
+    )
+    volumes = np.random.randint(1000, 10000, size=1000)
+
+    return Ohlcv(
+        pl.DataFrame(
+            {
+                "Date": dates,
+                "Open": open_prices,
+                "High": high_prices,
+                "Low": low_prices,
+                "Close": close_prices,
+                "Volume": volumes,
             }
         )
     )
