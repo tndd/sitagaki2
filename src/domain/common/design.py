@@ -45,7 +45,7 @@ class LabeledDatasetSplit:
         lgb_test = Dataset(
             self.test.X,
             self.test.y,
-            self.train.X,
+            lgb_train,
         )
         return lgb_train, lgb_test
 
