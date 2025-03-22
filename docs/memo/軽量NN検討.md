@@ -1,0 +1,19 @@
+# GRU（Gated Recurrent Unit）
+- LSTM よりも軽量で、時系列データの処理に適している。
+- 計算コストが低く、学習速度も速い。
+
+# Simple RNN
+- 最もシンプルな RNN の一種。
+- 計算コストは非常に低いけど、長期的な依存関係の学習には向いていない。
+
+# Temporal Convolutional Networks (TCN)
+- 時系列データに対して畳み込みニューラルネットワーク（CNN）を適用したモデル。
+- RNN よりも並列化が容易で、計算コストが低い場合がある。
+
+# Attention Mechanisms
+- 注意機構を使ったモデル（例: Transformer）。
+- 時系列データの処理にも使えるけど、計算コストは高め。
+
+# Lightweight Transformers
+- Transformer の軽量版（例: Linformer, Performer）。
+- 計算コストを抑えつつ、Transformer の利点を活かせる。
