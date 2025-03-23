@@ -3,9 +3,11 @@ name = "sitagaki2"
 version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
-requires-python = ">=3.13"
+requires-python = ">=3.11"
 dependencies = [
     "ipykernel>=6.29.5",
+    "lightgbm>=4.6.0",
+    "matplotlib>=3.10.1",
     "nbformat>=5.10.4",
     "numpy==1.26.4",
     "pandas>=2.2.3",
@@ -15,11 +17,17 @@ dependencies = [
     "pyarrow>=19.0.1",
     "pytest>=8.3.5",
     "ruff>=0.9.9",
+    "scikit-learn>=1.6.1",
+    "seaborn>=0.13.2",
     "setuptools>=75.9.1",
 ]
 
 [tool.setuptools.packages.find]
-where = ["src", "."]
+where = ["src"]     # 一応明示しておく
 
 [tool.pytest.ini_options]
 addopts = "--import-mode=importlib"
+
+[tool.ruff]
+select = ["E", "F", "W", "I", "B", "C4", "PL"]
+ignore = ["PLR2004"]
