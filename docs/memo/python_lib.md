@@ -1,8 +1,6 @@
 # Print
-
-rich
-icecream(ic)
+- rich
+- icecream(ic)
 
 # graph
-
-plotly
+- plotly
