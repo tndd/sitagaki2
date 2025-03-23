@@ -5,7 +5,7 @@ from domain.feature.closes.schema import ClosesN4
 
 def train_model_lgbm_closes_n4(dataset: ClosesN4) -> Booster:
     params = {
-        "objective": "regression",  #   #  タスクに応じて変更（例: 'binary', 'multiclass'）
+        "objective": "regression",  #   #  例: 'binary', 'multiclass'
         "metric": "rmse",  #            #  評価指標（例: 'auc', 'logloss'）
         "boosting_type": "gbdt",  #     #  デフォルトの勾配ブースティング
         "num_leaves": 31,  #            #  木の複雑さを調整（大きいほど複雑）
