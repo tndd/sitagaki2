@@ -1,9 +1,35 @@
 from math import log
 
+import pytest
+
 from domain.feature.closes.derive import derive_closes_n4
 from domain.feature.closes.schema import ClosesN4
+from domain.feature.closes.service import calc_feature_closes
 from domain.feature.common.const import SCALE_BP
 from fixture.factory.dataset.ohlcv import factory_ohlcv_cycle
+
+
+@pytest.mark.parametrize(
+    "n_rows, n_lags, exp_height",
+    [
+        (10, 3, 6),  #      # 通常
+        (6, 4, 1),  #       # ちょうど一行
+        (4, 4, 0),  #       # 数が足りなければ0
+        (3, 10, 0),  #       # 過剰な場合も0
+    ],
+)
+def test_service_calc_feature_closes(
+    n_rows,
+    n_lags,
+    exp_height,
+):
+    ohlcv = factory_ohlcv_cycle()
+    df = ohlcv.df.head(n_rows)
+    cf_closes = calc_feature_closes(df=df, n=n_lags)
+    # 行数のチェック
+    assert cf_closes.height == exp_height
+    # n_lags + Date,now二件の合計
+    assert cf_closes.width == n_lags + 2
 
 
 def test_derive_closes_n4():
