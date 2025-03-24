@@ -4,10 +4,12 @@ from domain.dataset.ohlcv.schema import Ohlcv
 from domain.feature.common.const import SCALE_BP
 
 
-def derive_closes(ohlcv: Ohlcv, n: int) -> DataFrame:
-    # 基準となるシフト量を動的に生成
+def calc_features_closes(df: DataFrame, n: int) -> DataFrame:
+    """
+    外部から汎用的に利用可能にするために、
+    pl.Dataframeを直接受け取る機能を分離した。
+    """
     base_shifts = [col("Close").shift(i) for i in range(n + 2)]
-    # 各lagカラムの計算式を生成
     lag_exprs = [
         (base_shifts[i] / base_shifts[i + 1])
         .log()
@@ -15,4 +17,8 @@ def derive_closes(ohlcv: Ohlcv, n: int) -> DataFrame:
         * SCALE_BP
         for i in range(n + 1)
     ]
-    return ohlcv.df.select([col("Date")] + lag_exprs).slice(n + 1)
+    return df.select([col("Date")] + lag_exprs).slice(n + 1)
+
+
+def derive_closes(ohlcv: Ohlcv, n: int) -> DataFrame:
+    return calc_features_closes(ohlcv.df, n)
