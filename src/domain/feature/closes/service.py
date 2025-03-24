@@ -4,7 +4,7 @@ from domain.dataset.ohlcv.schema import Ohlcv
 from domain.feature.common.const import SCALE_BP
 
 
-def calc_features_closes(df: DataFrame, n: int) -> DataFrame:
+def calc_feature_closes(df: DataFrame, n: int) -> DataFrame:
     """
     外部から汎用的に利用可能にするために、
     pl.Dataframeを直接受け取る機能を分離した。
@@ -21,4 +21,4 @@ def calc_features_closes(df: DataFrame, n: int) -> DataFrame:
 
 
 def derive_closes(ohlcv: Ohlcv, n: int) -> DataFrame:
-    return calc_features_closes(ohlcv.df, n)
+    return calc_feature_closes(ohlcv.df, n)
