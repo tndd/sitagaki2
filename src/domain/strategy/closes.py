@@ -15,6 +15,7 @@ from fixture.factory.feature.closes import factory_closes_n4_cycle
 class ClosesStrategy(Strategy):
     # パラメータの定義
     model = None
+    size = 0.5  # ポジションサイズを50%に設定
 
     def init(self):
         self.closes = self.data.Close
@@ -45,9 +46,9 @@ class ClosesStrategy(Strategy):
             self.position.close()
         # 売買
         if pred > 0:
-            self.buy()
+            self.buy(size=self.size)
         elif pred < 0:
-            self.sell()
+            self.sell(size=self.size)
 
 
 if __name__ == "__main__":
@@ -58,7 +59,9 @@ if __name__ == "__main__":
     closes = factory_closes_n4_cycle()
     model = train_model_lgbm_closes_n4(closes)
 
-    bt = Backtest(data, ClosesStrategy, commission=0, exclusive_orders=True)
+    bt = Backtest(
+        data, ClosesStrategy, commission=0, exclusive_orders=True, cash=100000
+    )  # 初期資金を増やす
     stats = bt.run(model=model)
 
     # stats の内容を出力して確認
