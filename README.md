@@ -32,6 +32,17 @@ Memo:
 - カスタムインジケーター
 - self.Iを使用
 
+要件:
+- 入力 -> model, data
+- 出力 -> 計算結果
+- strategyはmodelの評価というわけではない
+  - modelの評価自体は、domain/modelで行われるべきもの
+  - ここstrategyで行われるべき評価は、modelを用いた戦略の評価にある
+  - シグナルだったり、モデルの組み合わせだったりなど
+- 入力はmodelというよりsignalと言うべきか
+  - strategyはシミュレーションというより、signalを定義する場所
+  - シミュレーションは、datasetやfeatureでいう相関係数やSHAPの計算に相当する部分
+
 
 
 ## trade
