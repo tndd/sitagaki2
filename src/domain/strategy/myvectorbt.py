@@ -8,252 +8,205 @@ from domain.model.lgbm import train_model_lgbm_closes_n4
 from fixture.factory.feature.closes import factory_closes_n4_cycle
 
 
-class SimpleBacktester:
+class VectorbtLikeBacktester:
     """
-    シンプルなバックテスト実装。自作のバックテストロジックを使用。
+    vectorbtライクなバックテスト機能を提供するクラス
     """
 
-    def __init__(self, data, initial_cash=100000, commission=0.0):
+    def __init__(self, data, init_cash=100000, fees=0.0):
         """
         Args:
             data: バックテスト用のデータ（pd.DataFrame形式、'Close'カラムが必要）
-            initial_cash: 初期資金
-            commission: 取引手数料（%）
+            init_cash: 初期資金
+            fees: 取引手数料
         """
         self.data = data.copy()
-        self.initial_cash = initial_cash
-        self.cash = initial_cash
-        self.commission = commission
-        self.positions = 0
-        self.equity = []
-        self.returns = []
-        self.trades = []
-        self.dates = []  # 日付を追跡
+        self.init_cash = init_cash
+        self.fees = fees
 
-    def run(self, model, size=0.5):
+        # 結果用の変数を初期化
+        self.cash = init_cash
+        self.positions = 0
+        self.values = []
+        self.trades = []
+        self.dates = []
+
+    def run_from_signals(self, entries, exits, size=1.0, short_entries=False):
         """
-        バックテストを実行
+        売買シグナルに基づいてバックテストを実行
 
         Args:
-            model: 予測モデル
-            size: ポジションサイズ（0.5 = 50%）
+            entries: エントリーシグナル（True/Falseのシリーズ）
+            exits: エグジットシグナル（True/Falseのシリーズ）
+            size: ポジションサイズ（0-1の値）
+            short_entries: ショートエントリーを許可するかどうか
 
         Returns:
-            pd.DataFrame: バックテスト結果
+            self: バックテスト結果を含むインスタンス
         """
-        # 特徴量の作成
-        features = self._create_features()
+        prices = self.data["Close"]
 
-        if features is None or len(features) == 0:
-            return None
-
-        # 予測
-        predictions = model.predict(features)
-
-        # バックテストの実行
-        self.cash = self.initial_cash
+        # 初期化
+        self.cash = self.init_cash
         self.positions = 0
-        self.equity = []  # 空のリストから開始
-        self.dates = []  # 日付を追跡
+        self.values = [self.init_cash]  # 初期値を設定
+        self.trades = []
+        self.dates = [self.data.index[0]]  # 最初の日付
 
-        # day_idxがデータの範囲内にあることを確認
-        for i in range(len(predictions)):
-            day_idx = i + 4  # 特徴量の開始位置（4日目から）
+        # 各日付でバックテストを実行
+        for i in range(1, len(prices)):
+            price = prices.iloc[i]
+            date = prices.index[i]
 
-            # インデックスチェック
-            if day_idx >= len(self.data):
-                break
+            # 現在のポジション価値
+            position_value = self.positions * price
 
-            # 日付を追跡
-            self.dates.append(self.data.index[day_idx])
-            close_price = self.data["Close"].iloc[day_idx]
+            # エグジットが発生した場合（ポジションを保有している場合のみ）
+            if exits.iloc[i] and self.positions != 0:
+                entry_price = 0
+                entry_date = date
+                if self.trades and "entry_price" in self.trades[-1]:
+                    entry_price = self.trades[-1]["entry_price"]
+                    entry_date = self.trades[-1]["entry_date"]
 
-            # 現在のポジションを清算
-            if self.positions != 0:
-                # ポジションを清算して現金化
-                self.cash += self.positions * close_price * (1 - self.commission)
-                self.positions = 0
+                # ショートポジションの場合
+                if self.positions < 0:
+                    # ショート決済による利益計算 (買い戻し)
+                    pnl = abs(self.positions) * (entry_price - price)
+                    self.cash += abs(position_value) + pnl  # 証拠金と利益を戻す
+                else:
+                    # ロングポジションの決済
+                    self.cash += position_value
 
-            # 予測に基づいて新しいポジションを取る
-            if predictions[i] > 0:  # 上昇予測
-                # 買いポジション
-                shares_to_buy = (self.cash * size) / close_price
-                self.cash -= shares_to_buy * close_price * (1 + self.commission)
-                self.positions += shares_to_buy
+                # トレード記録
                 self.trades.append(
                     {
-                        "date": self.data.index[day_idx],
-                        "type": "buy",
-                        "price": close_price,
-                        "shares": shares_to_buy,
+                        "entry_date": entry_date,
+                        "exit_date": date,
+                        "entry_price": entry_price,
+                        "exit_price": price,
+                        "pnl": (price - entry_price) * self.positions,
+                        "type": "long" if self.positions > 0 else "short",
                     }
                 )
-            elif predictions[i] < 0:  # 下降予測
-                # 売りポジション（空売り）
-                shares_to_sell = (self.cash * size) / close_price
-                self.cash -= shares_to_sell * close_price * (1 + self.commission)
-                self.positions -= shares_to_sell
+
+                # ポジションのリセット
+                self.positions = 0
+
+            # エントリーが発生した場合（ポジションを保有していない場合のみ）
+            if entries.iloc[i] and self.positions == 0:
+                # 購入する数量（現金の半分を使用）
+                position_size = (self.cash * size) / price
+
+                # ショート・ロングの処理
+                if short_entries:
+                    # ショートポジション
+                    self.positions = -position_size  # 負の値でショートを表現
+                else:
+                    # ロングポジション
+                    self.cash -= position_size * price  # 購入による現金減少
+                    self.positions = position_size  # 正の値でロングを表現
+
+                # トレード記録
                 self.trades.append(
                     {
-                        "date": self.data.index[day_idx],
-                        "type": "sell",
-                        "price": close_price,
-                        "shares": shares_to_sell,
+                        "entry_date": date,
+                        "entry_price": price,
+                        "type": "short" if short_entries else "long",
+                        "size": abs(self.positions),
                     }
                 )
 
             # ポートフォリオ価値の計算
-            portfolio_value = self.cash + self.positions * close_price
-            self.equity.append(portfolio_value)
+            if self.positions >= 0:
+                # ロングポジションまたはポジションなし
+                portfolio_value = self.cash + position_value
+            else:
+                # ショートポジション
+                portfolio_value = self.cash  # 証拠金は既にcashに含まれる
 
-        # 結果の整形（必要に応じてequityの長さを調整）
-        if len(self.equity) > 0:
-            # 追跡した日付を使用してインデックスを設定
-            equity_series = pd.Series(self.equity, index=self.dates)
-            self.returns = equity_series.pct_change().fillna(0)
+            self.values.append(portfolio_value)
+            self.dates.append(date)
 
-            # 統計情報の計算
-            stats = self._calculate_stats(equity_series)
-            return stats
-        else:
-            # 十分なデータがない場合
-            return {
-                "初期資金": self.initial_cash,
-                "最終資金": self.initial_cash,
-                "トータルリターン(%)": 0,
-                "年率リターン(%)": 0,
-                "最大ドローダウン(%)": 0,
-                "シャープレシオ": 0,
-                "勝率(%)": 0,
-                "取引回数": 0,
-                "注意": "十分なデータがなくバックテストを完了できませんでした",
-            }
+        return self
 
-    def _create_features(self):
+    def value(self):
         """
-        4日分の過去の値動きから特徴量を作成
-
-        Returns:
-            features: 特徴量の配列
+        ポートフォリオ価値のシリーズを返す
         """
-        if len(self.data) < 4:
-            return None
+        return pd.Series(self.values, index=self.dates)
 
-        closes = self.data["Close"].values
-        features = []
-
-        for i in range(3, len(closes)):
-            # 現在の価格と過去3日分の価格を取得
-            now = closes[i]
-            lag_1 = closes[i - 1]
-            lag_2 = closes[i - 2]
-            lag_3 = closes[i - 3]
-
-            features.append([now, lag_1, lag_2, lag_3])
-
-        return np.array(features)
-
-    def _calculate_stats(self, equity_series):
+    def returns(self):
         """
-        バックテスト結果の統計情報を計算
-
-        Args:
-            equity_series: エクイティカーブ
-
-        Returns:
-            dict: 統計情報
+        リターンのシリーズを返す
         """
-        # リターンの計算
-        returns = equity_series.pct_change().fillna(0)
+        values = self.value()
+        return values.pct_change().fillna(0)
 
-        # 累積リターン
-        total_return = (equity_series.iloc[-1] / self.initial_cash - 1) * 100
+    def stats(self):
+        """
+        パフォーマンス統計を計算
+        """
+        values = self.value()
+        returns = self.returns()
 
-        # 年率リターン（252営業日で計算）
-        days = len(equity_series)
-        annual_return = (
-            ((1 + total_return / 100) ** (252 / days) - 1) * 100 if days > 0 else 0
-        )
+        # 基本的なパフォーマンス指標を計算
+        total_return = (values.iloc[-1] / self.init_cash - 1) * 100
 
-        # 最大ドローダウン
-        cummax = equity_series.cummax()
-        drawdown = (equity_series - cummax) / cummax * 100
-        max_drawdown = drawdown.min()
+        # 年率リターン（252営業日で計算）（異常値の場合は0を返す）
+        try:
+            days = len(values)
+            annual_return = ((1 + total_return / 100) ** (252 / days) - 1) * 100
+            if np.isnan(annual_return) or np.isinf(annual_return):
+                annual_return = 0
+        except:
+            annual_return = 0
 
         # シャープレシオ（無リスク金利は0と仮定）
-        sharpe_ratio = (
-            np.sqrt(252) * returns.mean() / returns.std() if returns.std() != 0 else 0
-        )
+        try:
+            sharpe_ratio = (
+                returns.mean() / returns.std() * np.sqrt(252)
+                if returns.std() != 0
+                else 0
+            )
+            if np.isnan(sharpe_ratio) or np.isinf(sharpe_ratio):
+                sharpe_ratio = 0
+        except:
+            sharpe_ratio = 0
+
+        # ドローダウン計算
+        peak = values.cummax()
+        drawdown = (values / peak - 1) * 100
+        max_drawdown = drawdown.min()
 
         # 勝率計算
-        if len(self.trades) > 0:
-            wins = sum(
-                1
-                for i in range(1, len(self.trades))
-                if (
-                    self.trades[i - 1]["type"] == "buy"
-                    and self.trades[i]["price"] > self.trades[i - 1]["price"]
-                )
-                or (
-                    self.trades[i - 1]["type"] == "sell"
-                    and self.trades[i]["price"] < self.trades[i - 1]["price"]
-                )
-            )
-            win_rate = (
-                (wins / (len(self.trades) - 1)) * 100 if len(self.trades) > 1 else 0
-            )
-        else:
-            win_rate = 0
+        completed_trades = [trade for trade in self.trades if "pnl" in trade]
+        win_trades = sum(1 for trade in completed_trades if trade["pnl"] > 0)
+        total_completed_trades = len(completed_trades)
+        win_rate = (
+            (win_trades / total_completed_trades * 100)
+            if total_completed_trades > 0
+            else 0
+        )
 
         stats = {
-            "初期資金": self.initial_cash,
-            "最終資金": equity_series.iloc[-1],
+            "初期資金": self.init_cash,
+            "最終価値": values.iloc[-1],
             "トータルリターン(%)": round(total_return, 2),
             "年率リターン(%)": round(annual_return, 2),
-            "最大ドローダウン(%)": round(max_drawdown, 2),
             "シャープレシオ": round(sharpe_ratio, 2),
-            "勝率(%)": round(win_rate, 2),
+            "最大ドローダウン(%)": round(max_drawdown, 2),
             "取引回数": len(self.trades),
+            "完了した取引": total_completed_trades,
+            "勝率(%)": round(win_rate, 2),
         }
 
         return stats
 
-    def plot(self):
-        """
-        バックテスト結果をプロット
-        """
-        if len(self.equity) == 0:
-            print("バックテストを先に実行してください")
-            return
 
-        # 追跡した日付を使用
-        equity_series = pd.Series(self.equity, index=self.dates)
-
-        plt.figure(figsize=(12, 8))
-
-        # エクイティカーブ
-        plt.subplot(2, 1, 1)
-        plt.plot(equity_series)
-        plt.title("Portfolio Value")
-        plt.grid(True)
-
-        # ドローダウン
-        plt.subplot(2, 1, 2)
-        cummax = equity_series.cummax()
-        drawdown = (equity_series - cummax) / cummax * 100
-        plt.fill_between(drawdown.index, drawdown.values, 0, color="red", alpha=0.3)
-        plt.title("Drawdown (%)")
-        plt.grid(True)
-
-        plt.tight_layout()
-        plt.show()
-
-        return plt.gcf()
-
-
-def run_closes_strategy_simple(data, model=None, size=0.5):
+def run_vectorbt_like_backtest(data, model=None, size=0.5):
     """
-    シンプルなバックテスト実装を使用したClosesStrategyの実行
+    vectorbtライクなバックテスターを使用した戦略の実装
 
     Args:
         data: バックテスト用のデータ（pd.DataFrame形式、'Close'カラムが必要）
@@ -261,23 +214,187 @@ def run_closes_strategy_simple(data, model=None, size=0.5):
         size: ポジションサイズ（デフォルト0.5 = 50%）
 
     Returns:
-        backtester: バックテスターオブジェクト
-        stats: バックテスト結果の統計情報
+        dict: バックテスト結果
     """
     if model is None:
         # モデルが指定されていない場合は訓練する
         closes = factory_closes_n4_cycle()
         model = train_model_lgbm_closes_n4(closes)
 
-    # バックテストの実行
-    backtester = SimpleBacktester(data, initial_cash=100000, commission=0.0)
-    stats = backtester.run(model, size=size)
+    # 特徴量の作成
+    features = create_features(data)
 
-    if stats is None:
-        print("エラー: バックテストの実行中に問題が発生しました")
-        return backtester, None
+    # 予測値の計算
+    predictions = model.predict(features)
 
-    return backtester, stats
+    # 売買シグナルの生成
+    buy_signals = pd.Series(False, index=data.index)
+    sell_signals = pd.Series(False, index=data.index)
+
+    # 最初の4日分はデータ不足のため取引なし
+    for i in range(len(predictions)):
+        if i + 4 < len(data):
+            if predictions[i] > 0:  # 上昇予測
+                buy_signals.iloc[i + 4] = True
+            elif predictions[i] < 0:  # 下降予測
+                sell_signals.iloc[i + 4] = True
+
+    # バックテスト実行
+    backtester_long = VectorbtLikeBacktester(data, init_cash=100000, fees=0.0)
+    backtester_long.run_from_signals(entries=buy_signals, exits=sell_signals, size=size)
+
+    backtester_short = VectorbtLikeBacktester(data, init_cash=100000, fees=0.0)
+    backtester_short.run_from_signals(
+        entries=sell_signals, exits=buy_signals, size=size, short_entries=True
+    )
+
+    # 結果表示
+    print("===== ロングストラテジーのパフォーマンス =====")
+    long_stats = backtester_long.stats()
+    for key, value in long_stats.items():
+        print(f"{key}: {value}")
+
+    print("\n===== ショートストラテジーのパフォーマンス =====")
+    short_stats = backtester_short.stats()
+    for key, value in short_stats.items():
+        print(f"{key}: {value}")
+
+    # 組み合わせパフォーマンス
+    long_values = backtester_long.value()
+    short_values = backtester_short.value()
+    combined_values = long_values + short_values - 100000  # 初期資金を1回分引く
+    combined_returns = combined_values.pct_change().fillna(0)
+
+    # 統計指標を安全に計算
+    try:
+        total_return = (combined_values.iloc[-1] / (2 * 100000 - 100000) - 1) * 100
+        if np.isnan(total_return) or np.isinf(total_return):
+            total_return = 0
+    except:
+        total_return = 0
+
+    try:
+        annual_return = (
+            (1 + total_return / 100) ** (252 / len(combined_values)) - 1
+        ) * 100
+        if np.isnan(annual_return) or np.isinf(annual_return):
+            annual_return = 0
+    except:
+        annual_return = 0
+
+    try:
+        sharpe_ratio = (
+            combined_returns.mean() / combined_returns.std() * np.sqrt(252)
+            if combined_returns.std() != 0
+            else 0
+        )
+        if np.isnan(sharpe_ratio) or np.isinf(sharpe_ratio):
+            sharpe_ratio = 0
+    except:
+        sharpe_ratio = 0
+
+    print("\n===== 組み合わせ戦略のパフォーマンス =====")
+    print(f"トータルリターン(%): {total_return:.2f}")
+    print(f"年率リターン(%): {annual_return:.2f}")
+    print(f"シャープレシオ: {sharpe_ratio:.2f}")
+    print(f"取引総数: {len(backtester_long.trades) + len(backtester_short.trades)}")
+
+    return {
+        "backtester_long": backtester_long,
+        "backtester_short": backtester_short,
+        "long_values": long_values,
+        "short_values": short_values,
+        "combined_values": combined_values,
+        "long_stats": long_stats,
+        "short_stats": short_stats,
+    }
+
+
+def create_features(data):
+    """
+    4日分の過去の値動きから特徴量を作成
+
+    Args:
+        data: バックテスト用のデータ（pd.DataFrame形式、'Close'カラムが必要）
+
+    Returns:
+        features: 特徴量の配列
+    """
+    if len(data) < 4:
+        return np.array([])
+
+    closes = data["Close"].values
+    features = []
+
+    for i in range(3, len(closes)):
+        # 現在の価格と過去3日分の価格を取得
+        now = closes[i]
+        lag_1 = closes[i - 1]
+        lag_2 = closes[i - 2]
+        lag_3 = closes[i - 3]
+
+        features.append([now, lag_1, lag_2, lag_3])
+
+    return np.array(features)
+
+
+def plot_performance(result):
+    """
+    バックテスト結果をプロット
+
+    Args:
+        result: バックテスト結果
+    """
+    plt.figure(figsize=(12, 10))
+
+    # ポートフォリオ価値のプロット
+    plt.subplot(2, 1, 1)
+    plt.plot(result["long_values"], label="Long Strategy")
+    plt.plot(result["short_values"], label="Short Strategy")
+    plt.plot(result["combined_values"], label="Combined Strategy")
+    plt.title("Portfolio Value")
+    plt.ylabel("Value")
+    plt.grid(True)
+    plt.legend()
+
+    # ドローダウンのプロット
+    plt.subplot(2, 1, 2)
+
+    # 各戦略のドローダウン計算
+    long_dd = (result["long_values"] / result["long_values"].cummax() - 1) * 100
+    short_dd = (result["short_values"] / result["short_values"].cummax() - 1) * 100
+    combined_dd = (
+        result["combined_values"] / result["combined_values"].cummax() - 1
+    ) * 100
+
+    plt.fill_between(
+        long_dd.index, long_dd.values, 0, color="blue", alpha=0.3, label="Long Drawdown"
+    )
+    plt.fill_between(
+        short_dd.index,
+        short_dd.values,
+        0,
+        color="red",
+        alpha=0.3,
+        label="Short Drawdown",
+    )
+    plt.fill_between(
+        combined_dd.index,
+        combined_dd.values,
+        0,
+        color="green",
+        alpha=0.3,
+        label="Combined Drawdown",
+    )
+    plt.title("Drawdown (%)")
+    plt.ylabel("Drawdown %")
+    plt.grid(True)
+    plt.legend()
+
+    plt.tight_layout()
+    plt.show()
+
+    return plt.gcf()
 
 
 if __name__ == "__main__":
@@ -292,13 +409,7 @@ if __name__ == "__main__":
     model = train_model_lgbm_closes_n4(closes)
 
     # バックテストの実行
-    backtester, stats = run_closes_strategy_simple(data, model=model)
+    result = run_vectorbt_like_backtest(data, model=model)
 
-    # 結果表示
-    if stats:
-        print("バックテスト結果:")
-        for key, value in stats.items():
-            print(f"{key}: {value}")
-
-        # グラフの表示
-        backtester.plot()
+    # 結果のプロット
+    plot_performance(result)
