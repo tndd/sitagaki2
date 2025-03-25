@@ -26,8 +26,10 @@ def run_vectorbt_strategy(ticker="AAPL", stop_loss_pct=0.05, take_profit_pct=0.1
     df = df.set_index("Date")
 
     # 単純な移動平均線の計算
-    fast_ma = vbt.MA.run(df["Close"], window=20)
-    slow_ma = vbt.MA.run(df["Close"], window=50)
+    fast_window = 20
+    slow_window = 50
+    fast_ma = vbt.MA.run(df["Close"], window=fast_window)
+    slow_ma = vbt.MA.run(df["Close"], window=slow_window)
 
     # エントリーシグナルの生成：短期移動平均が長期移動平均を上回った時
     entries = fast_ma.ma_above(slow_ma)
@@ -51,37 +53,51 @@ def run_vectorbt_strategy(ticker="AAPL", stop_loss_pct=0.05, take_profit_pct=0.1
     # パフォーマンス統計
     stats = pf.stats()
 
-    # 結果のプロット
+    # matplotlib用のプロット作成
     fig, axes = plt.subplots(3, 1, figsize=(12, 16))
 
-    # 価格とエントリー・イグジットポイント
-    df["Close"].vbt.plot(ax=axes[0], label="Close Price")
-    fast_ma.ma.vbt.plot(ax=axes[0], label=f"MA({fast_ma.window})")
-    slow_ma.ma.vbt.plot(ax=axes[0], label=f"MA({slow_ma.window})")
+    # 価格と移動平均線
+    df["Close"].plot(ax=axes[0], label="Close Price")
+    fast_ma.ma.plot(ax=axes[0], label=f"MA({fast_window})")
+    slow_ma.ma.plot(ax=axes[0], label=f"MA({slow_window})")
 
-    # エントリーとイグジットをプロット
-    pf.plot_trade_signals(ax=axes[0])
+    # エントリーとイグジットポイントのプロット
+    entries_idx = df.index[entries]
+    exits_idx = df.index[exits]
+
+    for idx in entries_idx:
+        if idx in df.index:
+            axes[0].axvline(x=idx, color="g", linestyle="--", alpha=0.5)
+
+    for idx in exits_idx:
+        if idx in df.index:
+            axes[0].axvline(x=idx, color="r", linestyle="--", alpha=0.5)
+
     axes[0].set_title(f"{ticker} Price and Signals")
     axes[0].legend()
 
     # 資産推移
-    pf.plot(ax=axes[1])
+    pf.value().plot(ax=axes[1])
     axes[1].set_title("Portfolio Value")
 
     # ドローダウン
-    pf.plot_drawdown(ax=axes[2])
-    axes[2].set_title("Drawdown")
+    # drawdownの値をパーセントに変換してプロット
+    dd_series = pd.Series(-pf.drawdown().values.flatten() * 100, index=pf.value().index)
+    dd_series.plot(ax=axes[2])
+    axes[2].set_title("Drawdown (%)")
+    axes[2].set_ylabel("Drawdown %")
+    axes[2].grid(True)
 
     plt.tight_layout()
 
     # 結果レポート
     print(f"===== {ticker} の移動平均線クロス戦略のパフォーマンス =====")
-    print(f"総リターン: {stats['total_return']:.2%}")
-    print(f"年率リターン: {stats['annual_return']:.2%}")
-    print(f"シャープレシオ: {stats['sharpe_ratio']:.2f}")
-    print(f"最大ドローダウン: {stats['max_drawdown']:.2%}")
-    print(f"勝率: {stats['win_rate']:.2%}")
-    print(f"取引回数: {stats['total_trades']}")
+    print(f"総リターン: {stats['Total Return [%]']:.2f}%")
+    print(f"年率リターン: {stats.get('Annual Return [%]', 0):.2f}%")
+    print(f"シャープレシオ: {stats['Sharpe Ratio']:.2f}")
+    print(f"最大ドローダウン: {stats['Max Drawdown [%]']:.2f}%")
+    print(f"勝率: {stats['Win Rate [%]']:.2f}%")
+    print(f"取引回数: {stats['Total Trades']}")
 
     return {"stats": stats, "portfolio": pf, "figure": fig}
 
@@ -157,15 +173,15 @@ def run_rsi_strategy(
     short_stats = short_pf.stats()
     combined_stats = combined_pf.stats()
 
-    # 結果のプロット
+    # matplotlib用のプロット作成
     fig, axes = plt.subplots(4, 1, figsize=(12, 20))
 
-    # 価格とRSI
-    df["Close"].vbt.plot(ax=axes[0], label="Close Price")
+    # 価格チャート
+    df["Close"].plot(ax=axes[0], label="Close Price")
     axes[0].set_title(f"{ticker} Price")
 
-    # RSIをプロット
-    rsi.rsi.vbt.plot(ax=axes[1], label="RSI")
+    # RSI指標
+    rsi.rsi.plot(ax=axes[1], label="RSI")
     axes[1].axhline(
         y=rsi_entry_low,
         color="g",
@@ -184,39 +200,59 @@ def run_rsi_strategy(
     axes[1].legend()
 
     # 資産推移
-    combined_pf.plot(ax=axes[2])
+    combined_pf.value().plot(ax=axes[2])
     axes[2].set_title("Combined Portfolio Value")
 
+    # ロングとショートの資産推移
+    long_pf.value().plot(ax=axes[2], label="Long Portfolio")
+    short_pf.value().plot(ax=axes[2], label="Short Portfolio")
+    axes[2].legend()
+
     # ドローダウン
-    combined_pf.plot_drawdown(ax=axes[3])
-    axes[3].set_title("Drawdown")
+    combined_dd = pd.Series(
+        -combined_pf.drawdown().values.flatten() * 100, index=combined_pf.value().index
+    )
+    long_dd = pd.Series(
+        -long_pf.drawdown().values.flatten() * 100, index=long_pf.value().index
+    )
+    short_dd = pd.Series(
+        -short_pf.drawdown().values.flatten() * 100, index=short_pf.value().index
+    )
+
+    combined_dd.plot(ax=axes[3], label="Combined")
+    long_dd.plot(ax=axes[3], label="Long")
+    short_dd.plot(ax=axes[3], label="Short")
+    axes[3].set_title("Drawdown (%)")
+    axes[3].set_ylabel("Drawdown %")
+    axes[3].legend()
+    axes[3].grid(True)
 
     plt.tight_layout()
 
     # 結果レポート
     print(f"===== {ticker} のRSI戦略のパフォーマンス =====")
     print(f"\n【ロング戦略】")
-    print(f"総リターン: {long_stats['total_return']:.2%}")
-    print(f"年率リターン: {long_stats['annual_return']:.2%}")
-    print(f"シャープレシオ: {long_stats['sharpe_ratio']:.2f}")
-    print(f"最大ドローダウン: {long_stats['max_drawdown']:.2%}")
-    print(f"勝率: {long_stats['win_rate']:.2%}")
-    print(f"取引回数: {long_stats['total_trades']}")
+    print(f"総リターン: {long_stats['Total Return [%]']:.2f}%")
+    print(f"年率リターン: {long_stats.get('Annual Return [%]', 0):.2f}%")
+    print(f"シャープレシオ: {long_stats['Sharpe Ratio']:.2f}")
+    print(f"最大ドローダウン: {long_stats['Max Drawdown [%]']:.2f}%")
+    print(f"勝率: {long_stats['Win Rate [%]']:.2f}%")
+    print(f"取引回数: {long_stats['Total Trades']}")
 
     print(f"\n【ショート戦略】")
-    print(f"総リターン: {short_stats['total_return']:.2%}")
-    print(f"年率リターン: {short_stats['annual_return']:.2%}")
-    print(f"シャープレシオ: {short_stats['sharpe_ratio']:.2f}")
-    print(f"最大ドローダウン: {short_stats['max_drawdown']:.2%}")
-    print(f"勝率: {short_stats['win_rate']:.2%}")
-    print(f"取引回数: {short_stats['total_trades']}")
+    print(f"総リターン: {short_stats['Total Return [%]']:.2f}%")
+    print(f"年率リターン: {short_stats.get('Annual Return [%]', 0):.2f}%")
+    print(f"シャープレシオ: {short_stats['Sharpe Ratio']:.2f}")
+    print(f"最大ドローダウン: {short_stats['Max Drawdown [%]']:.2f}%")
+    print(f"勝率: {short_stats['Win Rate [%]']:.2f}%")
+    print(f"取引回数: {short_stats['Total Trades']}")
 
     print(f"\n【組み合わせ戦略】")
-    print(f"総リターン: {combined_stats['total_return']:.2%}")
-    print(f"年率リターン: {combined_stats['annual_return']:.2%}")
-    print(f"シャープレシオ: {combined_stats['sharpe_ratio']:.2f}")
-    print(f"最大ドローダウン: {combined_stats['max_drawdown']:.2%}")
-    print(f"取引回数: {combined_stats['total_trades']}")
+    print(f"総リターン: {combined_stats['Total Return [%]']:.2f}%")
+    print(f"年率リターン: {combined_stats.get('Annual Return [%]', 0):.2f}%")
+    print(f"シャープレシオ: {combined_stats['Sharpe Ratio']:.2f}")
+    print(f"最大ドローダウン: {combined_stats['Max Drawdown [%]']:.2f}%")
+    print(f"取引回数: {combined_stats['Total Trades']}")
 
     return {
         "long_stats": long_stats,
@@ -248,27 +284,41 @@ def compare_strategies(ticker="AAPL"):
     ma_result = run_vectorbt_strategy(ticker)
     rsi_result = run_rsi_strategy(ticker)
 
-    # 取引結果を比較するためのプロット
+    # matplotlib用の比較プロット作成
     fig, axes = plt.subplots(3, 1, figsize=(12, 16))
 
     # 資産推移を比較
-    ma_result["portfolio"].plot(ax=axes[0], label="MA Strategy")
-    rsi_result["portfolio"].plot(ax=axes[0], label="RSI Strategy")
+    ma_result["portfolio"].value().plot(ax=axes[0], label="MA Strategy")
+    rsi_result["portfolio"].value().plot(ax=axes[0], label="RSI Strategy")
     axes[0].set_title("Portfolio Values Comparison")
     axes[0].legend()
+    axes[0].grid(True)
 
     # ドローダウン比較
-    ma_result["portfolio"].plot_drawdown(ax=axes[1], label="MA Strategy")
-    rsi_result["portfolio"].plot_drawdown(ax=axes[1], label="RSI Strategy")
-    axes[1].set_title("Drawdown Comparison")
+    ma_dd = pd.Series(
+        -ma_result["portfolio"].drawdown().values.flatten() * 100,
+        index=ma_result["portfolio"].value().index,
+    )
+    rsi_dd = pd.Series(
+        -rsi_result["portfolio"].drawdown().values.flatten() * 100,
+        index=rsi_result["portfolio"].value().index,
+    )
+
+    ma_dd.plot(ax=axes[1], label="MA Strategy")
+    rsi_dd.plot(ax=axes[1], label="RSI Strategy")
+    axes[1].set_title("Drawdown Comparison (%)")
+    axes[1].set_ylabel("Drawdown %")
+    axes[1].legend()
+    axes[1].grid(True)
 
     # リターン比較
     ma_returns = ma_result["portfolio"].returns()
     rsi_returns = rsi_result["portfolio"].returns()
-    (ma_returns.vbt.cumsum() + 1).vbt.plot(ax=axes[2], label="MA Strategy")
-    (rsi_returns.vbt.cumsum() + 1).vbt.plot(ax=axes[2], label="RSI Strategy")
+    (ma_returns.cumsum() + 1).plot(ax=axes[2], label="MA Strategy")
+    (rsi_returns.cumsum() + 1).plot(ax=axes[2], label="RSI Strategy")
     axes[2].set_title("Cumulative Returns")
     axes[2].legend()
+    axes[2].grid(True)
 
     plt.tight_layout()
 
@@ -278,20 +328,22 @@ def compare_strategies(ticker="AAPL"):
     stats_comparison = pd.DataFrame(
         {
             "MA戦略": {
-                "総リターン": ma_result["stats"]["total_return"],
-                "年率リターン": ma_result["stats"]["annual_return"],
-                "シャープレシオ": ma_result["stats"]["sharpe_ratio"],
-                "最大ドローダウン": ma_result["stats"]["max_drawdown"],
-                "勝率": ma_result["stats"]["win_rate"],
-                "取引回数": ma_result["stats"]["total_trades"],
+                "総リターン": ma_result["stats"]["Total Return [%]"],
+                "年率リターン": ma_result["stats"].get("Annual Return [%]", 0),
+                "シャープレシオ": ma_result["stats"]["Sharpe Ratio"],
+                "最大ドローダウン": ma_result["stats"]["Max Drawdown [%]"],
+                "勝率": ma_result["stats"]["Win Rate [%]"],
+                "取引回数": ma_result["stats"]["Total Trades"],
             },
             "RSI戦略(組合せ)": {
-                "総リターン": rsi_result["combined_stats"]["total_return"],
-                "年率リターン": rsi_result["combined_stats"]["annual_return"],
-                "シャープレシオ": rsi_result["combined_stats"]["sharpe_ratio"],
-                "最大ドローダウン": rsi_result["combined_stats"]["max_drawdown"],
-                "勝率": rsi_result["combined_stats"]["win_rate"],
-                "取引回数": rsi_result["combined_stats"]["total_trades"],
+                "総リターン": rsi_result["combined_stats"]["Total Return [%]"],
+                "年率リターン": rsi_result["combined_stats"].get(
+                    "Annual Return [%]", 0
+                ),
+                "シャープレシオ": rsi_result["combined_stats"]["Sharpe Ratio"],
+                "最大ドローダウン": rsi_result["combined_stats"]["Max Drawdown [%]"],
+                "勝率": rsi_result["combined_stats"]["Win Rate [%]"],
+                "取引回数": rsi_result["combined_stats"]["Total Trades"],
             },
         }
     )
