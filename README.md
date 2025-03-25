@@ -43,6 +43,11 @@ Memo:
   - strategyはシミュレーションというより、signalを定義する場所
   - シミュレーションは、datasetやfeatureでいう相関係数やSHAPの計算に相当する部分
 
+ライブラリ候補:
+- backtesting
+- backtrader
+- vectorbt
+- qlib
 
 
 ## trade
