@@ -8,7 +8,7 @@ from polars import (
 )
 
 from domain.common.design import Pldf
-from domain.dataset.ohlcv.schema import Ohlcv
+from domain.dataset.ohlcv import Ohlcv
 from domain.feature.common import SCALE_BP
 
 
@@ -47,6 +47,7 @@ def derive_df_ohlcv_ofs(ohlcv: Ohlcv) -> OhlcvOfs:
     )
 
 
+### Service ###
 def log_valiation_volume_from_open(df: Ohlcv) -> DataFrame:
     """
     前日を基準としたCloseとVolumeの対数差分。
