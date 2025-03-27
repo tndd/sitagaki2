@@ -1,7 +1,7 @@
 from datetime import datetime
 from math import log
 
-from domain.feature.common.const import SCALE_BP
+from domain.feature.common import SCALE_BP
 from domain.feature.ohlcv_ofs import OhlcvOfs, derive_df_ohlcv_ofs
 from fixture.common.const import APX_ZERO
 from fixture.factory.dataset.ohlcv import factory_ohlcv

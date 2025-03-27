@@ -2,7 +2,7 @@ from polars import DataFrame, Datetime, Float64, Schema, col
 
 from domain.common.design import Pldf
 from domain.dataset.ohlcv.schema import Ohlcv
-from domain.feature.common.const import SCALE_BP
+from domain.feature.common import SCALE_BP
 
 """
 CLOSES:
