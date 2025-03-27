@@ -1,4 +1,4 @@
-from domain.feature.closes.schema import ClosesN4
+from domain.feature.closes import ClosesN4
 from fixture.factory.feature.closes import (
     factory_closes_n4,
     factory_closes_n4_1000,
