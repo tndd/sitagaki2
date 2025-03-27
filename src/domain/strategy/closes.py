@@ -67,4 +67,4 @@ if __name__ == "__main__":
     # stats の内容を出力して確認
     print(stats)
     # グラフの表示
-    bt.plot()
+    # bt.plot()
