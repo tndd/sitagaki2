@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 import polars as pl
 
-from domain.dataset.ohlcv.schema import Ohlcv
+from domain.dataset.ohlcv import Ohlcv
 
 
 def factory_ohlcv() -> Ohlcv:

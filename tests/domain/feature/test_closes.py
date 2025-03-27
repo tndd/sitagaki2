@@ -2,10 +2,8 @@ from math import log
 
 import pytest
 
-from domain.feature.closes.derive import derive_closes_n4
-from domain.feature.closes.schema import ClosesN4
-from domain.feature.closes.service import calc_feature_closes
-from domain.feature.common.const import SCALE_BP
+from domain.feature.closes import ClosesN4, calc_feature_closes, derive_closes_n4
+from domain.feature.common import SCALE_BP
 from fixture.factory.dataset.ohlcv import factory_ohlcv_cycle
 
 

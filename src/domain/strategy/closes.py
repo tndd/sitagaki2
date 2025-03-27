@@ -6,7 +6,7 @@ from lightgbm import Booster
 from numpy import array, ndarray
 from polars import DataFrame
 
-from domain.feature.closes.service import calc_feature_closes
+from domain.feature.closes import calc_feature_closes
 from domain.model.lgbm import train_model_lgbm_closes_n4
 from fixture.factory.feature.closes import factory_closes_n4_cycle
 

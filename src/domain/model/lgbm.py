@@ -1,6 +1,6 @@
 from lightgbm import Booster, early_stopping, train
 
-from domain.feature.closes.schema import ClosesN4
+from domain.feature.closes import ClosesN4
 
 
 def train_model_lgbm_closes_n4(dataset: ClosesN4) -> Booster:

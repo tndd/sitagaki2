@@ -3,7 +3,7 @@ import numpy as np
 import pandas as pd
 import vectorbt as vbt
 
-from domain.dataset.ohlcv.service import read_df
+from domain.dataset.ohlcv import read_df
 
 
 def run_vectorbt_strategy(ticker="AAPL", stop_loss_pct=0.05, take_profit_pct=0.10):

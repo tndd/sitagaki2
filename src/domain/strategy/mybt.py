@@ -3,7 +3,7 @@ import math
 import numpy as np
 import yfinance as yf
 
-from domain.feature.common.const import SCALE_BP
+from domain.feature.common import SCALE_BP
 from domain.model.lgbm import train_model_lgbm_closes_n4
 from fixture.factory.feature.closes import factory_closes_n4_cycle
 
