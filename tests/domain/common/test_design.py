@@ -1,5 +1,6 @@
 from lightgbm import Dataset
 from numpy import ndarray
+from pandas import DataFrame as DataFramePD
 from polars import DataFrame, Date, Float64, Int64, Schema
 
 from domain.common.design import (
@@ -32,6 +33,15 @@ def test_pldf():
     assert isinstance(pldf, Pldf)
     # カラム名が定義の通りの並びになってるか？
     assert pldf.get_col_names() == ["A_DT", "B_FL", "C_IN"]
+
+
+def test_pldf_pddf():
+    """
+    PandasDFへの変換とインデックス設定が正常に行われているかを確認する。
+    """
+    pldf = factory_closes_n4_1000()
+    assert isinstance(pldf.pddf, DataFramePD)
+    assert pldf.pddf.index.name == "Date"
 
 
 def test_pldf_get_labeled_dataset():

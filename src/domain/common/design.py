@@ -2,6 +2,7 @@ from dataclasses import dataclass
 
 from lightgbm import Dataset
 from numpy import ndarray
+from pandas import DataFrame as DataFramePD
 from polars import DataFrame, Schema
 from sklearn.model_selection import train_test_split
 
@@ -107,6 +108,10 @@ class Pldf:
             self.exclude = exclude
         else:
             raise TypeError(f"不正なexclude => {exclude}")
+
+    @property
+    def pddf(self) -> DataFramePD:
+        return self.df.to_pandas().set_index("Date")
 
     @classmethod
     def get_col_names(cls) -> list[str]:
