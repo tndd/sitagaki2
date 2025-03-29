@@ -1,18 +1,17 @@
-import pandas as pd
-import pandera as pa
-from pandas import DataFrame
+from pandas import DataFrame, to_datetime
+from pandera import Column, DataFrameSchema
 
 from domain.dataset.schema import DataSchema, LabeledDataset, LabeledDatasetSplit
 
 
 class DataSchemaImpl(DataSchema):
-    SCHEMA = pa.DataFrameSchema(
+    SCHEMA = DataFrameSchema(
         {
-            "Open": pa.Column("float64"),
-            "High": pa.Column("float64"),
-            "Low": pa.Column("float64"),
-            "Close": pa.Column("float64"),
-            "Volume": pa.Column("int64"),
+            "Open": Column(float),
+            "High": Column(float),
+            "Low": Column(float),
+            "Close": Column(float),
+            "Volume": Column(int),
         },
     )
     ORIGIN = None
@@ -34,7 +33,7 @@ class DataSchemaImpl(DataSchema):
 def test_data_schema():
     df = DataFrame(
         {
-            "Date": pd.to_datetime(["2021-01-01", "2021-01-02", "2021-01-03"]),
+            "Date": to_datetime(["2021-01-01", "2021-01-02", "2021-01-03"]),
             "Open": [100.0, 200.0, 300.0],
             "High": [100.0, 200.0, 300.0],
             "Low": [100.0, 200.0, 300.0],
