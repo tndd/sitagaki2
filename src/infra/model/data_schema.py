@@ -27,6 +27,14 @@ class DataSchema:
     ) -> None:
         """
         Args:
+            schema: dict[str, Column]
+                スキーマを定義する。
+                clsの焼き直し。
+
+            col_names: list[str]
+                カラム名のリストを取得する。
+                clsの焼き直し。
+
             df: DataFrame
                 dataframeはここに格納される。
 
