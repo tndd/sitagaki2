@@ -14,7 +14,8 @@ def test_data_schema():
     assert dsi.df.index.name == "Date"
     assert dsi.df.index.dtype == "datetime64[ns]"
     # スキーマ検証の実行
-    assert not dsi.SCHEMA.validate(dsi.df).empty
+    df_schema = dsi.get_df_schema()
+    assert not df_schema.validate(dsi.df).empty
     # labelとexcludeがlistとして変換され設定されてるか
     assert dsi.label == ["Close"]
     assert dsi.exclude == ["Volume"]

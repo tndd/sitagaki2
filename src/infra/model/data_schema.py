@@ -1,5 +1,5 @@
 from pandas import DataFrame
-from pandera import DataFrameSchema
+from pandera import Column, DataFrameSchema
 from sklearn.model_selection import train_test_split
 
 from infra.model.labeled_dataset import LabeledDataset, LabeledDatasetSplit
@@ -15,7 +15,7 @@ class DataSchema:
             indexはスキーマ情報には含めない。
     """
 
-    SCHEMA: DataFrameSchema
+    SCHEMA: dict[str, Column]
     ORIGIN: list["DataSchema"] | None = None
 
     def __init__(
@@ -80,7 +80,14 @@ class DataSchema:
         """
         カラム名のリストを取得する
         """
-        return list(cls.SCHEMA.columns.keys())
+        return list(cls.SCHEMA.keys())
+
+    @classmethod
+    def get_df_schema(cls) -> DataFrameSchema:
+        """
+        DataFrameSchemaを返す
+        """
+        return DataFrameSchema(cls.SCHEMA)
 
     def get_labeled_dataset(self) -> LabeledDataset:
         """
