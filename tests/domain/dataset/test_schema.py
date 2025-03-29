@@ -2,7 +2,7 @@ import pandas as pd
 import pandera as pa
 from pandas import DataFrame
 
-from domain.dataset.schema import DataSchema
+from domain.dataset.schema import DataSchema, LabeledDataset, LabeledDatasetSplit
 
 
 class DataSchemaImpl(DataSchema):
@@ -54,8 +54,12 @@ def test_data_schema():
     assert dsi.df.index.dtype == "datetime64[ns]"
     # スキーマ検証の実行
     assert not dsi.SCHEMA.validate(dsi.df).empty
-    # カラム名一覧
-    assert dsi.get_col_names() == ["Open", "High", "Low", "Close", "Volume"]
     # labelとexcludeがlistとして変換され設定されてるか
     assert dsi.label == ["Close"]
     assert dsi.exclude == ["Volume"]
+    # test => get_col_names()
+    assert dsi.get_col_names() == ["Open", "High", "Low", "Close", "Volume"]
+    # test => get_labeled_dataset()
+    assert isinstance(dsi.get_labeled_dataset(), LabeledDataset)
+    # test => get_labeled_dataset_split()
+    assert isinstance(dsi.get_labeled_dataset_split(), LabeledDatasetSplit)
