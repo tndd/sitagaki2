@@ -1,7 +1,8 @@
 from pandas import DataFrame, to_datetime
 from pandera import Column, DataFrameSchema
 
-from domain.dataset.schema import DataSchema, LabeledDataset, LabeledDatasetSplit
+from infra.model.data_schema import DataSchema
+from infra.model.labeled_dataset import LabeledDataset, LabeledDatasetSplit
 
 
 class DataSchemaImpl(DataSchema):
