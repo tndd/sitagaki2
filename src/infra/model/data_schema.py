@@ -48,11 +48,13 @@ class DataSchema:
                 内部的には一貫的にlistとして扱う。
 
         """
-        self.df: DataFrame = df
+        # cls変数の代入
         self.schema: DataFrameSchema = self.__class__.get_df_schema()
         self.col_names: list[str] = self.__class__.get_col_names()
         # スキーマの定義と検証
-        self.schema.validate(self.df)
+        self.schema.validate(df)
+        # 検証されたDataFrameを受け入れ
+        self.df: DataFrame = df
         # Index
         if index is None:
             self.index = index
