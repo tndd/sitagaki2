@@ -1,7 +1,7 @@
 from datetime import datetime
 
 from domain.dataset.ohlcv import Ohlcv
-from fixture.factory.dataset.ohlcv import (
+from fixture.domain.dataset.ohlcv import (
     factory_ohlcv,
     factory_ohlcv_1000,
     factory_ohlcv_brown,

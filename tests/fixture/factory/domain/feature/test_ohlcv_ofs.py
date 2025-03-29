@@ -1,5 +1,5 @@
 from domain.feature.ohlcv_ofs import OhlcvOfs
-from fixture.factory.feature.ohlcv_ofs import factory_ohlcv_ofs
+from fixture.domain.feature.ohlcv_ofs import factory_ohlcv_ofs
 
 
 def test_factory_ofs_ohlcv():

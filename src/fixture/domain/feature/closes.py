@@ -1,5 +1,5 @@
 from domain.feature.closes import ClosesN4, derive_closes_n4
-from fixture.factory.dataset.ohlcv import (
+from fixture.domain.dataset.ohlcv import (
     factory_ohlcv,
     factory_ohlcv_1000,
     factory_ohlcv_cycle,

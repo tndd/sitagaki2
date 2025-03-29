@@ -8,7 +8,7 @@ from polars import DataFrame
 
 from domain.feature.closes import calc_feature_closes
 from domain.model.lgbm import train_model_lgbm_closes_n4
-from fixture.factory.feature.closes import factory_closes_n4_cycle
+from fixture.domain.feature.closes import factory_closes_n4_cycle
 
 
 # model × backtestingでバックテストを行う

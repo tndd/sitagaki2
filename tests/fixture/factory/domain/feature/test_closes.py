@@ -1,5 +1,5 @@
 from domain.feature.closes import ClosesN4
-from fixture.factory.feature.closes import (
+from fixture.domain.feature.closes import (
     factory_closes_n4,
     factory_closes_n4_1000,
     factory_closes_n4_cycle,
