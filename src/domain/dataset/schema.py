@@ -139,7 +139,7 @@ class DataSchema:
         elif len(self.label) == 1:
             # ラベルが１次元の場合
             return LabeledDataset(
-                X=self.df.drop(self.label + self.exclude).to_numpy(),
+                X=self.df.drop(columns=self.label + self.exclude).to_numpy(),
                 y=self.df[self.label]
                 .to_numpy()
                 .ravel(),  # 1dラベルと確定しているので、ravelで警告を抑制
