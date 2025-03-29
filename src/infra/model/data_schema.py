@@ -27,17 +27,10 @@ class DataSchema:
     ) -> None:
         """
         Args:
-            schema: dict[str, Column]
-                スキーマを定義する。
-                clsの焼き直し。
-
-            col_names: list[str]
-                カラム名のリストを取得する。
-                clsの焼き直し。
-
             df: DataFrame
                 dataframeはここに格納される。
 
+        === Optional ===
             index: str | None
                 インデックス名を指定する。
                 インデックスがない場合は、Noneを指定する。
@@ -49,6 +42,13 @@ class DataSchema:
             exclude: list[str] | str | None
                 特徴量としては含めない項目を指定する。
                 想定としては、Dateのような日付データなど。
+
+        === クラス変数の焼き直し ===
+            schema: dict[str, Column]
+                スキーマを定義する。
+
+            col_names: list[str]
+                カラム名のリストを取得する。
 
         注意:
             labelとexcludeの入力型:

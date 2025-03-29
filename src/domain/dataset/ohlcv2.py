@@ -3,19 +3,15 @@ from pandera import Column, DataFrameSchema
 
 from infra.model.data_schema import DataSchema
 
-# TODO: SCHEMAは辞書型で持った方がいいか？
-
 
 class Ohlcv2(DataSchema):
-    SCHEMA_OHLCV = DataFrameSchema(
-        {
-            "Open": Column(float),
-            "High": Column(float),
-            "Low": Column(float),
-            "Close": Column(float),
-            "Volume": Column(int),
-        },
-    )
+    SCHEMA_OHLCV = {
+        "Open": Column(float),
+        "High": Column(float),
+        "Low": Column(float),
+        "Close": Column(float),
+        "Volume": Column(int),
+    }
     SCHEMA = SCHEMA_OHLCV
     ORIGIN = None
 
@@ -25,8 +21,9 @@ class Ohlcv2(DataSchema):
         """
         super().__init__(df, index="Date")
 
-    def get_schema_name_ohlcv(self) -> tuple[str]:
-        return tuple(self.SCHEMA_OHLCV.columns.keys())
+    @classmethod
+    def get_col_names_ohlcv(cls) -> list[str]:
+        return list(cls.SCHEMA_OHLCV.keys())
 
 
 class Inherited(Ohlcv2):
