@@ -6,3 +6,12 @@
 # ohlcvの要件
 - featureの元クラス
 - featureに加え、ohlcvのカラムも追加したdfを返す関数を継承する
+
+# Todo
+pandasへの適合や、ohlcvとの統合に伴う修正
+
+- [ ] data_schema
+- [ ] ohlcv
+- [ ] feature
+- [ ] closes
+- [ ] ohlcv_ofs
