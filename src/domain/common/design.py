@@ -6,6 +6,8 @@ from pandas import DataFrame as DataFramePD
 from polars import DataFrame, Schema
 from sklearn.model_selection import train_test_split
 
+# TODO: infra/modelとreplace
+
 
 @dataclass
 class LabeledDataset:
