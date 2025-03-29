@@ -17,10 +17,17 @@ class DataSchemaImpl(DataSchema):
     )
     ORIGIN = None
 
-    def __init__(self, df: DataFrame) -> None:
+    def __init__(
+        self,
+        df: DataFrame,
+        label: str | list[str] | None = None,
+        exclude: str | list[str] | None = None,
+    ) -> None:
         super().__init__(
             df,
             index="Date",
+            label=label,
+            exclude=exclude,
         )
 
 
@@ -35,7 +42,11 @@ def test_data_schema():
             "Volume": [1000, 2000, 3000],
         }
     )
-    dsi = DataSchemaImpl(df)
+    dsi = DataSchemaImpl(
+        df=df,
+        label="Close",
+        exclude="Volume",
+    )
     # インスタンスが作成されてるか
     assert isinstance(dsi, DataSchema)
     # インデックスが設定されてるか
@@ -43,3 +54,8 @@ def test_data_schema():
     assert dsi.df.index.dtype == "datetime64[ns]"
     # スキーマ検証の実行
     assert not dsi.SCHEMA.validate(dsi.df).empty
+    # カラム名一覧
+    assert dsi.get_col_names() == ["Open", "High", "Low", "Close", "Volume"]
+    # labelとexcludeがlistとして変換され設定されてるか
+    assert dsi.label == ["Close"]
+    assert dsi.exclude == ["Volume"]
