@@ -23,8 +23,14 @@ def test_data_schema():
     # test => get_labeled_dataset()
     lds = dsi.get_labeled_dataset()
     assert isinstance(lds, LabeledDataset)
-    assert lds.X.shape == (3, 3)  # CloseとVolumeが除外され、(3,3)
-    assert lds.y.shape == (3,)  # Closeが目的変数に設定され、(3,)
+    assert lds.X.shape == (3, 3)  # CloseとVolumeが除外(3,3)
+    assert lds.y.shape == (3,)  # Closeが目的変数に設定(3,)
+    assert lds.X.tolist() == [
+        [101.0, 102.0, 103.0],  # Open
+        [201.0, 202.0, 203.0],  # High
+        [301.0, 302.0, 303.0],  # Low
+    ]
+    assert lds.y.tolist() == [104.0, 204.0, 304.0]  # Closeが目的変数に設定
     # test => get_labeled_dataset_split()
     ldsv = dsi.get_labeled_dataset_split()
     assert isinstance(ldsv, LabeledDatasetSplit)
