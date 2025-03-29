@@ -21,6 +21,14 @@ def test_data_schema():
     # test => get_col_names()
     assert dsi.get_col_names() == ["Open", "High", "Low", "Close", "Volume"]
     # test => get_labeled_dataset()
-    assert isinstance(dsi.get_labeled_dataset(), LabeledDataset)
+    lds = dsi.get_labeled_dataset()
+    assert isinstance(lds, LabeledDataset)
+    assert lds.X.shape == (3, 3)  # CloseとVolumeが除外され、(3,3)
+    assert lds.y.shape == (3,)  # Closeが目的変数に設定され、(3,)
     # test => get_labeled_dataset_split()
-    assert isinstance(dsi.get_labeled_dataset_split(), LabeledDatasetSplit)
+    ldsv = dsi.get_labeled_dataset_split()
+    assert isinstance(ldsv, LabeledDatasetSplit)
+    assert ldsv.train.X.shape == (2, 3)  # 2つのデータが訓練用に分割される
+    assert ldsv.test.X.shape == (1, 3)  # 1つのデータがテスト用に分割される
+    assert ldsv.train.y.shape == (2,)  # 2つのデータが訓練用に分割される
+    assert ldsv.test.y.shape == (1,)  # 1つのデータがテスト用に分割される
