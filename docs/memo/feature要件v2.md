@@ -15,3 +15,8 @@ pandasへの適合や、ohlcvとの統合に伴う修正
 - [ ] feature
 - [ ] closes
 - [ ] ohlcv_ofs
+
+# idea
+## data schemaの場所
+- これらは全ドメインで包括的に使われる汎用的な雛形となる。
+- ならば、これはinfraに配置するのが良いのではないか？
