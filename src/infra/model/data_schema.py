@@ -49,6 +49,10 @@ class DataSchema:
 
         """
         self.df: DataFrame = df
+        self.schema: DataFrameSchema = self.__class__.get_df_schema()
+        self.col_names: list[str] = self.__class__.get_col_names()
+        # スキーマの定義と検証
+        self.schema.validate(self.df)
         # Index
         if index is None:
             self.index = index

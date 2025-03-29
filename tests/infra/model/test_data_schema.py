@@ -14,13 +14,12 @@ def test_data_schema():
     assert dsi.df.index.name == "Date"
     assert dsi.df.index.dtype == "datetime64[ns]"
     # スキーマ検証の実行
-    df_schema = dsi.get_df_schema()
-    assert not df_schema.validate(dsi.df).empty
+    assert not dsi.schema.validate(dsi.df).empty
     # labelとexcludeがlistとして変換され設定されてるか
     assert dsi.label == ["Close"]
     assert dsi.exclude == ["Volume"]
-    # test => get_col_names()
-    assert dsi.get_col_names() == ["Open", "High", "Low", "Close", "Volume"]
+    # カラム名の確認
+    assert dsi.col_names == ["Open", "High", "Low", "Close", "Volume"]
     # test => get_labeled_dataset()
     lds = dsi.get_labeled_dataset()
     assert isinstance(lds, LabeledDataset)
