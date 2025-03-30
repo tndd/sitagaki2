@@ -1,3 +1,5 @@
+from dataclasses import dataclass
+
 from pandas import DataFrame
 from pandera import Column, DataFrameSchema
 from pandera.api.pandas.types import PandasDtypeInputTypes as PdType
@@ -6,15 +8,14 @@ from sklearn.model_selection import train_test_split
 from infra.model.labeled_dataset import LabeledDataset, LabeledDatasetSplit
 
 
-class FieldDefinition:
+@dataclass
+class Field:
     """
     Dataframeのフィールド定義を管理するクラス
-
-    dict型の定義を受け取り、
+    dict型の定義を受け取り、カラム名やschemaなど柔軟な形式で返す。
     """
 
-    def __init__(self, definition: dict[str, PdType]) -> None:
-        self.definition = definition
+    definition: dict[str, PdType]
 
     @property
     def col_names(self) -> list[str]:
@@ -28,7 +29,7 @@ class FieldDefinition:
         return DataFrameSchema(schema_dict)
 
 
-class DataSchema:
+class Dataset:
     """
     dataframeを扱うための抽象クラス
     スキーマ定義と親の情報を持つ。
@@ -45,7 +46,7 @@ class DataSchema:
     """
 
     SCHEMA: dict[str, PdType]
-    ORIGIN: list["DataSchema"] | None = None
+    ORIGIN: list["Dataset"] | None = None
 
     def __init__(
         self,
@@ -82,7 +83,7 @@ class DataSchema:
 
         """
         # スキーマの定義と検証
-        self.field = FieldDefinition(self.__class__.SCHEMA)
+        self.field = Field(self.__class__.SCHEMA)
         self.field.schema.validate(df)
         # 検証されたDataFrameを受け入れ
         self.df: DataFrame = df

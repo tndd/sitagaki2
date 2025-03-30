@@ -1,10 +1,10 @@
 from pandas import DataFrame
 from pandera import Column, DataFrameSchema
 
-from infra.model.data_schema import DataSchema
+from infra.model.dataset import Dataset
 
 
-class Ohlcv2(DataSchema):
+class Ohlcv2(Dataset):
     SCHEMA_OHLCV = {
         "Open": Column(float),
         "High": Column(float),

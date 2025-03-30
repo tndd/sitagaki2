@@ -1,5 +1,5 @@
 from fixture.infra.model import factory_data_schema_impl
-from infra.model.data_schema import DataSchema
+from infra.model.dataset import Dataset
 from infra.model.labeled_dataset import LabeledDataset, LabeledDatasetSplit
 
 
@@ -9,7 +9,7 @@ def test_data_schema():
         exclude="Volume",
     )
     # インスタンスが作成されてるか
-    assert isinstance(dsi, DataSchema)
+    assert isinstance(dsi, Dataset)
     # インデックスが設定されてるか
     assert dsi.df.index.name == "Date"
     assert dsi.df.index.dtype == "datetime64[ns]"

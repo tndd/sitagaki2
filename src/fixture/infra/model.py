@@ -1,9 +1,9 @@
 from pandas import DataFrame, to_datetime
 
-from infra.model.data_schema import DataSchema
+from infra.model.dataset import Dataset
 
 
-class DataSchemaImpl(DataSchema):
+class DataSchemaImpl(Dataset):
     SCHEMA = {
         "Open": float,
         "High": float,
