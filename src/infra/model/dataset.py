@@ -127,7 +127,10 @@ class Field:
         label: str | list[str] | None = None,
         exclude: str | list[str] | None = None,
     ) -> None:
-        self.definition = definition
+        # indexが指定されている場合、definitionから除外
+        self.definition: dict[str, PdType] = {
+            k: v for k, v in definition.items() if k != index
+        }
         # Index: str | None
         self.index = index
         # Label: list[str]
