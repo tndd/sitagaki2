@@ -18,7 +18,10 @@ class FeatureImpl(Feature):
     }
 
     def __init__(self, dataset: DatasetImpl) -> None:
-        super().__init__(dataset)
+        super().__init__(
+            dataset,
+            label="f0",
+        )
 
     @staticmethod
     def derive_df(df: DataFrame) -> DataFrame:

@@ -14,9 +14,18 @@ class Feature(Dataset):
 
     SCHEMA: dict[str, PdType]
 
-    def __init__(self, dataset: Dataset) -> None:
+    def __init__(
+        self,
+        dataset: Dataset,
+        label: str | list[str] | None = None,
+        exclude: str | list[str] | None = None,
+    ) -> None:
         self.dataset = dataset
-        super().__init__(self.derive_df(dataset.df))
+        super().__init__(
+            self.derive_df(dataset.df),
+            label=label,
+            exclude=exclude,
+        )
 
     @property
     def merge_df(self) -> DataFrame:
