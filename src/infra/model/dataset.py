@@ -46,7 +46,6 @@ class Dataset:
     """
 
     SCHEMA: dict[str, PdType]
-    ORIGIN: list["Dataset"] | None = None
 
     def __init__(
         self,
