@@ -1,5 +1,3 @@
-from pandera import DataFrameSchema
-
 from domain.dataset.ohlcv2 import Ohlcv2
 from fixture.domain.dataset.ohlcv2 import factory_ohlcv2
 
