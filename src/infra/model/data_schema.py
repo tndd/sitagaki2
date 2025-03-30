@@ -102,10 +102,7 @@ class DataSchema:
         """
         DataFrameSchemaを返す
         """
-        schema_dict = {
-            column_name: Column(dtype) for column_name, dtype in cls.SCHEMA.items()
-        }
-        return DataFrameSchema(schema_dict)
+        return dict_to_dataframe_schema(cls.SCHEMA)
 
     def get_labeled_dataset(self) -> LabeledDataset:
         """
@@ -153,3 +150,11 @@ class DataSchema:
             train=LabeledDataset(X=X_train, y=y_train),
             test=LabeledDataset(X=X_test, y=y_test),
         )
+
+
+def dict_to_dataframe_schema(d: dict[str, PdType]) -> DataFrameSchema:
+    """
+    辞書で定義されたスキーマをDataFrameSchemaに変換する。
+    """
+    schema_dict = {column_name: Column(dtype) for column_name, dtype in d.items()}
+    return DataFrameSchema(schema_dict)
