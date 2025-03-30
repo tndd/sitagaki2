@@ -1,7 +1,7 @@
-from fixture.infra.model import DataSchemaImpl, factory_data_schema_impl
+from fixture.infra.model import DatasetImpl, factory_dataset_impl
 
 
-def test_factory_data_schema_impl():
-    dsi: DataSchemaImpl = factory_data_schema_impl()
-    assert isinstance(dsi, DataSchemaImpl)
+def test_factory_dataset():
+    dsi: DatasetImpl = factory_dataset_impl()
+    assert isinstance(dsi, DatasetImpl)
     assert dsi.df.index.name == "Date"

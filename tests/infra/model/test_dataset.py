@@ -1,10 +1,10 @@
-from fixture.infra.model import factory_data_schema_impl
+from fixture.infra.model import factory_dataset_impl
 from infra.model.dataset import Dataset
 from infra.model.tensor import LabeledTensor, SplitLabeledTensor
 
 
 def test_data_schema():
-    dsi = factory_data_schema_impl(
+    dsi = factory_dataset_impl(
         label="Close",
         exclude="Volume",
     )

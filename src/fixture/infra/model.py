@@ -3,7 +3,7 @@ from pandas import DataFrame, to_datetime
 from infra.model.dataset import Dataset
 
 
-class DataSchemaImpl(Dataset):
+class DatasetImpl(Dataset):
     SCHEMA = {
         "Open": float,
         "High": float,
@@ -30,10 +30,10 @@ class DataSchemaImpl(Dataset):
         )
 
 
-def factory_data_schema_impl(
+def factory_dataset_impl(
     label: str | list[str] | None = None,
     exclude: str | list[str] | None = None,
-) -> DataSchemaImpl:
+) -> DatasetImpl:
     df = DataFrame(
         {
             "Date": to_datetime(["2021-01-01", "2021-01-02", "2021-01-03"]),
@@ -44,7 +44,7 @@ def factory_data_schema_impl(
             "Volume": [1000, 2000, 3000],
         }
     )
-    return DataSchemaImpl(
+    return DatasetImpl(
         df=df,
         label=label,
         exclude=exclude,
