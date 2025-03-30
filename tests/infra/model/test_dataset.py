@@ -23,18 +23,36 @@ def test_dataset():
     # test => get_labeled_tensor()
     labeled_tensor = dsi.get_labeled_tensor()
     assert isinstance(labeled_tensor, LabeledTensor)
-    assert labeled_tensor.X.shape == (3, 3)  # CloseとVolumeが除外(3,3)
-    assert labeled_tensor.y.shape == (3,)  # Closeが目的変数に設定(3,)
+    assert labeled_tensor.X.shape == (9, 3)  # CloseとVolumeが除外(9,3)
+    assert labeled_tensor.y.shape == (9,)  # Closeが目的変数に設定(9,)
+    # Open, High, Lowの値が設定されているか
     assert labeled_tensor.X.tolist() == [
-        [101.0, 102.0, 103.0],  # Open
-        [201.0, 202.0, 203.0],  # High
-        [301.0, 302.0, 303.0],  # Low
+        [100.0, 110.0, 90.0],
+        [200.0, 210.0, 190.0],
+        [300.0, 310.0, 290.0],
+        [400.0, 410.0, 390.0],
+        [500.0, 510.0, 490.0],
+        [600.0, 610.0, 590.0],
+        [700.0, 710.0, 690.0],
+        [800.0, 810.0, 790.0],
+        [900.0, 910.0, 890.0],
     ]
-    assert labeled_tensor.y.tolist() == [104.0, 204.0, 304.0]  # Closeが目的変数に設定
+    # Closeが目的変数に設定されているか
+    assert labeled_tensor.y.tolist() == [
+        105.0,
+        205.0,
+        305.0,
+        405.0,
+        505.0,
+        605.0,
+        705.0,
+        805.0,
+        905.0,
+    ]
     # test => get_split_labeled_tensor()
     sl_tensor = dsi.get_split_labeled_tensor()
     assert isinstance(sl_tensor, SplitLabeledTensor)
-    assert sl_tensor.train.X.shape == (2, 3)  # 2つのデータが訓練用に分割される
-    assert sl_tensor.test.X.shape == (1, 3)  # 1つのデータがテスト用に分割される
-    assert sl_tensor.train.y.shape == (2,)  # 2つのデータが訓練用に分割される
-    assert sl_tensor.test.y.shape == (1,)  # 1つのデータがテスト用に分割される
+    assert sl_tensor.train.X.shape == (7, 3)  # 7つのデータが訓練用に分割される
+    assert sl_tensor.test.X.shape == (2, 3)  # 2つのデータがテスト用に分割される
+    assert sl_tensor.train.y.shape == (7,)  # 7つのデータが訓練用に分割される
+    assert sl_tensor.test.y.shape == (2,)  # 2つのデータがテスト用に分割される
