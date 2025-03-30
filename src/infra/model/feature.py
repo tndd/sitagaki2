@@ -31,11 +31,17 @@ class Feature(Dataset):
 
     @property
     def merge_df(self) -> DataFrame:
-        return concat(
-            [self.dataset.df, self.df],
-            axis=1,
-            join="inner",
-        )
+        if not isinstance(self.dataset, list):
+            # 単数のdatasetの場合
+            return concat(
+                [self.dataset.df, self.df],
+                axis=1,
+                join="inner",
+            )
+        else:
+            # 複数のdatasetの場合
+            # TODO: 複数のdatasetを結合する処理を実装する
+            raise NotImplementedError("まだ未実装")
 
     @staticmethod
     def derive_df(dataset: Dataset | list[Dataset]) -> DataFrame:

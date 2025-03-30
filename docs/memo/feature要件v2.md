@@ -10,11 +10,19 @@
 # Todo
 pandasへの適合や、ohlcvとの統合に伴う修正
 
-- [ ] data_schema
-- [ ] ohlcv
-- [ ] feature
-- [ ] closes
-- [ ] ohlcv_ofs
+- [ ] infra
+  - [x] dataset
+  - [ ] feature
+    - [x] dataset単体
+    - [ ] dataset複数
+
+- [ ] domain
+  - [ ] ohlcv
+  - [ ] lag
+  - [ ] ratio
+
+- [ ] other
+  - [ ] 古い実装の削除
 
 # idea
 ## data schemaの場所
