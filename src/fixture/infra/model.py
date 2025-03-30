@@ -1,16 +1,15 @@
 from pandas import DataFrame, to_datetime
-from pandera import Column
 
 from infra.model.data_schema import DataSchema
 
 
 class DataSchemaImpl(DataSchema):
     SCHEMA = {
-        "Open": Column(float),
-        "High": Column(float),
-        "Low": Column(float),
-        "Close": Column(float),
-        "Volume": Column(int),
+        "Open": float,
+        "High": float,
+        "Low": float,
+        "Close": float,
+        "Volume": int,
     }
     ORIGIN = None
 

@@ -1,5 +1,6 @@
 from pandas import DataFrame
 from pandera import Column, DataFrameSchema
+from pandera.api.pandas.types import PandasDtypeInputTypes as PdType
 from sklearn.model_selection import train_test_split
 
 from infra.model.labeled_dataset import LabeledDataset, LabeledDatasetSplit
@@ -15,7 +16,7 @@ class DataSchema:
             indexはスキーマ情報には含めない。
     """
 
-    SCHEMA: dict[str, Column]
+    SCHEMA: dict[str, PdType]
     ORIGIN: list["DataSchema"] | None = None
 
     def __init__(
@@ -101,7 +102,10 @@ class DataSchema:
         """
         DataFrameSchemaを返す
         """
-        return DataFrameSchema(cls.SCHEMA)
+        schema_dict = {
+            column_name: Column(dtype) for column_name, dtype in cls.SCHEMA.items()
+        }
+        return DataFrameSchema(schema_dict)
 
     def get_labeled_dataset(self) -> LabeledDataset:
         """
