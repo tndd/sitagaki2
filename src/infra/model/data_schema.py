@@ -6,14 +6,42 @@ from sklearn.model_selection import train_test_split
 from infra.model.labeled_dataset import LabeledDataset, LabeledDatasetSplit
 
 
+class FieldDefinition:
+    """
+    Dataframeのフィールド定義を管理するクラス
+
+    dict型の定義を受け取り、
+    """
+
+    def __init__(self, definition: dict[str, PdType]) -> None:
+        self.definition = definition
+
+    @property
+    def col_names(self) -> list[str]:
+        return list(self.definition.keys())
+
+    @property
+    def schema(self) -> DataFrameSchema:
+        schema_dict = {
+            column_name: Column(dtype) for column_name, dtype in self.definition.items()
+        }
+        return DataFrameSchema(schema_dict)
+
+
 class DataSchema:
     """
     dataframeを扱うための抽象クラス
     スキーマ定義と親の情報を持つ。
 
+    === クラス変数 ===
     SCHEMA:
         indexについて:
             indexはスキーマ情報には含めない。
+
+    ORIGIN:
+        存在理由:
+            後で親子関係を把握しやすくするため。
+            現状では使用場面はない。
     """
 
     SCHEMA: dict[str, PdType]
@@ -31,7 +59,10 @@ class DataSchema:
             df: DataFrame
                 dataframeはここに格納される。
 
-        === Optional ===
+        Self:
+            field: FieldDefinition
+                フィールド定義を管理する。
+
             index: str | None
                 インデックス名を指定する。
                 インデックスがない場合は、Noneを指定する。
@@ -44,24 +75,15 @@ class DataSchema:
                 特徴量としては含めない項目を指定する。
                 想定としては、Dateのような日付データなど。
 
-        === クラス変数の焼き直し ===
-            schema: dict[str, Column]
-                スキーマを定義する。
-
-            col_names: list[str]
-                カラム名のリストを取得する。
-
         注意:
             labelとexcludeの入力型:
                 入力の段階では、str, list, Noneの3つを取り得るが、
                 内部的には一貫的にlistとして扱う。
 
         """
-        # cls変数の代入
-        self.schema: DataFrameSchema = self.__class__.get_df_schema()
-        self.col_names: list[str] = self.__class__.get_col_names()
         # スキーマの定義と検証
-        self.schema.validate(df)
+        self.field = FieldDefinition(self.__class__.SCHEMA)
+        self.field.schema.validate(df)
         # 検証されたDataFrameを受け入れ
         self.df: DataFrame = df
         # Index
@@ -89,20 +111,6 @@ class DataSchema:
             self.exclude = exclude
         else:
             raise TypeError(f"不正なexclude => {exclude}")
-
-    @classmethod
-    def get_col_names(cls) -> list[str]:
-        """
-        カラム名のリストを取得する
-        """
-        return list(cls.SCHEMA.keys())
-
-    @classmethod
-    def get_df_schema(cls) -> DataFrameSchema:
-        """
-        DataFrameSchemaを返す
-        """
-        return dict_to_dataframe_schema(cls.SCHEMA)
 
     def get_labeled_dataset(self) -> LabeledDataset:
         """
@@ -150,11 +158,3 @@ class DataSchema:
             train=LabeledDataset(X=X_train, y=y_train),
             test=LabeledDataset(X=X_test, y=y_test),
         )
-
-
-def dict_to_dataframe_schema(d: dict[str, PdType]) -> DataFrameSchema:
-    """
-    辞書で定義されたスキーマをDataFrameSchemaに変換する。
-    """
-    schema_dict = {column_name: Column(dtype) for column_name, dtype in d.items()}
-    return DataFrameSchema(schema_dict)

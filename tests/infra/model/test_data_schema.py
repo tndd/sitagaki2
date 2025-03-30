@@ -13,13 +13,13 @@ def test_data_schema():
     # インデックスが設定されてるか
     assert dsi.df.index.name == "Date"
     assert dsi.df.index.dtype == "datetime64[ns]"
-    # スキーマ検証の実行
-    assert not dsi.schema.validate(dsi.df).empty
+    # スキーマ検証の実行 (DataSchema内部で検証はされてるが、念のため)
+    assert not dsi.field.schema.validate(dsi.df).empty
     # labelとexcludeがlistとして変換され設定されてるか
     assert dsi.label == ["Close"]
     assert dsi.exclude == ["Volume"]
     # カラム名の確認
-    assert dsi.col_names == ["Open", "High", "Low", "Close", "Volume"]
+    assert dsi.field.col_names == ["Open", "High", "Low", "Close", "Volume"]
     # test => get_labeled_dataset()
     lds = dsi.get_labeled_dataset()
     assert isinstance(lds, LabeledDataset)
