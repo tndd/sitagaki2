@@ -11,7 +11,6 @@ class DatasetImpl(Dataset):
         "Close": float,
         "Volume": int,
     }
-    ORIGIN = None
 
     def __init__(
         self,
