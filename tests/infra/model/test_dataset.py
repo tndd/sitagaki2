@@ -16,8 +16,8 @@ def test_dataset():
     # スキーマ検証の実行 (DataSchema内部で検証はされてるが、念のため)
     assert not dsi.field.schema.validate(dsi.df).empty
     # labelとexcludeがlistとして変換され設定されてるか
-    assert dsi.label == ["Close"]
-    assert dsi.exclude == ["Volume"]
+    assert dsi.field.label == ["Close"]
+    assert dsi.field.exclude == ["Volume"]
     # カラム名の確認
     assert dsi.field.col_names == ["Open", "High", "Low", "Close", "Volume"]
     # test => get_labeled_tensor()
