@@ -11,9 +11,17 @@ class Dataset:
     dataframeを扱うための抽象クラス
     スキーマ定義と親の情報を持つ。
 
-    SCHEMA:
-        フィールド定義を管理する。
-        indexはスキーマ情報には含めない。
+    Properties:
+        df: DataFrame
+            dataframeはここに格納される。
+
+        field: Field
+            フィールド定義を管理する。
+
+    ClassProperties:
+        SCHEMA: dict[str, PdType]
+            フィールド定義を管理する。
+            indexはスキーマ情報には含めない。
     """
 
     SCHEMA: dict[str, PdType]
@@ -26,29 +34,9 @@ class Dataset:
         exclude: str | list[str] | None = None,
     ) -> None:
         """
-        Args:
-            df: DataFrame
-                dataframeはここに格納される。
-
-            index: str | None
-                インデックス名を指定する。
-                インデックスがない場合は、Noneを指定する。
-
-            label: list[str] | str | None
-                教師データのラベル名を指定する。
-                ラベルがない場合は、何も入れない。
-
-            exclude: list[str] | str | None
-                特徴量としては含めない項目を指定する。
-                想定としては、Dateのような日付データなど。
-
-        Self:
-            field: FieldDefinition
-                フィールド定義を管理する。
-
         注意: labelとexcludeの入力型について
             入力の段階では、str, list, Noneの3つを取り得るが、
-            内部的には一貫的にlistとして扱う。
+            内部的(Fieldクラス)は一貫してlistとして扱う。
         """
         # スキーマの定義と検証
         self.field = Field(
@@ -120,8 +108,16 @@ class Field:
 
     Properties:
         index: str | None
+            インデックス名を指定する。
+            インデックスがない場合は、Noneを指定する。
+
         label: list[str]
+            教師データの名前を指定する。
+            基本的には単数だが、複数指定にも対応。
+
         exclude: list[str]
+            特徴量としては含めない項目を指定する。
+            想定としては、Dateのような日付データなど。
     """
 
     def __init__(
