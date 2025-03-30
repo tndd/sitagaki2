@@ -11,7 +11,7 @@ class FeatureImpl(Feature):
     """
 
     SCHEMA = {
-        "Date": "INDEX",
+        "Date": "INDEX:datetime",
         "f0": float,
         "f1": float,
         "f2": float,
