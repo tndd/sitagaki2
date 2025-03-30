@@ -13,16 +13,16 @@ class Feature(Dataset):
     """
 
     SCHEMA: dict[str, PdType]
-    BASE: Dataset
+    DATASET: Dataset
 
     def __init__(self, df: DataFrame) -> None:
         super().__init__(df)
-        self.base = self.__class__.BASE
+        self.dataset = self.__class__.DATASET
 
     @property
     def merge_df(self) -> DataFrame:
         return concat(
-            [self.base.df, self.df],
+            [self.dataset.df, self.df],
             axis=1,
             join="inner",
         )
