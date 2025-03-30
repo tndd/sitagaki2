@@ -1,4 +1,4 @@
-from fixture.infra.model import DatasetImpl, factory_dataset_impl
+from fixture.infra.model.dataset import DatasetImpl, factory_dataset_impl
 
 
 def test_factory_dataset():

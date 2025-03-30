@@ -1,4 +1,4 @@
-from fixture.infra.model import factory_dataset_impl
+from fixture.infra.model.dataset import factory_dataset_impl
 from infra.model.dataset import Dataset
 from infra.model.tensor import LabeledTensor, SplitLabeledTensor
 
