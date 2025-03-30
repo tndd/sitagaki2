@@ -6,6 +6,11 @@ def test_factory_dataset_impl():
     dsi: DatasetImpl = factory_dataset_impl()
     assert isinstance(dsi, DatasetImpl)
     assert dsi.df.index.name == "Date"
+    assert dsi.field.col_names == ["Open", "High", "Low", "Close", "Volume"]
+    assert dsi.label == []
+    assert dsi.exclude == []
+    # スキーマの検証
+    dsi.field.schema.validate(dsi.df)
 
 
 def test_factory_feature_impl():
