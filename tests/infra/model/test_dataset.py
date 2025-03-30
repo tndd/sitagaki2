@@ -18,7 +18,7 @@ def test_dataset():
     # labelとexcludeがlistとして変換され設定されてるか
     assert dsi.field.label == ["Close"]
     assert dsi.field.exclude == ["Volume"]
-    # カラム名の確認
+    # カラム名の確認(index=>Dateは除外されている)
     assert dsi.field.col_names == ["Open", "High", "Low", "Close", "Volume"]
     # test => get_labeled_tensor()
     labeled_tensor = dsi.get_labeled_tensor()

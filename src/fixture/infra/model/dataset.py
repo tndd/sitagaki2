@@ -5,6 +5,7 @@ from infra.model.dataset import Dataset
 
 class DatasetImpl(Dataset):
     SCHEMA = {
+        "Date": "INDEX",
         "Open": float,
         "High": float,
         "Low": float,

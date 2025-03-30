@@ -11,6 +11,7 @@ class FeatureImpl(Feature):
     """
 
     SCHEMA = {
+        "Date": "INDEX",
         "f0": float,
         "f1": float,
         "f2": float,
@@ -21,6 +22,7 @@ class FeatureImpl(Feature):
     def __init__(self, dataset: DatasetImpl) -> None:
         super().__init__(
             dataset,
+            index="Date",
             label="f0",
         )
 
