@@ -1,6 +1,7 @@
 from pandas import DataFrame
 
 from fixture.infra.model.dataset import DatasetImpl, factory_dataset_impl
+from infra.model.dataset import Dataset
 from infra.model.feature import Feature
 
 
@@ -24,7 +25,7 @@ class FeatureImpl(Feature):
         )
 
     @staticmethod
-    def derive_df(df: DataFrame) -> DataFrame:
+    def derive_df(dataset: Dataset) -> DataFrame:
         """
         渡されたdfのインデックスを保持し、
         SCHEMAに基づいて連続した値を持つdfを生成する。
@@ -40,10 +41,10 @@ class FeatureImpl(Feature):
         └───────┴─────┴─────┴─────┴─────┴─────┘
         """
         data = {
-            col: [0.1 + i + 0.1 * j for j in range(len(df.index))]
+            col: [0.1 + i + 0.1 * j for j in range(len(dataset.df.index))]
             for i, col in enumerate(FeatureImpl.SCHEMA.keys())
         }
-        return DataFrame(data, index=df.index)
+        return DataFrame(data, index=dataset.df.index)
 
 
 def factory_feature_impl() -> FeatureImpl:

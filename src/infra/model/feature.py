@@ -16,13 +16,15 @@ class Feature(Dataset):
 
     def __init__(
         self,
-        dataset: Dataset,
+        dataset: Dataset | list[Dataset],
+        index: str | None = None,
         label: str | list[str] | None = None,
         exclude: str | list[str] | None = None,
     ) -> None:
         self.dataset = dataset
         super().__init__(
-            self.derive_df(dataset.df),
+            self.derive_df(dataset),
+            index=index,
             label=label,
             exclude=exclude,
         )
@@ -36,9 +38,9 @@ class Feature(Dataset):
         )
 
     @staticmethod
-    def derive_df(df: DataFrame) -> DataFrame:
+    def derive_df(dataset: Dataset | list[Dataset]) -> DataFrame:
         """
         データセットから特徴量を生成する抽象クラス。
-        initにて渡されたdfから特徴量を生成する。
+        単数か複数のdatasetから、featureのdataframeを組み上げる。
         """
         raise NotImplementedError("feature/derive_df is not implemented.")
