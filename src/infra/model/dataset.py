@@ -6,58 +6,6 @@ from sklearn.model_selection import train_test_split
 from infra.model.tensor import LabeledTensor, SplitLabeledTensor
 
 
-class Field:
-    """
-    Dataframeのフィールド定義を管理するクラス
-    dict型の定義を受け取り、カラム名やschemaなど柔軟な形式で返す。
-
-    Properties:
-        index: str | None
-        label: list[str]
-        exclude: list[str]
-    """
-
-    def __init__(
-        self,
-        definition: dict[str, PdType],
-        index: str | None = None,
-        label: str | list[str] | None = None,
-        exclude: str | list[str] | None = None,
-    ) -> None:
-        self.definition = definition
-        # Index: str | None
-        self.index = index
-        # Label: list[str]
-        if label is None:
-            self.label = []
-        elif isinstance(label, str):
-            self.label = [label]
-        elif isinstance(label, list):
-            self.label = label
-        else:
-            raise TypeError(f"不正なlabel => {label}")
-        # Exclude: list[str]
-        if exclude is None:
-            self.exclude = []
-        elif isinstance(exclude, str):
-            self.exclude = [exclude]
-        elif isinstance(exclude, list):
-            self.exclude = exclude
-        else:
-            raise TypeError(f"不正なexclude => {exclude}")
-
-    @property
-    def col_names(self) -> list[str]:
-        return list(self.definition.keys())
-
-    @property
-    def schema(self) -> DataFrameSchema:
-        schema_dict = {
-            column_name: Column(dtype) for column_name, dtype in self.definition.items()
-        }
-        return DataFrameSchema(schema_dict)
-
-
 class Dataset:
     """
     dataframeを扱うための抽象クラス
@@ -163,3 +111,55 @@ class Dataset:
             train=LabeledTensor(X=X_train, y=y_train),
             test=LabeledTensor(X=X_test, y=y_test),
         )
+
+
+class Field:
+    """
+    Dataframeのフィールド定義を管理するクラス
+    dict型の定義を受け取り、カラム名やschemaなど柔軟な形式で返す。
+
+    Properties:
+        index: str | None
+        label: list[str]
+        exclude: list[str]
+    """
+
+    def __init__(
+        self,
+        definition: dict[str, PdType],
+        index: str | None = None,
+        label: str | list[str] | None = None,
+        exclude: str | list[str] | None = None,
+    ) -> None:
+        self.definition = definition
+        # Index: str | None
+        self.index = index
+        # Label: list[str]
+        if label is None:
+            self.label = []
+        elif isinstance(label, str):
+            self.label = [label]
+        elif isinstance(label, list):
+            self.label = label
+        else:
+            raise TypeError(f"不正なlabel => {label}")
+        # Exclude: list[str]
+        if exclude is None:
+            self.exclude = []
+        elif isinstance(exclude, str):
+            self.exclude = [exclude]
+        elif isinstance(exclude, list):
+            self.exclude = exclude
+        else:
+            raise TypeError(f"不正なexclude => {exclude}")
+
+    @property
+    def col_names(self) -> list[str]:
+        return list(self.definition.keys())
+
+    @property
+    def schema(self) -> DataFrameSchema:
+        schema_dict = {
+            column_name: Column(dtype) for column_name, dtype in self.definition.items()
+        }
+        return DataFrameSchema(schema_dict)
