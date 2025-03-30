@@ -3,7 +3,7 @@ from infra.model.dataset import Dataset
 from infra.model.tensor import LabeledTensor, SplitLabeledTensor
 
 
-def test_data_schema():
+def test_dataset():
     dsi = factory_dataset_impl(
         label="Close",
         exclude="Volume",
