@@ -34,15 +34,10 @@ class Dataset:
     dataframeを扱うための抽象クラス
     スキーマ定義と親の情報を持つ。
 
-    === クラス変数 ===
     SCHEMA:
-        indexについて:
-            indexはスキーマ情報には含めない。
+        フィールド定義を管理する。
+        indexはスキーマ情報には含めない。
 
-    ORIGIN:
-        存在理由:
-            後で親子関係を把握しやすくするため。
-            現状では使用場面はない。
     """
 
     SCHEMA: dict[str, PdType]
