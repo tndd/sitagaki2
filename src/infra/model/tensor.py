@@ -5,7 +5,7 @@ from numpy import ndarray
 
 
 @dataclass
-class LabeledDataset:
+class LabeledTensor:
     """
     教師ありデータセットのフォーマット
     (Supervised)
@@ -28,14 +28,14 @@ class LabeledDataset:
 
 
 @dataclass
-class LabeledDatasetSplit:
+class SplitLabeledTensor:
     """
     訓練と検証のために分割された、
     教師ありデータセットのフォーマット
     """
 
-    train: LabeledDataset
-    test: LabeledDataset
+    train: LabeledTensor
+    test: LabeledTensor
 
     def get_lgb_train_test(self) -> tuple[Dataset, Dataset]:
         lgb_train = self.train.to_lgb()

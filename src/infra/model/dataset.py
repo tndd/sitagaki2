@@ -5,7 +5,7 @@ from pandera import Column, DataFrameSchema
 from pandera.api.pandas.types import PandasDtypeInputTypes as PdType
 from sklearn.model_selection import train_test_split
 
-from infra.model.labeled_dataset import LabeledDataset, LabeledDatasetSplit
+from infra.model.tensor import LabeledTensor, SplitLabeledTensor
 
 
 @dataclass
@@ -113,18 +113,16 @@ class Dataset:
         else:
             raise TypeError(f"不正なexclude => {exclude}")
 
-    def get_labeled_dataset(self) -> LabeledDataset:
+    def get_labeled_tensor(self) -> LabeledTensor:
         """
-        指定されたlabelを教師データカラムに。
-        そしてその他のカラムを学習データとして、
-        教師あり学習トレーニング用のDatasetSVに加工して返す。
+        教師ありデータのtensorに変換して返す
         """
         if len(self.label) == 0:
             # labels未定義状態で、この関数を呼んだ場合はエラーで落とす
             raise ValueError("There is no label in this schema.")
         elif len(self.label) == 1:
             # ラベルが１次元の場合
-            return LabeledDataset(
+            return LabeledTensor(
                 X=self.df.drop(columns=self.label + self.exclude).to_numpy(),
                 y=self.df[self.label]
                 .to_numpy()
@@ -134,19 +132,20 @@ class Dataset:
             # 多次元ラベルの場合
             raise ValueError("WIP: Labelが複数の場合の動作は未定義")
 
-    def get_labeled_dataset_split(
+    def get_split_labeled_tensor(
         self,
         test_size: int = 0.2,
         shuffle: bool = False,
         random_state: int = 42,
-    ) -> LabeledDatasetSplit:
+    ) -> SplitLabeledTensor:
         """
-        訓練用とテスト用にデータが分割されたDatasetSvを返す
+        訓練用とテスト用にデータが分割された、
+        教師ありデータのtensorを返す
 
-        原則的には時系列を考慮し、シャッフルはしない。
         テストサイズは20%。
+        時系列データが渡されることを考慮し、デフォルトではシャッフルはしない。
         """
-        dssv = self.get_labeled_dataset()
+        dssv = self.get_labeled_tensor()
         # 時系列を考慮したデータ分割
         X_train, X_test, y_train, y_test = train_test_split(
             dssv.X,
@@ -155,7 +154,7 @@ class Dataset:
             shuffle=shuffle,
             random_state=random_state,
         )
-        return LabeledDatasetSplit(
-            train=LabeledDataset(X=X_train, y=y_train),
-            test=LabeledDataset(X=X_test, y=y_test),
+        return SplitLabeledTensor(
+            train=LabeledTensor(X=X_train, y=y_train),
+            test=LabeledTensor(X=X_test, y=y_test),
         )

@@ -1,4 +1,4 @@
-from infra.model.labeled_dataset import LabeledDataset, LabeledDatasetSplit
+from infra.model.tensor import LabeledTensor
 
 
 def test_labeled_dataset():
