@@ -65,4 +65,39 @@
         "folderPathColor.custom1": "#ffe1a8",
         "folderPathColor.custom2": "#b7d2ff",
     },
+    "todo-tree.general.tags": [
+        "BUG",
+        "HACK",
+        "FIXME",
+        "TODO",
+        "XXX",
+        "[ ]",
+        "WARN",
+        "NOTE",
+        "WARN"
+    ],
+    "todo-tree.filtering.excludeGlobs": [
+        ".venv/**",
+        "**/docs/archive/**",
+    ],
+    "todo-tree.highlights.customHighlight": {
+        "BUG": {
+            "icon": "bug"
+        },
+        "HACK": {
+            "icon": "tools"
+        },
+        "FIXME": {
+            "icon": "flame"
+        },
+        "XXX": {
+            "icon": "x"
+        },
+        "[ ]": {
+            "icon": "issue-draft"
+        },
+        "[x]": {
+            "icon": "issue-closed"
+        }
+    },
 }

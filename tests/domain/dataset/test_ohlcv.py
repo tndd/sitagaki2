@@ -1,14 +1,10 @@
-from domain.dataset.ohlcv.repository import read_df_aapl
-from domain.dataset.ohlcv.schema import Ohlcv
+from domain.dataset.ohlcv import Ohlcv
+from fixture.domain.dataset.ohlcv import factory_ohlcv
 
 
-def test_read_df_aapl():
-    ohlcv = read_df_aapl()
-    # OHLCVであること(Polars dataframe)
+def test_factory_ohlcv():
+    ohlcv = factory_ohlcv()
     assert isinstance(ohlcv, Ohlcv)
-    # データが空でない
-    assert len(ohlcv.df) > 0
-    # スキーマの完全一致チェック
-    assert ohlcv.df.schema == Ohlcv.SCHEMA
-    # Dateが日付順にソートされていること"
-    assert ohlcv.df["Date"].is_sorted()
+    assert ohlcv.df.index.name == "Date"
+    assert ohlcv.df.index.dtype == "datetime64[ns]"
+    assert ohlcv.field.col_names == ["Open", "High", "Low", "Close", "Volume"]

@@ -1,9 +1,9 @@
 from lightgbm import Booster, early_stopping, train
 
-from domain.feature.closes.schema import ClosesN4
+from domain.feature.lag import LagCloses10
 
 
-def train_model_lgbm_closes_n4(dataset: ClosesN4) -> Booster:
+def train_model_lgbm_lag_closes10(dataset: LagCloses10) -> Booster:
     params = {
         "objective": "regression",  #   #  例: 'binary', 'multiclass'
         "metric": "rmse",  #            #  評価指標（例: 'auc', 'logloss'）
@@ -15,8 +15,8 @@ def train_model_lgbm_closes_n4(dataset: ClosesN4) -> Booster:
         "bagging_freq": 5,  #           #  バギングの頻度
         "verbose": -1,  #               #  ログを非表示
     }
-    lds = dataset.get_labeled_dataset_split()
-    lgb_train, lgb_test = lds.get_lgb_train_test()
+    slt = dataset.get_split_labeled_tensor()
+    lgb_train, lgb_test = slt.get_lgb_train_test()
     return train(
         params,
         lgb_train,
