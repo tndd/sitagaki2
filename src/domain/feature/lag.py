@@ -1,3 +1,4 @@
+from numpy import log
 from pandas import DataFrame
 
 from domain.dataset.ohlcv2 import Ohlcv2
@@ -35,21 +36,24 @@ class LagCloses10(OhlcvFeature):
 
     def derive_df_lag_closes10(self, ohlcv: Ohlcv2) -> DataFrame:
         """
-        10日分の終値の変化率の特徴量を生成する。
+        10日分の終値の対数差分の特徴量を生成する。
+        各カラムは、n日前とn+1日前の終値の対数差分（log(Close_{t-n} / Close_{t-n-1})）を表す。
+        l0は今日と昨日、l1は昨日と一昨日、という形で日次リターンを表現する。
         欠損値を含む行は削除する。
-
-        # TODO: 対数比を使用する
         """
         df = ohlcv.df.copy()  # コピーを作成して元データを変更しないようにする
-        df["l0"] = df["Close"]
-        df["l1"] = df["Close"].shift(1)
-        df["l2"] = df["Close"].shift(2)
-        df["l3"] = df["Close"].shift(3)
-        df["l4"] = df["Close"].shift(4)
-        df["l5"] = df["Close"].shift(5)
-        df["l6"] = df["Close"].shift(6)
-        df["l7"] = df["Close"].shift(7)
-        df["l8"] = df["Close"].shift(8)
-        df["l9"] = df["Close"].shift(9)
-        df["l10"] = df["Close"].shift(10)
+        close = df["Close"]
+
+        # 対数差分での変化率（日次リターン）を計算
+        df["l0"] = log(close / close.shift(1))  # 今日と昨日
+        df["l1"] = log(close.shift(1) / close.shift(2))  # 昨日と一昨日
+        df["l2"] = log(close.shift(2) / close.shift(3))
+        df["l3"] = log(close.shift(3) / close.shift(4))
+        df["l4"] = log(close.shift(4) / close.shift(5))
+        df["l5"] = log(close.shift(5) / close.shift(6))
+        df["l6"] = log(close.shift(6) / close.shift(7))
+        df["l7"] = log(close.shift(7) / close.shift(8))
+        df["l8"] = log(close.shift(8) / close.shift(9))
+        df["l9"] = log(close.shift(9) / close.shift(10))
+        df["l10"] = log(close.shift(10) / close.shift(11))
         return df.dropna()  # 欠損値を含む行を削除して返す
