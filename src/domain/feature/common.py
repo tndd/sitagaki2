@@ -1,7 +1,7 @@
 from pandas import DataFrame, concat
 from pandera.api.pandas.types import PandasDtypeInputTypes as PdType
 
-from domain.dataset.ohlcv2 import Ohlcv2
+from domain.dataset.ohlcv import Ohlcv2
 from infra.model.dataset import Dataset
 
 SCALE_BP = 10000

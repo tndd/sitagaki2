@@ -1,7 +1,7 @@
 from numpy import log
 from pandas import DataFrame
 
-from domain.dataset.ohlcv2 import Ohlcv2
+from domain.dataset.ohlcv import Ohlcv2
 from domain.feature.common import OhlcvFeature
 
 

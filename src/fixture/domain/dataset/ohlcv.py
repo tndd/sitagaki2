@@ -2,151 +2,104 @@ from datetime import datetime, timedelta
 
 import numpy as np
 import pandas as pd
-import polars as pl
+from pandas import DataFrame, to_datetime
 
-from domain.dataset.ohlcv import Ohlcv
+from domain.dataset.ohlcv import Ohlcv2
 
 
-def factory_ohlcv() -> Ohlcv:
+def factory_ohlcv2() -> Ohlcv2:
+    df = DataFrame(
+        {
+            "Date": to_datetime(
+                [
+                    "2021-01-01",
+                    "2021-01-02",
+                    "2021-01-03",
+                    "2021-01-04",
+                    "2021-01-05",
+                    "2021-01-06",
+                    "2021-01-07",
+                    "2021-01-08",
+                    "2021-01-09",
+                ]
+            ),
+            "Open": [100.0, 200.0, 300.0, 400.0, 500.0, 600.0, 700.0, 800.0, 900.0],
+            "High": [110.0, 210.0, 310.0, 410.0, 510.0, 610.0, 710.0, 810.0, 910.0],
+            "Low": [90.0, 190.0, 290.0, 390.0, 490.0, 590.0, 690.0, 790.0, 890.0],
+            "Close": [105.0, 205.0, 305.0, 405.0, 505.0, 605.0, 705.0, 805.0, 905.0],
+            "Volume": [1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000],
+        }
+    )
+    return Ohlcv2(df)
+
+
+def factory_ohlcv2_random_walk(n: int = 1000) -> Ohlcv2:
     """
-    Open:   100ずつ増える。ただし最後は101.0でCloseと同じ値
-    High:   Openを基準に5%ずつ日毎に上昇幅が上昇
-    Low:    Openを基準に5%ずつ日毎に下落幅が下落
-    Close:  Openを基準に日毎に1%ずつ上昇幅が上昇。ただし最後はOpenと同じ価格となる
-    Volume: 1000から日毎に100ずつ上昇。ただし最終日は初めと同じ値
+    デフォルトで1000件のデータを生成する(nで設定)
+
+    OHLCVデータとして辻褄が合うように以下の条件を満たす:
+    - High >= Open, Close, Low
+    - Low <= Open, Close, High
+    - 日付は連続する (取引日として週末を除く)
+    - 価格変動は現実的な範囲内
     """
-    return Ohlcv(
-        pl.DataFrame(
+    # 初期価格と日付を設定
+    base_price = 100.0
+    start_date = datetime(2020, 1, 1)
+
+    # 日付配列を生成（週末を除く営業日1000日分）
+    dates = []
+    current_date = start_date
+    while len(dates) < n:
+        # 土日を除外 (5: 土曜, 6: 日曜)
+        if current_date.weekday() < 5:
+            dates.append(current_date)
+        current_date += timedelta(days=1)
+
+    # 価格変動のシミュレーション
+    np.random.seed(42)  # 再現性のためにシード値を設定
+
+    # ランダムウォークで価格を生成
+    returns = np.random.normal(
+        0.0005, 0.015, n
+    )  # 平均リターン0.05%、ボラティリティ1.5%
+    price_multipliers = np.exp(np.cumsum(returns))
+    base_prices = base_price * price_multipliers
+
+    # データフレームを作成
+    data = []
+    for i, date in enumerate(dates):
+        # その日の基本価格
+        price = base_prices[i]
+
+        # その日のボラティリティ（価格帯の幅）
+        volatility = price * np.random.uniform(0.01, 0.03)  # 1〜3%のボラティリティ
+
+        # 始値・終値の生成
+        open_price = price * np.random.uniform(0.99, 1.01)
+        close_price = price * np.random.uniform(0.99, 1.01)
+
+        # 高値・安値の生成（辻褄が合うように）
+        high_price = max(open_price, close_price) + volatility * np.random.uniform(0, 1)
+        low_price = min(open_price, close_price) - volatility * np.random.uniform(0, 1)
+
+        # 出来高の生成（価格変動に応じて増減するように）
+        price_change_ratio = abs((close_price / open_price) - 1)
+        volume = int(np.random.normal(1000000, 500000) * (1 + price_change_ratio * 10))
+        volume = max(100000, volume)  # 最低出来高を設定
+
+        data.append(
             {
-                "Date": [datetime(2000, 1, d) for d in range(1, 5)],
-                "Open": [100.0, 200.0, 300.0, 101.0],
-                "High": [105.0, 210.0, 345.0, 120.0],
-                "Low": [95.0, 190.0, 255.0, 80.0],
-                "Close": [101.0, 204.0, 309.0, 101.0],
-                "Volume": [1000, 1100, 1200, 1000],
-            }
-        )
-    )
-
-
-def factory_ohlcv_1000() -> Ohlcv:
-    """
-    固定の1000件のOHLCVデータを生成する
-
-    > head()
-    ┌─────────────────────┬─────────┬─────────┬─────────┬─────────┬────────┐
-    │ Date                ┆ Open    ┆ High    ┆ Low     ┆ Close   ┆ Volume │
-    │ ---                 ┆ ---     ┆ ---     ┆ ---     ┆ ---     ┆ ---    │
-    │ datetime[ns]        ┆ f64     ┆ f64     ┆ f64     ┆ f64     ┆ i64    │
-    ╞═════════════════════╪═════════╪═════════╪═════════╪═════════╪════════╡
-    │ 2023-01-01 00:00:00 ┆ 137.454 ┆ 139.305 ┆ 134.837 ┆ 139.181 ┆ 5713   │
-    │ 2023-01-02 00:00:00 ┆ 195.071 ┆ 200.49  ┆ 192.601 ┆ 198.038 ┆ 4092   │
-    │ 2023-01-03 00:00:00 ┆ 173.199 ┆ 181.928 ┆ 164.136 ┆ 170.704 ┆ 5159   │
-    │ 2023-01-04 00:00:00 ┆ 159.866 ┆ 167.188 ┆ 157.371 ┆ 161.115 ┆ 7308   │
-    │ 2023-01-05 00:00:00 ┆ 115.602 ┆ 123.668 ┆ 112.883 ┆ 116.319 ┆ 8478   │
-    └─────────────────────┴─────────┴─────────┴─────────┴─────────┴────────┘
-    """
-    N_DECIMAL = 3
-    # 再現性のためにシードを固定
-    np.random.seed(42)
-    # ohlcvの部品
-    dates = pd.date_range(
-        start="2023-01-01",
-        periods=1000,
-        freq="D",
-    ).astype("datetime64[us]")  # pd.date_rangeはデフォルトではnsに変換してしまう
-    open_prices = np.round(np.random.uniform(100, 200, size=1000), N_DECIMAL)
-    high_prices = np.round(open_prices + np.random.uniform(0, 10, size=1000), N_DECIMAL)
-    low_prices = np.round(open_prices - np.random.uniform(0, 10, size=1000), N_DECIMAL)
-    close_prices = np.round(
-        open_prices + np.random.uniform(-5, 5, size=1000), N_DECIMAL
-    )
-    volumes = np.random.randint(1000, 10000, size=1000)
-
-    return Ohlcv(
-        pl.DataFrame(
-            {
-                "Date": dates,
-                "Open": open_prices,
-                "High": high_prices,
-                "Low": low_prices,
-                "Close": close_prices,
-                "Volume": volumes,
-            }
-        )
-    )
-
-
-def factory_ohlcv_cycle(start_date="2000-01-01", length=100) -> Ohlcv:
-    # 基本の価格パターン（階段状に上昇）
-    base_prices = np.concatenate(
-        [np.linspace(100, 105, 30), np.linspace(105, 95, 40), np.linspace(95, 110, 30)]
-    )
-    dates = [
-        datetime.strptime(start_date, "%Y-%m-%d") + timedelta(days=i)
-        for i in range(length)
-    ]
-    ohlc_data = []
-    prev_close = 100.0
-    for i in range(length):
-        # 5日周期でパターン変化
-        cycle = i % 5
-        if cycle == 0:
-            open_price = prev_close * 1.01
-        elif cycle == 3:
-            open_price = prev_close * 0.99
-        else:
-            open_price = prev_close
-        close_price = base_prices[i] + np.random.normal(0, 0.5)
-        high = max(open_price, close_price) + abs(np.random.normal(0.2, 0.1))
-        low = min(open_price, close_price) - abs(np.random.normal(0.2, 0.1))
-        volume = int(np.random.uniform(10000, 50000))
-        ohlc_data.append(
-            {
-                "Date": dates[i],
+                "Date": date,
                 "Open": round(open_price, 2),
-                "High": round(high, 2),
-                "Low": round(low, 2),
+                "High": round(high_price, 2),
+                "Low": round(low_price, 2),
                 "Close": round(close_price, 2),
                 "Volume": volume,
             }
         )
-        prev_close = close_price
-    return Ohlcv(pl.DataFrame(ohlc_data))
 
+    # DataFrameを作成
+    df = pd.DataFrame(data)
 
-def factory_ohlcv_brown(num_rows: int = 10_0000) -> Ohlcv:
-    """ランダムなOHLCVデータを生成する関数"""
-
-    # ベース日時の生成（1分足を想定）
-    start_date = pl.datetime(2000, 1, 1)  # ←引数を個別に指定
-    base_date = pl.datetime_range(
-        start=start_date,
-        end=start_date + pl.duration(minutes=num_rows - 1),
-        interval="1m",
-        eager=True,
-    ).alias("Date")
-
-    # ランダムな価格変動（幾何ブラウン運動を模倣）
-    returns = np.random.normal(0, 0.0001, num_rows)
-    close_prices = 100.0 * np.exp(np.cumsum(returns))
-
-    return Ohlcv(
-        pl.DataFrame(
-            {
-                "Date": base_date,
-                "Open": close_prices * np.random.uniform(0.99, 1.01, num_rows),
-                "High": close_prices * np.random.uniform(1.0, 1.02, num_rows),
-                "Low": close_prices * np.random.uniform(0.98, 1.0, num_rows),
-                "Close": close_prices,
-                "Volume": np.random.normal(1_000_000, 100_000, num_rows).astype(
-                    np.int64
-                ),
-            }
-        ).cast(Ohlcv.SCHEMA)
-    )
-
-
-if __name__ == "__main__":
-    ohlcv = factory_ohlcv()
-    print(ohlcv.df)
+    return Ohlcv2(df)
