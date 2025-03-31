@@ -37,6 +37,8 @@ class LagCloses10(OhlcvFeature):
         """
         10日分の終値の変化率の特徴量を生成する。
         欠損値を含む行は削除する。
+
+        # TODO: 対数比を使用する
         """
         df = ohlcv.df.copy()  # コピーを作成して元データを変更しないようにする
         df["l0"] = df["Close"]
