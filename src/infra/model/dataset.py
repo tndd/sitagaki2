@@ -48,8 +48,8 @@ class Dataset:
         self.field.schema.validate(df)
         # 検証されたDataFrameを受け入れ
         self.df: DataFrame = df
-        # Indexがあるなら設定
-        if isinstance(index, str):
+        # 指定のインデックスが指定されてなければ、indexを設定する
+        if isinstance(index, str) and self.df.index.name != index:
             self.df = self.df.set_index(index)
 
     def get_labeled_tensor(self) -> LabeledTensor:

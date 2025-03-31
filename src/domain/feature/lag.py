@@ -10,6 +10,7 @@ class LagCloses10(OhlcvFeature):
     """
 
     SCHEMA = {
+        "Date": "INDEX",
         "l0": float,
         "l1": float,
         "l2": float,
