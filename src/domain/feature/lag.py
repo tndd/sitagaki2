@@ -24,12 +24,29 @@ class LagCloses10(OhlcvFeature):
         "l10": float,
     }
 
-    def __init__(self, df: DataFrame) -> None:
-        self.ohlcv = Ohlcv2(df)
+    def __init__(self, ohlcv: Ohlcv2) -> None:
+        super().__init__(ohlcv)
 
+    def derive_df(self, ohlcv: Ohlcv2) -> DataFrame:
+        """
+        10日分の終値の変化率の特徴量を生成する
+        """
+        return self.derive_df_lag_closes10(ohlcv)
 
-def derive_lag_closes10(df: DataFrame) -> DataFrame:
-    """
-    10日分の終値の変化率の特徴量を生成する
-    """
-    pass
+    def derive_df_lag_closes10(self, ohlcv: Ohlcv2) -> DataFrame:
+        """
+        10日分の終値の変化率の特徴量を生成する
+        """
+        df = ohlcv.df
+        df["l0"] = df["Close"]
+        df["l1"] = df["Close"].shift(1)
+        df["l2"] = df["Close"].shift(2)
+        df["l3"] = df["Close"].shift(3)
+        df["l4"] = df["Close"].shift(4)
+        df["l5"] = df["Close"].shift(5)
+        df["l6"] = df["Close"].shift(6)
+        df["l7"] = df["Close"].shift(7)
+        df["l8"] = df["Close"].shift(8)
+        df["l9"] = df["Close"].shift(9)
+        df["l10"] = df["Close"].shift(10)
+        return df
