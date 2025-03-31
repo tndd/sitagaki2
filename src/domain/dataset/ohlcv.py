@@ -60,3 +60,8 @@ def read_df(name: str) -> Ohlcv:
         .sort("Date")
     )
     return Ohlcv(df)
+
+
+if __name__ == "__main__":
+    ohlcv = read_df("aapl")
+    print(ohlcv.df)
