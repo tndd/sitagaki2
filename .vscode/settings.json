@@ -72,14 +72,13 @@
         "TODO",
         "XXX",
         "[ ]",
-        "[x]",
         "WARN",
         "NOTE",
         "WARN"
     ],
     "todo-tree.filtering.excludeGlobs": [
         ".venv/**",
-        "docs/archive/**",
+        "**/docs/archive/**",
     ],
     "todo-tree.highlights.customHighlight": {
         "BUG": {
