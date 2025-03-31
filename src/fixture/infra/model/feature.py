@@ -27,7 +27,7 @@ class FeatureImpl(Feature):
         )
 
     @staticmethod
-    def derive_df(dataset: Dataset) -> DataFrame:
+    def build_df(dataset: Dataset) -> DataFrame:
         """
         渡されたdfのインデックスを保持し、
         SCHEMAに基づいて連続した値を持つdfを生成する。

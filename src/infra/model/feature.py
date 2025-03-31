@@ -23,13 +23,12 @@ class Feature(Dataset):
     ) -> None:
         self.dataset = dataset
         super().__init__(
-            self.derive_df(dataset),
+            self.build_df(dataset),
             index=index,
             label=label,
             exclude=exclude,
         )
 
-    @property
     def merge_df(self) -> DataFrame:
         if not isinstance(self.dataset, list):
             # 単数のdatasetの場合
@@ -44,9 +43,9 @@ class Feature(Dataset):
             raise NotImplementedError("まだ未実装")
 
     @staticmethod
-    def derive_df(dataset: Dataset | list[Dataset]) -> DataFrame:
+    def build_df(dataset: Dataset | list[Dataset]) -> DataFrame:
         """
         データセットから特徴量を生成する抽象クラス。
         単数か複数のdatasetから、featureのdataframeを組み上げる。
         """
-        raise NotImplementedError("feature/derive_df is not implemented.")
+        raise NotImplementedError("feature/build_df is not implemented.")
