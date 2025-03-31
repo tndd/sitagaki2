@@ -30,6 +30,30 @@ class DatasetImpl(Dataset):
         )
 
 
+class DatasetImplV2(Dataset):
+    SCHEMA = {
+        "Date": "INDEX:datetime",
+        "D0": float,
+        "D1": float,
+        "D2": float,
+        "D3": float,
+        "D4": float,
+    }
+
+    def __init__(
+        self,
+        df: DataFrame,
+        label: str | list[str] | None = None,
+        exclude: str | list[str] | None = None,
+    ) -> None:
+        super().__init__(
+            df,
+            index="Date",
+            label=label,
+            exclude=exclude,
+        )
+
+
 def factory_dataset_impl(
     label: str | list[str] | None = None,
     exclude: str | list[str] | None = None,
@@ -57,6 +81,39 @@ def factory_dataset_impl(
         }
     )
     return DatasetImpl(
+        df=df,
+        label=label,
+        exclude=exclude,
+    )
+
+
+def factory_dataset_impl_v2(
+    label: str | list[str] | None = None,
+    exclude: str | list[str] | None = None,
+) -> DatasetImplV2:
+    df = DataFrame(
+        {
+            "Date": to_datetime(
+                [
+                    "2021-01-01",
+                    "2021-01-02",
+                    "2021-01-03",
+                    "2021-01-04",
+                    "2021-01-05",
+                    "2021-01-06",
+                    "2021-01-07",
+                    "2021-01-08",
+                    "2021-01-09",
+                ]
+            ),
+            "D0": [0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0],
+            "D1": [0.1, 1.1, 2.1, 3.1, 4.1, 5.1, 6.1, 7.1, 8.1],
+            "D2": [0.2, 1.2, 2.2, 3.2, 4.2, 5.2, 6.2, 7.2, 8.2],
+            "D3": [0.3, 1.3, 2.3, 3.3, 4.3, 5.3, 6.3, 7.3, 8.3],
+            "D4": [0.4, 1.4, 2.4, 3.4, 4.4, 5.4, 6.4, 7.4, 8.4],
+        }
+    )
+    return DatasetImplV2(
         df=df,
         label=label,
         exclude=exclude,
