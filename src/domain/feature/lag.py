@@ -37,16 +37,13 @@ class LagCloses10(OhlcvFeature):
     def derive_df_lag_closes10(self, ohlcv: Ohlcv2) -> DataFrame:
         """
         10日分の終値の対数差分の特徴量を生成する。
-        各カラムは、n日前とn+1日前の終値の対数差分（log(Close_{t-n} / Close_{t-n-1})）を表す。
-        l0は今日と昨日、l1は昨日と一昨日、という形で日次リターンを表現する。
         欠損値を含む行は削除する。
         """
         df = ohlcv.df.copy()  # コピーを作成して元データを変更しないようにする
         close = df["Close"]
-
         # 対数差分での変化率（日次リターン）を計算
-        df["l0"] = log(close / close.shift(1))  # 今日と昨日
-        df["l1"] = log(close.shift(1) / close.shift(2))  # 昨日と一昨日
+        df["l0"] = log(close / close.shift(1))
+        df["l1"] = log(close.shift(1) / close.shift(2))
         df["l2"] = log(close.shift(2) / close.shift(3))
         df["l3"] = log(close.shift(3) / close.shift(4))
         df["l4"] = log(close.shift(4) / close.shift(5))
