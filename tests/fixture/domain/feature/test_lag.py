@@ -7,7 +7,7 @@ def test_factory_lag_closes10():
     assert isinstance(lag_closes10, LagCloses10)
     assert len(lag_closes10.df) == 989  # 0 ~ 10日分のデータが欠損するため
     assert lag_closes10.field.index == "Date"
-    assert lag_closes10.field.label == []
+    assert lag_closes10.field.label == ["l0"]
     assert lag_closes10.field.exclude == []
     assert lag_closes10.field.col_names == [
         "l0",

@@ -26,7 +26,10 @@ class LagCloses10(OhlcvFeature):
     }
 
     def __init__(self, ohlcv: Ohlcv2) -> None:
-        super().__init__(ohlcv)
+        super().__init__(
+            ohlcv,
+            label="l0",
+        )
 
     def derive_df(self, ohlcv: Ohlcv2) -> DataFrame:
         """
