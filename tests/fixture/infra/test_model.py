@@ -31,7 +31,7 @@ def test_factory_feature_impl():
     feature: FeatureImpl = factory_feature_impl()
     assert isinstance(feature, FeatureImpl)
     feature.field.schema.validate(feature.df)
-    assert feature.df.index.name == "Date"
+    assert feature.field.index == "Date"
     assert feature.field.col_names == ["f0", "f1", "f2", "f3", "f4"]
     assert feature.field.label == ["f0"]
     assert feature.field.exclude == []
