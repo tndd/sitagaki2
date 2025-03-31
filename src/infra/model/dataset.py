@@ -106,6 +106,9 @@ class Field:
     Dataframeのフィールド定義を管理するクラス
     dict型の定義を受け取り、カラム名やschemaなど柔軟な形式で返す。
 
+    注意:
+        indexについてはdefinitionから除外される。
+
     Properties:
         index: str | None
             インデックス名を指定する。
