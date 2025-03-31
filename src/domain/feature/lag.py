@@ -35,9 +35,10 @@ class LagCloses10(OhlcvFeature):
 
     def derive_df_lag_closes10(self, ohlcv: Ohlcv2) -> DataFrame:
         """
-        10日分の終値の変化率の特徴量を生成する
+        10日分の終値の変化率の特徴量を生成する。
+        欠損値を含む行は削除する。
         """
-        df = ohlcv.df
+        df = ohlcv.df.copy()  # コピーを作成して元データを変更しないようにする
         df["l0"] = df["Close"]
         df["l1"] = df["Close"].shift(1)
         df["l2"] = df["Close"].shift(2)
@@ -49,4 +50,4 @@ class LagCloses10(OhlcvFeature):
         df["l8"] = df["Close"].shift(8)
         df["l9"] = df["Close"].shift(9)
         df["l10"] = df["Close"].shift(10)
-        return df
+        return df.dropna()  # 欠損値を含む行を削除して返す
