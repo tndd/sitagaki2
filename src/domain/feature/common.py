@@ -1,6 +1,5 @@
-from dataclasses import dataclass
-
 from pandas import DataFrame, concat
+from pandera.api.pandas.types import PandasDtypeInputTypes as PdType
 
 from domain.dataset.ohlcv2 import Ohlcv2
 from infra.model.dataset import Dataset
@@ -8,24 +7,55 @@ from infra.model.dataset import Dataset
 SCALE_BP = 10000
 
 
-@dataclass
-class OhlcvFeature:
+class OhlcvFeature(Dataset):
     """
     ohlcvを元として生成される特徴量を表すクラス
 
     ohlcvを要素として持つことでバックテスト時に、
     簡単に特徴量のパフォーマンスの検証が可能となる。
+
+    Props:
+        ohlcv: Ohlcv2
+        df: DataFrame
+    ClsProps:
+        SCHEMA: dict[str, PdType]
     """
 
-    # TODO: テスト
+    SCHEMA: dict[str, PdType]
 
-    ohlcv: Ohlcv2
-    feature: Dataset
+    def __init__(
+        self,
+        ohlcv: Ohlcv2,
+        index: str = "Date",
+        label: str | list[str] | None = None,
+        exclude: str | list[str] | None = None,
+    ) -> None:
+        """
+        ohlcvを受け取り、特徴量を生成する。
+        """
+        self.ohlcv = ohlcv
+        super().__init__(
+            df=self.derive_df_from_ohlcv(ohlcv),
+            index=index,
+            label=label,
+            exclude=exclude,
+        )
+
+    @staticmethod
+    def derive_df_from_ohlcv(ohlcv: Ohlcv2) -> DataFrame:
+        """
+        抽象メソッド。
+        ohlcvを元に特徴量を生成する。
+        """
+        raise NotImplementedError("This method should be implemented by subclass.")
 
     @property
-    def merge_df(self) -> DataFrame:
+    def df_merged(self) -> DataFrame:
+        """
+        自身の特徴量DFとohlcv.DFを結合して返す。
+        """
         return concat(
-            [self.ohlcv.df, self.feature.df],
+            [self.ohlcv.df, self.df],
             axis=1,
             join="inner",
         )
