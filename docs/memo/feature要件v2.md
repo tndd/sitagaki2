@@ -3,6 +3,9 @@
 - だが現在のfeatureには、ohlcvのカラムは含まれていない仕様
 - そうなると、featureはohlcvを継承して作成するという形式の方が向いてるんじゃないか？
 
+## 1
+
+
 # ohlcvの要件
 - featureの元クラス
 - featureに加え、ohlcvのカラムも追加したdfを返す関数を継承する

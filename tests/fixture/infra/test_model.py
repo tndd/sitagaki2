@@ -4,7 +4,6 @@ from fixture.infra.model.dataset import (
     factory_dataset_impl,
     factory_dataset_impl_v2,
 )
-from fixture.infra.model.feature import FeatureImpl, factory_feature_impl
 
 
 def test_factory_dataset_impl():
@@ -25,13 +24,3 @@ def test_factory_dataset_impl_v2():
     assert dsi.field.col_names == ["D0", "D1", "D2", "D3", "D4"]
     assert dsi.field.label == []
     assert dsi.field.exclude == []
-
-
-def test_factory_feature_impl():
-    feature: FeatureImpl = factory_feature_impl()
-    assert isinstance(feature, FeatureImpl)
-    feature.field.schema.validate(feature.df)
-    assert feature.field.index == "Date"
-    assert feature.field.col_names == ["f0", "f1", "f2", "f3", "f4"]
-    assert feature.field.label == ["f0"]
-    assert feature.field.exclude == []
