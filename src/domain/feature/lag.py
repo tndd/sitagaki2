@@ -1,7 +1,7 @@
 from numpy import log
 from pandas import DataFrame
 
-from domain.dataset.ohlcv import Ohlcv2
+from domain.dataset.ohlcv import Ohlcv
 from domain.feature.common import OhlcvFeature
 
 
@@ -25,19 +25,19 @@ class LagCloses10(OhlcvFeature):
         "l10": float,
     }
 
-    def __init__(self, ohlcv: Ohlcv2) -> None:
+    def __init__(self, ohlcv: Ohlcv) -> None:
         super().__init__(
             ohlcv,
             label="l0",
         )
 
-    def derive_df(self, ohlcv: Ohlcv2) -> DataFrame:
+    def derive_df(self, ohlcv: Ohlcv) -> DataFrame:
         """
         10日分の終値の変化率の特徴量を生成する
         """
         return self.derive_df_lag_closes10(ohlcv)
 
-    def derive_df_lag_closes10(self, ohlcv: Ohlcv2) -> DataFrame:
+    def derive_df_lag_closes10(self, ohlcv: Ohlcv) -> DataFrame:
         """
         10日分の終値の対数差分の特徴量を生成する。
         欠損値を含む行は削除する。

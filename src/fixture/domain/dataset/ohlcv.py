@@ -4,10 +4,10 @@ import numpy as np
 import pandas as pd
 from pandas import DataFrame, to_datetime
 
-from domain.dataset.ohlcv import Ohlcv2
+from domain.dataset.ohlcv import Ohlcv
 
 
-def factory_ohlcv2() -> Ohlcv2:
+def factory_ohlcv() -> Ohlcv:
     df = DataFrame(
         {
             "Date": to_datetime(
@@ -30,10 +30,10 @@ def factory_ohlcv2() -> Ohlcv2:
             "Volume": [1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000],
         }
     )
-    return Ohlcv2(df)
+    return Ohlcv(df)
 
 
-def factory_ohlcv2_random_walk(n: int = 1000) -> Ohlcv2:
+def factory_ohlcv_random_walk(n: int = 1000) -> Ohlcv:
     """
     デフォルトで1000件のデータを生成する(nで設定)
 
@@ -102,4 +102,4 @@ def factory_ohlcv2_random_walk(n: int = 1000) -> Ohlcv2:
     # DataFrameを作成
     df = pd.DataFrame(data)
 
-    return Ohlcv2(df)
+    return Ohlcv(df)

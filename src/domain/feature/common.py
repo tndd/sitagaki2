@@ -1,7 +1,7 @@
 from pandas import DataFrame, concat
 from pandera.api.pandas.types import PandasDtypeInputTypes as PdType
 
-from domain.dataset.ohlcv import Ohlcv2
+from domain.dataset.ohlcv import Ohlcv
 from infra.model.dataset import Dataset
 
 SCALE_BP = 10000
@@ -15,7 +15,7 @@ class OhlcvFeature(Dataset):
     簡単に特徴量のパフォーマンスの検証が可能となる。
 
     Props:
-        ohlcv: Ohlcv2
+        ohlcv: Ohlcv
         df: DataFrame
     ClsProps:
         SCHEMA: dict[str, PdType]
@@ -25,7 +25,7 @@ class OhlcvFeature(Dataset):
 
     def __init__(
         self,
-        ohlcv: Ohlcv2,
+        ohlcv: Ohlcv,
         index: str = "Date",
         label: str | list[str] | None = None,
         exclude: str | list[str] | None = None,
@@ -41,7 +41,7 @@ class OhlcvFeature(Dataset):
             exclude=exclude,
         )
 
-    def derive_df(self, ohlcv: Ohlcv2) -> DataFrame:
+    def derive_df(self, ohlcv: Ohlcv) -> DataFrame:
         """
         抽象メソッド。
         ohlcvを元に特徴量を生成する。

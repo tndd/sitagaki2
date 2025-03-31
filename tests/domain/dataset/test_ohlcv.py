@@ -1,10 +1,10 @@
-from domain.dataset.ohlcv import Ohlcv2
-from fixture.domain.dataset.ohlcv import factory_ohlcv2
+from domain.dataset.ohlcv import Ohlcv
+from fixture.domain.dataset.ohlcv import factory_ohlcv
 
 
-def test_factory_ohlcv2():
-    ohlcv2 = factory_ohlcv2()
-    assert isinstance(ohlcv2, Ohlcv2)
-    assert ohlcv2.df.index.name == "Date"
-    assert ohlcv2.df.index.dtype == "datetime64[ns]"
-    assert ohlcv2.field.col_names == ["Open", "High", "Low", "Close", "Volume"]
+def test_factory_ohlcv():
+    ohlcv = factory_ohlcv()
+    assert isinstance(ohlcv, Ohlcv)
+    assert ohlcv.df.index.name == "Date"
+    assert ohlcv.df.index.dtype == "datetime64[ns]"
+    assert ohlcv.field.col_names == ["Open", "High", "Low", "Close", "Volume"]

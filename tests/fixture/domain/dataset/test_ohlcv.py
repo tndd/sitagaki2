@@ -1,13 +1,13 @@
-from domain.dataset.ohlcv import Ohlcv2
-from fixture.domain.dataset.ohlcv import factory_ohlcv2, factory_ohlcv2_random_walk
+from domain.dataset.ohlcv import Ohlcv
+from fixture.domain.dataset.ohlcv import factory_ohlcv, factory_ohlcv_random_walk
 
 
-def test_factory_ohlcv2():
-    ohlcv2 = factory_ohlcv2()
-    assert isinstance(ohlcv2, Ohlcv2)
+def test_factory_ohlcv():
+    ohlcv = factory_ohlcv()
+    assert isinstance(ohlcv, Ohlcv)
 
 
-def test_factory_ohlcv2_random_walk():
-    ohlcv2 = factory_ohlcv2_random_walk(n=1000)
-    assert isinstance(ohlcv2, Ohlcv2)
-    assert len(ohlcv2.df) == 1000
+def test_factory_ohlcv_random_walk():
+    ohlcv = factory_ohlcv_random_walk(n=1000)
+    assert isinstance(ohlcv, Ohlcv)
+    assert len(ohlcv.df) == 1000

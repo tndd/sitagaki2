@@ -3,7 +3,7 @@ from pandas import DataFrame
 from infra.model.dataset import Dataset
 
 
-class Ohlcv2(Dataset):
+class Ohlcv(Dataset):
     SCHEMA = {
         "Open": float,
         "High": float,
