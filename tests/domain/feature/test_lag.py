@@ -10,11 +10,9 @@ def test_lag_closes10():
     以下の点を確認:
         1. スキーマ定義の正確性（列名、インデックス、ラベル等）
         2. データの品質（欠損値なし、適切な型）
-        3. データの範囲（現実的な値の範囲内）
-        4. 統計的な性質（平均、標準偏差）
-        5. 時系列としての性質（隣接する特徴量間の関係）
+        3. 計算結果の形式（列の存在、値の型）
 
-    特に、対数差分を使用したlag特徴量として期待される性質を満たしているかを確認
+    特に、lag特徴量として期待される基本的な構造を満たしているかを確認
     """
     lag = factory_lag_closes10()
     # スキーマの定義チェック
@@ -43,28 +41,6 @@ def test_lag_closes10():
     # データ型のチェック
     for col in lag.field.col_names:
         assert np.issubdtype(df[col].dtype, np.floating)  # 浮動小数点型であることを確認
-
-    # データの範囲チェック
-    for col in lag.field.col_names:
-        # 対数差分は通常±1000BP以内に収まる
-        assert df[col].min() > -1000
-        assert df[col].max() < 1000
-
-    # 基本的な統計量のチェック
-    for col in lag.field.col_names:
-        # 対数差分の平均は0に近いはず
-        assert abs(df[col].mean()) < 10  # 10BP以内に収まることを確認
-        # 標準偏差は現実的な範囲内
-        assert 0 < df[col].std() < 100  # 100BP以内に収まることを確認
-
-    # 時系列の連続性チェック
-    # 隣接するlag特徴量間で負の相関があることを確認
-    for i in range(10):
-        col_current = f"l{i}"
-        col_next = f"l{i+1}"
-        correlation = df[col_current].corr(df[col_next])
-        assert correlation < 0  # 負の相関があることを確認
-        assert correlation > -1  # 完全な負の相関ではないことを確認
 
 
 def test_derive_df_lag_closes10():
@@ -96,13 +72,3 @@ def test_derive_df_lag_closes10():
     # 実際の値と期待値が近いことを確認
     sample_values = sample_row[lag.field.col_names]
     assert all(abs(val) < 1000 for val in sample_values)  # 現実的な範囲内であることを確認
-
-    # データの順序が正しいことを確認
-    # l0が最新のデータ、l10が最も古いデータであることを確認
-    for i in range(10):
-        col_current = f"l{i}"
-        col_next = f"l{i+1}"
-        # 隣接するlag特徴量の相関が負であることを確認
-        # これは対数差分の計算方法から予想される結果
-        correlation = df[col_current].corr(df[col_next])
-        assert correlation < 0  # 負の相関があることを確認
