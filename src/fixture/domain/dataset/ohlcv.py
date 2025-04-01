@@ -46,44 +46,37 @@ def factory_ohlcv_random_walk(n: int = 1000) -> Ohlcv:
     # 初期価格と日付を設定
     base_price = 100.0
     start_date = datetime(2020, 1, 1)
-
     # 日付配列を生成（単純に1分単位）
     dates = [start_date + timedelta(minutes=i) for i in range(n)]
-
     # 価格変動のシミュレーション
     np.random.seed(42)  # 再現性のためにシード値を設定
-
     # ランダムウォークで価格を生成
     returns = np.random.normal(
-        0.00001, 0.001, n
-    )  # 平均リターン0.001%、ボラティリティ0.1%（1分足として妥当な範囲）
-    price_multipliers = np.exp(np.cumsum(returns))
+        loc=0,
+        scale=0.0001,
+        size=n,
+    )  # ドリフトなしで小さな変動
+    price_multipliers = np.cumprod(
+        1 + returns
+    )  # 発散を防ぐために累積和ではなく累積積を使用
     base_prices = base_price * price_multipliers
-
     # データフレームを作成
     data = []
     for i, date in enumerate(dates):
         # その分の基本価格
         price = base_prices[i]
-
         # その分のボラティリティ（価格帯の幅）
-        volatility = price * np.random.uniform(
-            0.0005, 0.003
-        )  # 0.05%〜0.3%のボラティリティ（1分足として現実的）
-
+        volatility = price * 0.001  # 固定の小さなボラティリティ
         # 始値・終値の生成
         open_price = price * np.random.uniform(0.9995, 1.0005)
         close_price = price * np.random.uniform(0.9995, 1.0005)
-
         # 高値・安値の生成（辻褄が合うように）
         high_price = max(open_price, close_price) + volatility * np.random.uniform(0, 1)
         low_price = min(open_price, close_price) - volatility * np.random.uniform(0, 1)
-
         # 出来高の生成
         price_change_ratio = abs((close_price / open_price) - 1)
         volume = int(np.random.normal(10000, 5000) * (1 + price_change_ratio * 10))
         volume = max(1000, volume)  # 最低出来高を設定
-
         data.append(
             {
                 "Date": date,
@@ -94,8 +87,6 @@ def factory_ohlcv_random_walk(n: int = 1000) -> Ohlcv:
                 "Volume": volume,
             }
         )
-
-    # DataFrameを作成
+    # Ohlcvオブジェクトとして返す
     df = pd.DataFrame(data)
-
     return Ohlcv(df)
