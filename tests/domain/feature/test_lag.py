@@ -66,10 +66,12 @@ def test_derive_df_lag_closes10():
 
     # 特定の行のlag特徴量を確認
     sample_row = df.iloc[0]
-    assert all(col in sample_row.index for col in lag.field.col_names)  # 必要な列が存在することを確認
+    # 必要な列が存在することを確認
+    assert all(col in sample_row.index for col in lag.field.col_names)
 
     # 対数差分の計算が正しいことを確認
     # 例：l0 = log(close_t / close_t-1) * 10000
     # 実際の値と期待値が近いことを確認
     sample_values = sample_row[lag.field.col_names]
-    assert all(abs(val) < 1000 for val in sample_values)  # 現実的な範囲内であることを確認
+    # 現実的な範囲内であることを確認
+    assert all(abs(val) < 1000 for val in sample_values)
