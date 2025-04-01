@@ -1,9 +1,11 @@
 from fixture.domain.feature.lag import factory_lag_closes10
 from pandas import DataFrame
+import numpy as np
 
 
 def test_lag_closes10():
     lag = factory_lag_closes10()
+    # スキーマの定義チェック
     assert lag.field.index == "Date"
     assert lag.field.label == ["l0"]
     assert lag.field.exclude == []
@@ -20,6 +22,37 @@ def test_lag_closes10():
         "l9",
         "l10",
     ]
+    # データフレームの基本チェック
+    df = lag.df
+    assert isinstance(df, DataFrame)
+    assert not df.isna().any().any()  # 欠損値がないことを確認
+    assert len(df) > 0  # データが存在することを確認
+
+    # データ型のチェック
+    for col in lag.field.col_names:
+        assert np.issubdtype(df[col].dtype, np.floating)  # 浮動小数点型であることを確認
+
+    # データの範囲チェック
+    for col in lag.field.col_names:
+        # 対数差分は通常±1000BP以内に収まる
+        assert df[col].min() > -1000
+        assert df[col].max() < 1000
+
+    # 基本的な統計量のチェック
+    for col in lag.field.col_names:
+        # 対数差分の平均は0に近いはず
+        assert abs(df[col].mean()) < 10  # 10BP以内に収まることを確認
+        # 標準偏差は現実的な範囲内
+        assert 0 < df[col].std() < 100  # 100BP以内に収まることを確認
+
+    # 時系列の連続性チェック
+    # 隣接するlag特徴量間で負の相関があることを確認
+    for i in range(10):
+        col_current = f"l{i}"
+        col_next = f"l{i+1}"
+        correlation = df[col_current].corr(df[col_next])
+        assert correlation < 0  # 負の相関があることを確認
+        assert correlation > -1  # 完全な負の相関ではないことを確認
 
 
 def test_derive_df_lag_closes10():
