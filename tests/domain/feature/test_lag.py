@@ -1,6 +1,7 @@
-from fixture.domain.feature.lag import factory_lag_closes10
-from pandas import DataFrame
 import numpy as np
+from pandas import DataFrame
+
+from fixture.domain.feature.lag import factory_lag_closes10
 
 
 def test_lag_closes10():

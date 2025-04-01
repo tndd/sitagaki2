@@ -1,7 +1,8 @@
-from domain.dataset.ohlcv import Ohlcv
-from fixture.domain.dataset.ohlcv import factory_ohlcv, factory_ohlcv_random_walk
 import numpy as np
 from pandas import DataFrame
+
+from domain.dataset.ohlcv import Ohlcv
+from fixture.domain.dataset.ohlcv import factory_ohlcv, factory_ohlcv_random_walk
 
 
 def test_factory_ohlcv():
