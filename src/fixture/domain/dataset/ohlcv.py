@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 
 import numpy as np
-import pandas as pd
+import polars as pl
 from pandas import DataFrame, to_datetime
 
 from domain.dataset.ohlcv import Ohlcv
@@ -36,6 +36,7 @@ def factory_ohlcv() -> Ohlcv:
 def factory_ohlcv_random_walk(n: int = 1000) -> Ohlcv:
     """
     デフォルトで1000件のデータを生成する(nで設定)
+    注意: 高速化のためPolarsを使用している
 
     OHLCVデータとして辻褄が合うように以下の条件を満たす:
     - High >= Open, Close, Low
@@ -43,50 +44,64 @@ def factory_ohlcv_random_walk(n: int = 1000) -> Ohlcv:
     - 日付は1分単位で連続する
     - 価格変動は現実的な範囲内
     """
-    # 初期価格と日付を設定
+    # シード値を設定
+    np.random.seed(42)
+
+    # 初期価格設定
     base_price = 100.0
+
+    # 日付配列を生成（NumPyを使用して生成し、後でPolarsに変換）
     start_date = datetime(2020, 1, 1)
-    # 日付配列を生成（単純に1分単位）
-    dates = [start_date + timedelta(minutes=i) for i in range(n)]
-    # 価格変動のシミュレーション
-    np.random.seed(42)  # 再現性のためにシード値を設定
-    # ランダムウォークで価格を生成
-    returns = np.random.normal(
-        loc=0,
-        scale=0.0001,
-        size=n,
-    )  # ドリフトなしで小さな変動
-    price_multipliers = np.cumprod(
-        1 + returns
-    )  # 発散を防ぐために累積和ではなく累積積を使用
+    # 分単位のオフセットを生成して日付配列を作成
+    date_offsets = np.arange(n)
+    dates = np.array(
+        [start_date + timedelta(minutes=int(offset)) for offset in date_offsets],
+        dtype="datetime64[ns]",
+    )
+
+    # ランダムウォークを生成
+    returns = np.random.normal(loc=0, scale=0.0001, size=n)
+    price_multipliers = np.cumprod(1 + returns)
     base_prices = base_price * price_multipliers
-    # データフレームを作成
-    data = []
-    for i, date in enumerate(dates):
-        # その分の基本価格
-        price = base_prices[i]
-        # その分のボラティリティ（価格帯の幅）
-        volatility = price * 0.001  # 固定の小さなボラティリティ
-        # 始値・終値の生成
-        open_price = price * np.random.uniform(0.9995, 1.0005)
-        close_price = price * np.random.uniform(0.9995, 1.0005)
-        # 高値・安値の生成（辻褄が合うように）
-        high_price = max(open_price, close_price) + volatility * np.random.uniform(0, 1)
-        low_price = min(open_price, close_price) - volatility * np.random.uniform(0, 1)
-        # 出来高の生成
-        price_change_ratio = abs((close_price / open_price) - 1)
-        volume = int(np.random.normal(10000, 5000) * (1 + price_change_ratio * 10))
-        volume = max(1000, volume)  # 最低出来高を設定
-        data.append(
-            {
-                "Date": date,
-                "Open": round(open_price, 2),
-                "High": round(high_price, 2),
-                "Low": round(low_price, 2),
-                "Close": round(close_price, 2),
-                "Volume": volume,
-            }
-        )
-    # Ohlcvオブジェクトとして返す
-    df = pd.DataFrame(data)
-    return Ohlcv(df)
+
+    # ボラティリティ（固定の小さなボラティリティ）
+    volatility = base_prices * 0.001
+
+    # ランダム変動を生成
+    open_rand = np.random.uniform(0.9995, 1.0005, n)
+    close_rand = np.random.uniform(0.9995, 1.0005, n)
+    high_rand = np.random.uniform(0, 1, n)
+    low_rand = np.random.uniform(0, 1, n)
+
+    # 価格データを計算
+    open_prices = base_prices * open_rand
+    close_prices = base_prices * close_rand
+
+    # 高値と安値を計算（辻褄が合うように）
+    max_oc = np.maximum(open_prices, close_prices)
+    min_oc = np.minimum(open_prices, close_prices)
+    high_prices = max_oc + volatility * high_rand
+    low_prices = min_oc - volatility * low_rand
+
+    # 出来高を計算
+    price_change_ratio = np.abs((close_prices / open_prices) - 1)
+    volume_base = np.random.normal(10000, 5000, n)
+    volumes = np.maximum(
+        1000, (volume_base * (1 + price_change_ratio * 10)).astype(int)
+    )
+
+    # Polarsデータフレームを作成
+    pl_df = pl.DataFrame(
+        {
+            "Date": dates,
+            "Open": np.round(open_prices, 2),
+            "High": np.round(high_prices, 2),
+            "Low": np.round(low_prices, 2),
+            "Close": np.round(close_prices, 2),
+            "Volume": volumes,
+        }
+    )
+
+    # PandasのDataFrameに変換してOhlcvオブジェクトとして返す
+    pd_df = pl_df.to_pandas()
+    return Ohlcv(pd_df)
