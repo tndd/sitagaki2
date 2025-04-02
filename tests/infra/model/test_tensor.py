@@ -1,4 +1,3 @@
-from infra.model.tensor import LabeledTensor
 
 
 def test_labeled_dataset():

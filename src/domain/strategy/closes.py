@@ -1,12 +1,8 @@
 import numpy as np
 from backtesting import Backtest, Strategy
-from backtesting.lib import crossover
-from backtesting.test import GOOG, SMA
-from lightgbm import Booster
-from numpy import array, ndarray
-from polars import DataFrame
+from backtesting.test import GOOG
+from numpy import ndarray
 
-from domain.feature.closes import calc_feature_closes
 from domain.model.lgbm import train_model_lgbm_closes_n4
 from fixture.domain.feature.closes import factory_closes_n4_cycle
 
