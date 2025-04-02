@@ -1,9 +1,13 @@
-from lightgbm import Booster, early_stopping, train
+from lightgbm import (
+    Booster,
+    early_stopping,
+    train,
+)
 
-from domain.feature.lag import LagCloses10
+from domain.feature.common import OhlcvFeature
 
 
-def train_model_lgbm_lag_closes10(dataset: LagCloses10) -> Booster:
+def train_model_lgbm_lag_closes10(dataset: OhlcvFeature) -> Booster:
     params = {
         "objective": "regression",  # 回帰問題として解く
         "metric": "rmse",  # 評価指標
