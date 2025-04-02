@@ -5,15 +5,15 @@ from domain.feature.lag import LagCloses10
 
 def train_model_lgbm_lag_closes10(dataset: LagCloses10) -> Booster:
     params = {
-        "objective": "regression",  #   #  例: 'binary', 'multiclass'
-        "metric": "rmse",  #            #  評価指標（例: 'auc', 'logloss'）
-        "boosting_type": "gbdt",  #     #  デフォルトの勾配ブースティング
-        "num_leaves": 31,  #            #  木の複雑さを調整（大きいほど複雑）
-        "learning_rate": 0.05,  #       #  学習率（小さくすると精度が上がるが遅くなる）
-        "feature_fraction": 0.9,  #     #  各木で使う特徴量の割合（過学習防止）
-        "bagging_fraction": 0.8,  #     #  データのサブサンプリング割合（過学習防止）
-        "bagging_freq": 5,  #           #  バギングの頻度
-        "verbose": -1,  #               #  ログを非表示
+        "objective": "regression",  # 回帰問題として解く
+        "metric": "rmse",  # 評価指標
+        "boosting_type": "gbdt",  # 勾配ブースティング
+        "num_leaves": 31,  # 木の複雑さを元に戻す
+        "learning_rate": 0.05,  # 学習率を元に戻す
+        "feature_fraction": 0.9,  # 特徴選択の割合を元に戻す
+        "bagging_fraction": 0.8,  # データのサブサンプリング割合を元に戻す
+        "bagging_freq": 5,  # バギングの頻度
+        "verbose": -1,  # ログを非表示
     }
     slt = dataset.get_split_labeled_tensor()
     lgb_train, lgb_test = slt.get_lgb_train_test()
@@ -21,6 +21,6 @@ def train_model_lgbm_lag_closes10(dataset: LagCloses10) -> Booster:
         params,
         lgb_train,
         valid_sets=[lgb_test],
-        num_boost_round=500,
-        callbacks=[early_stopping(50)],
+        num_boost_round=500,  # ラウンド数を元に戻す
+        callbacks=[early_stopping(50)],  # 早期停止の監視期間を元に戻す
     )
