@@ -1,7 +1,8 @@
 import numpy as np
 from pandas import DataFrame
 
-from backtest.domain.strategy.base import Strategy
+# 基底クラスとドメイン知識をインポート
+from backtest.domain.strategy.base import Strategy # 再作成した基底クラス
 from domain.dataset.ohlcv import Ohlcv
 from domain.feature.lag import LagCloses10
 
@@ -20,25 +21,27 @@ class LagLgbmStrategy(Strategy):
 
     def init(self):
         """
-        戦略の初期化処理
+        戦略の初期化処理。
+        モデルは基底クラスの __init__ で self.model に設定される想定。
+        追加の初期化が必要な場合はここに記述。
         """
-        # モデルはパラメータとして渡される
+        super().init() # 基底クラスのinitも呼び出す (念のため)
+        # 特に初期化処理が不要な場合は pass でも可
+        pass
 
     def get_feature(self) -> np.ndarray:
         """
         直近のデータからLagCloses10特徴量を作成
         """
         # バックテスト中の現在の時点までのデータ
-        # DataFrameに変換（バックテストライブラリのデータ形式から変換）
         df = DataFrame(self.data.df.iloc[: len(self.data)])
-        # インデックス設定
         df.index.name = "Date"
 
         # データからOhlcv、そしてLagCloses10特徴量を作成
         ohlcv = Ohlcv(df)
         feature = LagCloses10(ohlcv)
 
-        # 最新のデータポイントのみを特徴量として使用
+        # 最新のデータポイントのみを特徴量として使用し、ラベル列を除外
         latest_features = feature.df.iloc[-1:].drop(columns=[feature.field.label[0]])
         return latest_features.to_numpy()
 
@@ -46,11 +49,19 @@ class LagLgbmStrategy(Strategy):
         """
         各バーごとに呼び出される取引ロジック
         """
-        # 特徴量を準備
         try:
+            # 十分なデータがあるかチェック (LagCloses10は最低12日分のデータが必要)
+            MIN_DATA_LEN = 12
+            if len(self.data) < MIN_DATA_LEN:
+                 return # データが足りない場合は何もしない
+
             features = self.get_feature()
 
-            # モデルによる予測
+            # モデルによる予測 (self.model は基底クラスの __init__ で設定される)
+            if self.model is None:
+                print("エラー: モデルが初期化されていません。")
+                return
+
             prediction = self.model.predict(features)[0]
 
             # 現在のポジションをクローズ
@@ -59,10 +70,13 @@ class LagLgbmStrategy(Strategy):
 
             # 予測値に基づいて取引
             if prediction > self.BUY_THRESHOLD:  # 上昇予測
-                self.buy()
+                self.buy(size=self.size) # sizeパラメータを指定
             elif prediction < self.SELL_THRESHOLD:  # 下落予測
-                self.sell()
+                self.sell(size=self.size) # sizeパラメータを指定
 
+        except IndexError:
+             # データが足りない場合などに発生する可能性がある
+             print(f"データ不足のためスキップ: 現在のデータ長 {len(self.data)}")
         except Exception as e:
-            # 特徴量計算に十分なデータがない場合など
-            print(f"スキップ: {e}")
+            # その他の予期せぬエラー
+            print(f"エラー発生のためスキップ: {e}")
