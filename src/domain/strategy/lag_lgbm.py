@@ -1,10 +1,9 @@
 import numpy as np
 from pandas import DataFrame
 
-# 基底クラスとドメイン知識をインポート
-from backtest.domain.strategy.base import Strategy # 再作成した基底クラス
 from domain.dataset.ohlcv import Ohlcv
 from domain.feature.lag import LagCloses10
+from domain.strategy.base import Strategy
 
 
 class LagLgbmStrategy(Strategy):
@@ -25,7 +24,7 @@ class LagLgbmStrategy(Strategy):
         モデルは基底クラスの __init__ で self.model に設定される想定。
         追加の初期化が必要な場合はここに記述。
         """
-        super().init() # 基底クラスのinitも呼び出す (念のため)
+        super().init()  # 基底クラスのinitも呼び出す (念のため)
         # 特に初期化処理が不要な場合は pass でも可
         pass
 
@@ -53,7 +52,7 @@ class LagLgbmStrategy(Strategy):
             # 十分なデータがあるかチェック (LagCloses10は最低12日分のデータが必要)
             MIN_DATA_LEN = 12
             if len(self.data) < MIN_DATA_LEN:
-                 return # データが足りない場合は何もしない
+                return  # データが足りない場合は何もしない
 
             features = self.get_feature()
 
@@ -70,13 +69,13 @@ class LagLgbmStrategy(Strategy):
 
             # 予測値に基づいて取引
             if prediction > self.BUY_THRESHOLD:  # 上昇予測
-                self.buy(size=self.size) # sizeパラメータを指定
+                self.buy(size=self.size)  # sizeパラメータを指定
             elif prediction < self.SELL_THRESHOLD:  # 下落予測
-                self.sell(size=self.size) # sizeパラメータを指定
+                self.sell(size=self.size)  # sizeパラメータを指定
 
         except IndexError:
-             # データが足りない場合などに発生する可能性がある
-             print(f"データ不足のためスキップ: 現在のデータ長 {len(self.data)}")
+            # データが足りない場合などに発生する可能性がある
+            print(f"データ不足のためスキップ: 現在のデータ長 {len(self.data)}")
         except Exception as e:
             # その他の予期せぬエラー
             print(f"エラー発生のためスキップ: {e}")
