@@ -4,12 +4,11 @@ from lightgbm import (
     train,
 )
 
-# 必要なドメイン知識のインポート
 from domain.feature.common import OhlcvFeature
 
 
 # --- モデル訓練関数 ---
-def train_model_lgbm_lag_closes10(dataset: OhlcvFeature) -> Booster:
+def train_model_lgbm_ohlcv_feature(dataset: OhlcvFeature) -> Booster:
     """
     LagCloses10特徴量データセットを使ってLightGBMモデルを訓練する
     """

@@ -5,7 +5,7 @@ from pandas import DataFrame
 from domain.dataset.common import read_df
 from domain.dataset.ohlcv import Ohlcv
 from domain.feature.lag import LagCloses10
-from domain.model.lgbm import train_model_lgbm_lag_closes10
+from domain.model.lgbm import train_model_lgbm_ohlcv_feature
 from domain.strategy.lag_lgbm import LagLgbmStrategy
 
 
@@ -24,7 +24,7 @@ def train_lag_model(ohlcv: Ohlcv) -> Booster:
     """
     lag_feature = LagCloses10(ohlcv)
     # domain.model.lgbm から訓練関数を呼び出す
-    return train_model_lgbm_lag_closes10(lag_feature)
+    return train_model_lgbm_ohlcv_feature(lag_feature)
 
 
 def run_backtest(df: DataFrame, model: Booster) -> None:
