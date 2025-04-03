@@ -3,7 +3,7 @@ from pandas import DataFrame
 
 from domain.dataset.ohlcv import Ohlcv
 from domain.feature.lag import LagCloses10
-from domain.strategy.base import Strategy
+from domain.strategy.common import Strategy
 
 
 class LagLgbmStrategy(Strategy):
