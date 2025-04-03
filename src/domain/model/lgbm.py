@@ -1,5 +1,6 @@
 import numpy as np
 from backtesting import Backtest
+from backtesting import Strategy as BacktestStrategy
 from lightgbm import (
     Booster,
     early_stopping,
@@ -7,13 +8,11 @@ from lightgbm import (
 )
 from pandas import DataFrame
 
-# 必要なドメイン知識のインポート
 from domain.dataset.common import read_df
 from domain.dataset.ohlcv import Ohlcv
 from domain.feature.common import OhlcvFeature
 from domain.feature.lag import LagCloses10
-# 外部ライブラリbacktestingからStrategyをインポート
-from backtesting import Strategy as BacktestStrategy
+
 
 # --- 基底戦略クラス (元 src/backtest/domain/strategy/base.py) ---
 class Strategy(BacktestStrategy):
@@ -22,13 +21,13 @@ class Strategy(BacktestStrategy):
     """
 
     # 必要に応じて共通機能を追加
-    model: Booster = None # モデルを保持するクラス変数（run_backtestで設定）
+    model: Booster = None  # モデルを保持するクラス変数（run_backtestで設定）
 
     def __init__(self, broker, data, params):
         super().__init__(broker, data, params)
         # initでmodelを受け取る (backtesting > 0.3.3)
-        if hasattr(self, '_params') and 'model' in self._params:
-             self.model = self._params['model']
+        if hasattr(self, "_params") and "model" in self._params:
+            self.model = self._params["model"]
 
     def get_feature(self) -> np.ndarray:
         """
@@ -44,7 +43,7 @@ class Strategy(BacktestStrategy):
 
 
 # --- LagLgbm戦略クラス (元 src/domain/strategy/lag_lgbm.py) ---
-class LagLgbmStrategy(Strategy): # 継承元を上で定義したStrategyに変更
+class LagLgbmStrategy(Strategy):  # 継承元を上で定義したStrategyに変更
     """
     LagCloses10特徴量とLGBMモデルを使用したバックテスト戦略
     """
@@ -92,8 +91,8 @@ class LagLgbmStrategy(Strategy): # 継承元を上で定義したStrategyに変�
             # 十分なデータがあるかチェック (LagCloses10は最低12日分のデータが必要: shift(11)まで使うため)
             MIN_DATA_LEN = 12
             if len(self.data) < MIN_DATA_LEN:
-                 # print(f"データ不足のためスキップ: 現在 {len(self.data)} < 必要 {MIN_DATA_LEN}")
-                 return # データが足りない場合は何もしない
+                # print(f"データ不足のためスキップ: 現在 {len(self.data)} < 必要 {MIN_DATA_LEN}")
+                return  # データが足りない場合は何もしない
 
             features = self.get_feature()
 
@@ -107,13 +106,13 @@ class LagLgbmStrategy(Strategy): # 継承元を上で定義したStrategyに変�
 
             # 予測値に基づいて取引
             if prediction > self.BUY_THRESHOLD:  # 上昇予測
-                self.buy(size=self.size) # sizeパラメータを指定
+                self.buy(size=self.size)  # sizeパラメータを指定
             elif prediction < self.SELL_THRESHOLD:  # 下落予測
-                self.sell(size=self.size) # sizeパラメータを指定
+                self.sell(size=self.size)  # sizeパラメータを指定
 
         except IndexError:
-             # データが足りない場合などに発生する可能性がある
-             print(f"データ不足のためスキップ: 現在のデータ長 {len(self.data)}")
+            # データが足りない場合などに発生する可能性がある
+            print(f"データ不足のためスキップ: 現在のデータ長 {len(self.data)}")
         except Exception as e:
             # その他の予期せぬエラー
             print(f"エラー発生のためスキップ: {e}")
@@ -170,7 +169,7 @@ def run_backtest(df: DataFrame, model: Booster) -> None:
     # バックテストの設定
     backtest = Backtest(
         df,
-        LagLgbmStrategy, # ここで定義した戦略クラスを使用
+        LagLgbmStrategy,  # ここで定義した戦略クラスを使用
         cash=100000,  # 初期資金
         commission=0.002,  # 売買手数料
         exclusive_orders=True,  # 注文は同時に1つのみ
@@ -209,7 +208,9 @@ def main():
     try:
         ohlcv = create_ohlcv_from_data(dataset_name)
     except FileNotFoundError:
-        print(f"エラー: データファイルが見つかりません。src/domain/dataset/data/{dataset_name.upper()}.csv を確認してください。")
+        print(
+            f"エラー: データファイルが見つかりません。src/domain/dataset/data/{dataset_name.upper()}.csv を確認してください。"
+        )
         return
     except Exception as e:
         print(f"データ読み込み中にエラーが発生しました: {e}")
