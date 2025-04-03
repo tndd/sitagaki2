@@ -10,7 +10,7 @@ from domain.feature.common import OhlcvFeature
 # --- モデル訓練関数 ---
 def train_model_lgbm_ohlcv_feature(dataset: OhlcvFeature) -> Booster:
     """
-    LagCloses10特徴量データセットを使ってLightGBMモデルを訓練する
+    lgbmモデルをohlcv_featureデータセットを使って訓練する
     """
     params = {
         "objective": "regression",  # 回帰問題として解く
