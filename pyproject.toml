@@ -6,7 +6,6 @@ readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
     "backtesting>=0.6.3",
-    "catboost>=1.2.7",
     "ipykernel>=6.29.5",
     "lightgbm>=4.6.0",
     "matplotlib>=3.10.1",
@@ -22,8 +21,6 @@ dependencies = [
     "scikit-learn>=1.6.1",
     "seaborn>=0.13.2",
     "setuptools>=75.9.1",
-    "vectorbt>=0.27.1",
-    "xgboost>=3.0.0",
     "yfinance>=0.2.55",
     "pandera>=0.23.1",
     "icecream>=2.1.4",
