@@ -87,7 +87,7 @@ def factory_ohlcv_random_walk(n: int = 1000) -> Ohlcv:
     price_change_ratio = np.abs((close_prices / open_prices) - 1)
     volume_base = np.random.normal(10000, 5000, n)
     volumes = np.maximum(
-        1000, (volume_base * (1 + price_change_ratio * 10)).astype(int)
+        1000, (volume_base * (1 + price_change_ratio * 10)).astype(np.int64)
     )
 
     # Polarsデータフレームを作成
@@ -104,4 +104,6 @@ def factory_ohlcv_random_walk(n: int = 1000) -> Ohlcv:
 
     # PandasのDataFrameに変換してOhlcvオブジェクトとして返す
     pd_df = pl_df.to_pandas()
+    # Volumeカラムが確実にint64型になるように明示的に変換
+    pd_df["Volume"] = pd_df["Volume"].astype('int64')
     return Ohlcv(pd_df)
