@@ -11,7 +11,7 @@ class Strategy(BacktestStrategy):
     """
 
     # 必要に応じて共通機能を追加
-    model: Booster = None # モデルを保持するクラス変数
+    model: Booster = None  # モデルを保持するクラス変数
 
     def __init__(self, broker, data, params):
         super().__init__(broker, data, params)
@@ -19,8 +19,8 @@ class Strategy(BacktestStrategy):
         # backtestingライブラリはparams経由で渡されたものを自動でインスタンス変数に割り当てる
         # そのため、明示的に self.model = params['model'] とする必要はないことが多い
         # ただし、型ヒントや明示性のために書いておくことも可能
-        if 'model' in params:
-             self.model = params['model']
+        if "model" in params:
+            self.model = params["model"]
 
     def get_feature(self) -> np.ndarray:
         """

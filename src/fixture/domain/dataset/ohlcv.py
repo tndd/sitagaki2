@@ -105,5 +105,5 @@ def factory_ohlcv_random_walk(n: int = 1000) -> Ohlcv:
     # PandasのDataFrameに変換してOhlcvオブジェクトとして返す
     pd_df = pl_df.to_pandas()
     # Volumeカラムが確実にint64型になるように明示的に変換
-    pd_df["Volume"] = pd_df["Volume"].astype('int64')
+    pd_df["Volume"] = pd_df["Volume"].astype("int64")
     return Ohlcv(pd_df)

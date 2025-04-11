@@ -42,7 +42,7 @@ class LagCloses10(OhlcvFeature):
         10日分の終値の対数差分の特徴量を生成する。
         欠損値を含む行は削除する。
         """
-        SCALE = 10000 # BP表記
+        SCALE = 10000  # BP表記
         df = ohlcv.df.copy()  # コピーを作成して元データを変更しないようにする
         close = df["Close"]
         # 対数差分での変化率（日次リターン）を計算
