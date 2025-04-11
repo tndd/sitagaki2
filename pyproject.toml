@@ -34,5 +34,5 @@ where = ["src"]     # 一応明示しておく
 addopts = "--import-mode=importlib"
 
 [tool.ruff]
-select = ["E", "F", "W", "I", "B", "C4", "PL"]
-ignore = ["PLR2004"]
+lint.select = ["E", "F", "W", "I", "B", "C4", "PL"]
+lint.ignore = ["PLR2004"]
