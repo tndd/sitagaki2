@@ -35,13 +35,13 @@ class OhlcvFeature(Dataset):
         """
         self.ohlcv = ohlcv
         super().__init__(
-            df=self.derive_df(ohlcv),
+            df=self._derive_df(ohlcv),
             index=index,
             label=label,
             exclude=exclude,
         )
 
-    def derive_df(self, ohlcv: Ohlcv) -> DataFrame:
+    def _derive_df(self, ohlcv: Ohlcv) -> DataFrame:
         """
         抽象メソッド。
         ohlcvを元に特徴量を生成する。

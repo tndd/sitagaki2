@@ -31,7 +31,7 @@ class LagCloses10(OhlcvFeature):
             label="l0",
         )
 
-    def derive_df(self, ohlcv: Ohlcv) -> DataFrame:
+    def _derive_df(self, ohlcv: Ohlcv) -> DataFrame:
         """
         10日分の終値の変化率の特徴量を生成する
         """
