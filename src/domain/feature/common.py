@@ -35,7 +35,9 @@ class OhlcvFeature(Dataset):
         """
         self.ohlcv = ohlcv
         super().__init__(
+            # OhlcvFeatureのdfは特徴量のみで構成される
             df=self._derive_df(ohlcv),
+            # indexやlabelも特徴量についてのものを設定
             index=index,
             label=label,
             exclude=exclude,
@@ -51,7 +53,8 @@ class OhlcvFeature(Dataset):
     @property
     def df_merged(self) -> DataFrame:
         """
-        自身の特徴量DFとohlcv.DFを結合して返す。
+        自身の特徴量dfとohlcv.dfを結合して返す。
+        結合しないとバックテストで使えない。
         """
         return concat(
             [self.ohlcv.df, self.df],
