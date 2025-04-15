@@ -9,11 +9,14 @@ class OhlcvFeature(Dataset):
     """
     ohlcvを元として生成される特徴量を表すクラス。
 
-    ohlcvを要素として持つことで、
-    バックテストで特徴量のパフォーマンスの検証が可能となる。
+    ohlcvを要素として持つ理由:
+        バックテストで特徴量のパフォーマンスの検証を行うため。
+        ohlcvが無いと、具体的な価格の推移を計算できないから。
 
-    基本的にこの特徴量は、
-    生成素材をohlcv"のみ"ということを前提としている。
+    このクラスの前提条件:
+        生成素材をohlcv"のみ"ということを前提としている。
+        ohlcv以外も素材として特徴量を生成することは十分考えられるが、
+        それはこのクラスの責務外とする。
 
     Props:
         ohlcv: Ohlcv
@@ -48,6 +51,10 @@ class OhlcvFeature(Dataset):
         """
         抽象メソッド。
         ohlcvを元に特徴量を生成する。
+
+        staticmethodではない理由:
+            このメソッドから他のメソッドを呼び出すことが想定されているため、
+            selfを参照する必要があるから。
         """
         raise NotImplementedError("This method should be implemented by subclass.")
 
