@@ -9,10 +9,13 @@ SCALE_BP = 10000
 
 class OhlcvFeature(Dataset):
     """
-    ohlcvを元として生成される特徴量を表すクラス
+    ohlcvを元として生成される特徴量を表すクラス。
 
     ohlcvを要素として持つことで、
     バックテストで特徴量のパフォーマンスの検証が可能となる。
+
+    基本的にこの特徴量は、
+    生成素材をohlcv"のみ"ということを前提としている。
 
     Props:
         ohlcv: Ohlcv
