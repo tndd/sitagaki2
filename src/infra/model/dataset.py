@@ -134,9 +134,9 @@ class Field:
         self.definition: dict[str, PdType] = {
             k: v for k, v in definition.items() if k != index
         }
-        # Index: str | None
+        # Index: Noneが設定される場合もある
         self.index = index
-        # Label: list[str]
+        # Label: list[str]の形式に変換される
         if label is None:
             self.label = []
         elif isinstance(label, str):
@@ -145,7 +145,7 @@ class Field:
             self.label = label
         else:
             raise TypeError(f"不正なlabel => {label}")
-        # Exclude: list[str]
+        # Exclude: list[str]の形式に変換される
         if exclude is None:
             self.exclude = []
         elif isinstance(exclude, str):
@@ -157,10 +157,17 @@ class Field:
 
     @property
     def col_names(self) -> list[str]:
+        """
+        フィールド定義のカラム名を返す。
+        indexは含めない。
+        """
         return list(self.definition.keys())
 
     @property
     def schema(self) -> DataFrameSchema:
+        """
+        スキーマ検証用のためのDataFrameSchemaを返す。
+        """
         schema_dict = {
             column_name: Column(dtype) for column_name, dtype in self.definition.items()
         }
