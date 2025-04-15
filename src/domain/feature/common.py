@@ -4,8 +4,6 @@ from pandera.api.pandas.types import PandasDtypeInputTypes as PdType
 from domain.dataset.ohlcv import Ohlcv
 from infra.model.dataset import Dataset
 
-SCALE_BP = 10000
-
 
 class OhlcvFeature(Dataset):
     """
@@ -39,14 +37,14 @@ class OhlcvFeature(Dataset):
         self.ohlcv = ohlcv
         super().__init__(
             # OhlcvFeatureのdfは特徴量のみで構成される
-            df=self._derive_df(ohlcv),
+            df=self._derive_feature_df_from_ohlcv(ohlcv),
             # indexやlabelも特徴量についてのものを設定
             index=index,
             label=label,
             exclude=exclude,
         )
 
-    def _derive_df(self, ohlcv: Ohlcv) -> DataFrame:
+    def _derive_feature_df_from_ohlcv(self, ohlcv: Ohlcv) -> DataFrame:
         """
         抽象メソッド。
         ohlcvを元に特徴量を生成する。
