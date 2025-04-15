@@ -110,12 +110,12 @@
         "**/.pytest_cache": true,
         "**/*egg-info": true
     },
+    "editor.formatOnSave": true,
     "editor.codeActionsOnSave": {
-        "source.organizeImports.ruff": "explicit"
+        "editor.source.fixAll": "explicit",
     },
     "notebook.formatOnSave.enabled": true,
     "notebook.codeActionsOnSave": {
         "notebook.source.fixAll": "explicit",
-        "notebook.source.organizeImports": "explicit",
     },
 }
