@@ -47,7 +47,8 @@ class OhlcvFeature(Dataset):
             exclude=exclude,
         )
 
-    def _derive_feature_df_from_ohlcv(self, ohlcv: Ohlcv) -> DataFrame:
+    @staticmethod
+    def _derive_feature_df_from_ohlcv(ohlcv: Ohlcv) -> DataFrame:
         """
         抽象メソッド。
         ohlcvを元に特徴量を生成する。
