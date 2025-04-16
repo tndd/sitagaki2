@@ -1,4 +1,3 @@
-import numpy as np
 from numpy import log
 from pandas import DataFrame
 
@@ -57,7 +56,7 @@ def derive_lag_df_from_ohlcv(ohlcv: Ohlcv, n: int) -> DataFrame:
             & next_shifted_close.notna()
             & (next_shifted_close != 0)
         )
-        feature_df[f"l{i}"] = np.nan
+        feature_df[f"l{i}"] = float("nan")
         feature_df.loc[mask, f"l{i}"] = (
             log(shifted_close[mask] / next_shifted_close[mask]) * SCALE
         )
