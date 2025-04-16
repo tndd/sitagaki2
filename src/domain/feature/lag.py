@@ -32,7 +32,7 @@ class LagCloses10(OhlcvFeature):
         )
 
     @staticmethod
-    def _setter_feature_df(ohlcv: Ohlcv) -> DataFrame:
+    def _feature_df_source(ohlcv: Ohlcv) -> DataFrame:
         return derive_df_lag_closes10(ohlcv)
 
 

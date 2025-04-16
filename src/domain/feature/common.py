@@ -40,7 +40,7 @@ class OhlcvFeature(Dataset):
         self.ohlcv = ohlcv
         super().__init__(
             # OhlcvFeatureのdfは特徴量のみで構成される
-            df=self._setter_feature_df(ohlcv),
+            df=self._feature_df_source(ohlcv),
             # indexやlabelも特徴量についてのものを設定
             index=index,
             label=label,
@@ -48,7 +48,7 @@ class OhlcvFeature(Dataset):
         )
 
     @staticmethod
-    def _setter_feature_df(ohlcv: Ohlcv) -> DataFrame:
+    def _feature_df_source(ohlcv: Ohlcv) -> DataFrame:
         """
         抽象メソッド。
         ohlcvを元に特徴量を生成する。
