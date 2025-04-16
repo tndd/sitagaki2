@@ -38,28 +38,28 @@ class LagCloses10(OhlcvFeature):
 
 
 def derive_lag_df_from_ohlcv(ohlcv: Ohlcv, n: int) -> DataFrame:
+    # TODO: テストを書く
     """
     n日分の終値の対数差分の特徴量を生成し、特徴量のみのDataFrameを返す。
     インデックスは元のOHLCVデータから引き継ぎ、欠損値を含む行は削除する。
     """
-    SCALE = 10000  # BP表記
-    close = ohlcv.df["Close"]
-    # 特徴量列を格納する新しいDataFrameをインデックス付きで作成
+    # ohlcvとインデックスを同じくする新たな特徴量のDataFrameを作成
     feature_df = DataFrame(index=ohlcv.df.index)
-    # 対数差分での変化率（日次リターン）を計算し、新しいDataFrameに追加
+    # 対数差分の計算
+    close = ohlcv.df["Close"]
     for i in range(n + 1):
         shifted_close = close.shift(i)
         next_shifted_close = close.shift(i + 1)
-        # Ensure both series have values before calculating log
+        # 安全に計算できる行を計算
         mask = (
             shifted_close.notna()
             & next_shifted_close.notna()
             & (next_shifted_close != 0)
         )
-        feature_df[f"l{i}"] = float("nan")
-        feature_df.loc[mask, f"l{i}"] = (
-            log(shifted_close[mask] / next_shifted_close[mask]) * SCALE
+        feature_df[f"l{i}"] = float("nan")  # NoneだとObject型と判定されエラー
+        # 計算できない部分はスキップされnanのまま
+        feature_df.loc[mask, f"l{i}"] = log(
+            shifted_close[mask] / next_shifted_close[mask]
         )
-
-    # 欠損値を含む行を削除して返す (n+1日分のデータが必要になるため)
+    # 全てのlagが満たされていない行は除外する
     return feature_df.dropna()
