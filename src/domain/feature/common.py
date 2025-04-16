@@ -40,7 +40,7 @@ class OhlcvFeature(Dataset):
         self.ohlcv = ohlcv
         super().__init__(
             # OhlcvFeatureのdfは特徴量のみで構成される
-            df=self._derive_feature_df_from_ohlcv(ohlcv),
+            df=self._setter_feature_df(ohlcv),
             # indexやlabelも特徴量についてのものを設定
             index=index,
             label=label,
@@ -48,14 +48,15 @@ class OhlcvFeature(Dataset):
         )
 
     @staticmethod
-    def _derive_feature_df_from_ohlcv(ohlcv: Ohlcv) -> DataFrame:
+    def _setter_feature_df(ohlcv: Ohlcv) -> DataFrame:
         """
         抽象メソッド。
         ohlcvを元に特徴量を生成する。
+        ここで生成されたdfが特徴量のdfとなる。
 
-        staticmethodではない理由:
-            このメソッドから他のメソッドを呼び出すことが想定されているため、
-            selfを参照する必要があるから。
+        setterという命名について:
+            実際は値のセットは行っておらず、生成部分までしかやってない。
+            だが派生クラスから見た場合に役割をわかりやすくするための方便的な命名。
         """
         raise NotImplementedError("This method should be implemented by subclass.")
 
