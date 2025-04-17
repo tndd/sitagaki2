@@ -8,3 +8,5 @@ def test_factory_ohlcv():
     assert ohlcv.df.index.name == "Date"
     assert ohlcv.df.index.dtype == "datetime64[ns]"
     assert ohlcv.field.names == ["Open", "High", "Low", "Close", "Volume"]
+    # labelもexcludeも設定されていないので、namesとfeature_namesは一致する
+    assert ohlcv.field.feature_names == ohlcv.field.names

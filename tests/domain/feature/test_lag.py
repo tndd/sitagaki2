@@ -30,6 +30,19 @@ def test_lag_closes10():
         "l9",
         "l10",
     ]
+    # feature_namesからはnamesからlabelであるl0が除外される
+    assert lag.field.feature_names == [
+        "l1",
+        "l2",
+        "l3",
+        "l4",
+        "l5",
+        "l6",
+        "l7",
+        "l8",
+        "l9",
+        "l10",
+    ]
     # 10件+label分の列数
     assert lag.df.shape[1] == 11
     # Nから10件+label分を引いた行数

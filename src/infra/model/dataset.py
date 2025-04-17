@@ -170,7 +170,6 @@ class Field:
         学習対象である特徴量に当たる部分のカラム名を返す。
         つまりインデックスとラベル、さらに除外指定されたカラムも除外される。
         """
-        # TODO: 未検証
         exclude_cols = set(self.label + self.exclude)
         return [col for col in self.definition if col not in exclude_cols]
 
