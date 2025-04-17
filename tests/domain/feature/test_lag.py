@@ -49,6 +49,8 @@ def test_lag_closes10():
     assert lag.df.shape[0] == N - 11
     # ohlcvと結合前と結合後で行数が変わらないことを確認
     assert lag.df_with_ohlcv.shape[0] == lag.df.shape[0]
+    # ohlcv含めてカラムを特徴量のみに絞っても行数は変わらないことを確認
+    assert lag.df_feature_with_ohlcv.shape[0] == lag.df.shape[0]
 
 
 @pytest.mark.parametrize("n_lags", [1, 10, 100])
