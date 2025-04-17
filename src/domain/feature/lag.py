@@ -45,13 +45,15 @@ def derive_lag_df_from_ohlcv(ohlcv: Ohlcv, n: int) -> DataFrame:
     nが0以下の場合:
         空のDataFrameを返す仕様とする。
     """
-    # ohlcvとインデックスを同じくする新たな特徴量のDataFrameを作成
-    feature_df = DataFrame(index=ohlcv.df.index)
-    # nが0以下の場合は空のDataFrameを返す
     if n <= 0:
-        return feature_df
+        # nが0以下なら、インデックスだけ持つ空のDataFrameを返す
+        return DataFrame(index=ohlcv.df.index)
+    # nが1以上なら、雛形を作って返す
+    columns_to_add = {f"l{i}": float("nan") for i in range(n + 1)}
+    feature_df = DataFrame(columns_to_add, index=ohlcv.df.index)
     # 対数差分の計算
     close = ohlcv.df["Close"]
+    # 計算できない部分はスキップされnanのまま
     for i in range(n + 1):
         shifted_close = close.shift(i)
         next_shifted_close = close.shift(i + 1)
@@ -61,8 +63,6 @@ def derive_lag_df_from_ohlcv(ohlcv: Ohlcv, n: int) -> DataFrame:
             & next_shifted_close.notna()
             & (next_shifted_close != 0)
         )
-        feature_df[f"l{i}"] = float("nan")  # NoneだとObject型と判定されエラー
-        # 計算できない部分はスキップされnanのまま
         feature_df.loc[mask, f"l{i}"] = log(
             shifted_close[mask] / next_shifted_close[mask]
         )

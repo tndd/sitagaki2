@@ -38,35 +38,36 @@ def test_lag_closes10():
     assert lag.df_with_ohlcv.shape[0] == lag.df.shape[0]
 
 
-@pytest.mark.parametrize("n", [1, 10, 100])
-def test_derive_lag_df_from_ohlcv_normal(n):
+@pytest.mark.parametrize("n_lags", [1, 10, 100])
+def test_derive_lag_df_from_ohlcv_normal(n_lags):
     """
     ohlcvからlag特徴量を抽出する機能のテスト。
-    ここでは正常系を検証する。(n>0)
+    ここでは正常系を検証する。(n_lags>0)
     """
     ohlcv = factory_ohlcv_random_walk()
-    lag_df = derive_lag_df_from_ohlcv(ohlcv, n)
+    lag_df = derive_lag_df_from_ohlcv(ohlcv, n_lags)
     assert isinstance(lag_df, DataFrame)
     # label分の1を加えた0~nまでの個数
-    assert lag_df.shape[1] == n + 1
+    assert lag_df.shape[1] == n_lags + 1
     # dropnaのせいで厳密一致することはないが、最新のindexは一致する
     assert lag_df.index[-100:].equals(ohlcv.df.index[-100:])
     # 特徴量dfの長さは0でない
     assert lag_df.shape[0] > 0
 
 
-@pytest.mark.parametrize("n", [0, -1, -10])
-def test_derive_lag_df_from_ohlcv_abnormal(n):
+@pytest.mark.parametrize("n_lags", [0, -1, -10])
+def test_derive_lag_df_from_ohlcv_abnormal(n_lags):
     """
     ohlcvからlag特徴量を抽出する機能のテスト。
-    ここでは異常系を検証する。(n<=0)
+    ここでは異常系を検証する。(n_lags<=0)
     """
     n_cols = 1000
     ohlcv = factory_ohlcv_random_walk(n_cols)
-    lag_df = derive_lag_df_from_ohlcv(ohlcv, n)
+    lag_df = derive_lag_df_from_ohlcv(ohlcv, n_lags)
     assert isinstance(lag_df, DataFrame)
+    # 行数については異常系でもNの数だけ作られる
     assert lag_df.shape[0] == n_cols
-    # lagが作られる前に値が返されるので、列数は0となる
+    # 異常系においてはlagは１つも作られない。indexのみとなる
     assert lag_df.shape[1] == 0
     # dropnaのせいで厳密一致することはないが、最新のindexは一致する
     assert lag_df.index[-100:].equals(ohlcv.df.index[-100:])
