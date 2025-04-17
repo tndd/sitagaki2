@@ -1,5 +1,8 @@
+import pytest
 from pandas import DataFrame
 
+from domain.feature.lag import derive_lag_df_from_ohlcv
+from fixture.domain.dataset.ohlcv import factory_ohlcv_random_walk
 from fixture.domain.feature.lag import factory_lag_closes10
 
 
@@ -28,34 +31,35 @@ def test_lag_closes10():
     ]
 
 
-def test_derive_df_lag_closes10():
+@pytest.mark.parametrize("n", [1, 10, 100])
+def test_derive_lag_df_from_ohlcv_normal(n):
     """
-    lag特徴量の具体的な計算結果を検証するテスト
-
-    以下の点を確認:
-        1. データフレームの基本構造
-        2. サンプルデータの存在と形式
-        3. 計算結果の値の範囲
-        4. 時系列データとしての連続性
-
-    特に、実際の計算結果が期待される範囲内に収まっているかを確認
+    ohlcvからlag特徴量を抽出する機能のテスト。
+    ここでは正常系を検証する。(n>0)
     """
-    lag = factory_lag_closes10()
-    df = lag.df
+    ohlcv = factory_ohlcv_random_walk()
+    lag_df = derive_lag_df_from_ohlcv(ohlcv, n)
+    assert isinstance(lag_df, DataFrame)
+    # label分の1を加えた0~nまでの個数
+    assert lag_df.shape[1] == n + 1
+    # dropnaのせいで厳密一致することはないが、最新のindexは一致する
+    assert lag_df.index[-100:].equals(ohlcv.df.index[-100:])
+    # 特徴量dfの長さは0でない
+    assert lag_df.shape[0] > 0
 
-    # データフレームの基本チェック
-    assert isinstance(df, DataFrame)
-    assert not df.isna().any().any()  # 欠損値がないことを確認
-    assert len(df) > 0  # データが存在することを確認
 
-    # 特定の行のlag特徴量を確認
-    sample_row = df.iloc[0]
-    # 必要な列が存在することを確認
-    assert all(col in sample_row.index for col in lag.field.col_names)
-
-    # 対数差分の計算が正しいことを確認
-    # 例：l0 = log(close_t / close_t-1) * 10000
-    # 実際の値と期待値が近いことを確認
-    sample_values = sample_row[lag.field.col_names]
-    # 現実的な範囲内であることを確認
-    assert all(abs(val) < 1000 for val in sample_values)
+@pytest.mark.parametrize("n", [0, -1, -10])
+def test_derive_lag_df_from_ohlcv_abnormal(n):
+    """
+    ohlcvからlag特徴量を抽出する機能のテスト。
+    ここでは異常系を検証する。(n<=0)
+    """
+    n_cols = 1000
+    ohlcv = factory_ohlcv_random_walk(n_cols)
+    lag_df = derive_lag_df_from_ohlcv(ohlcv, n)
+    assert isinstance(lag_df, DataFrame)
+    assert lag_df.shape[0] == n_cols
+    # lagが作られる前に値が返されるので、列数は0となる
+    assert lag_df.shape[1] == 0
+    # dropnaのせいで厳密一致することはないが、最新のindexは一致する
+    assert lag_df.index[-100:].equals(ohlcv.df.index[-100:])

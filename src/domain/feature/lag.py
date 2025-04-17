@@ -38,13 +38,18 @@ class LagCloses10(OhlcvFeature):
 
 
 def derive_lag_df_from_ohlcv(ohlcv: Ohlcv, n: int) -> DataFrame:
-    # TODO: テストを書く
     """
     n日分の終値の対数差分の特徴量を生成し、特徴量のみのDataFrameを返す。
     インデックスは元のOHLCVデータから引き継ぎ、欠損値を含む行は削除する。
+
+    nが0以下の場合:
+        空のDataFrameを返す仕様とする。
     """
     # ohlcvとインデックスを同じくする新たな特徴量のDataFrameを作成
     feature_df = DataFrame(index=ohlcv.df.index)
+    if n <= 0:
+        # nが0以下の場合は空のDataFrameを返す
+        return feature_df
     # 対数差分の計算
     close = ohlcv.df["Close"]
     for i in range(n + 1):
