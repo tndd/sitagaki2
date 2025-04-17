@@ -156,17 +156,18 @@ class Field:
             raise TypeError(f"不正なexclude => {exclude}")
 
     @property
-    def col_names(self) -> list[str]:
+    def names(self) -> list[str]:
         """
         フィールド定義のカラム名を返す。
-        indexは含めない。
+        definitionからindexのみ除外される。
+        テーブルの全カラム名一覧を取得するイメージ。
         """
         return list(self.definition.keys())
 
     @property
-    def col_names_exclude_label(self) -> list[str]:
+    def feature_names(self) -> list[str]:
         """
-        学習対象のカラム名を返す。
+        学習対象である特徴量に当たる部分のカラム名を返す。
         つまりインデックスとラベル、さらに除外指定されたカラムも除外される。
         """
         # TODO: 未検証

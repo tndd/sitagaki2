@@ -11,7 +11,7 @@ def test_factory_dataset_impl():
     assert isinstance(dsi, DatasetImpl)
     dsi.field.schema.validate(dsi.df)
     assert dsi.df.index.name == "Date"
-    assert dsi.field.col_names == ["Open", "High", "Low", "Close", "Volume"]
+    assert dsi.field.names == ["Open", "High", "Low", "Close", "Volume"]
     assert dsi.field.label == []
     assert dsi.field.exclude == []
 
@@ -21,6 +21,6 @@ def test_factory_dataset_impl_v2():
     assert isinstance(dsi, DatasetImplV2)
     dsi.field.schema.validate(dsi.df)
     assert dsi.df.index.name == "Date"
-    assert dsi.field.col_names == ["D0", "D1", "D2", "D3", "D4"]
+    assert dsi.field.names == ["D0", "D1", "D2", "D3", "D4"]
     assert dsi.field.label == []
     assert dsi.field.exclude == []

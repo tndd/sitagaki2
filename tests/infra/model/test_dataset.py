@@ -19,7 +19,7 @@ def test_dataset():
     assert dsi.field.label == ["Close"]
     assert dsi.field.exclude == ["Volume"]
     # カラム名の確認(index=>Dateは除外されている)
-    assert dsi.field.col_names == ["Open", "High", "Low", "Close", "Volume"]
+    assert dsi.field.names == ["Open", "High", "Low", "Close", "Volume"]
     # test => get_labeled_tensor()
     labeled_tensor = dsi.get_labeled_tensor()
     assert isinstance(labeled_tensor, LabeledTensor)
