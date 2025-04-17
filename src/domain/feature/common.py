@@ -61,7 +61,7 @@ class OhlcvFeature(Dataset):
         raise NotImplementedError("This method should be implemented by subclass.")
 
     @property
-    def df_merged(self) -> DataFrame:
+    def df_with_ohlcv(self) -> DataFrame:
         """
         自身の特徴量dfとohlcv.dfを結合して返す。
         結合しないとバックテストで使えない。

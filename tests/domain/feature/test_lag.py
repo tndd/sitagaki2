@@ -35,7 +35,7 @@ def test_lag_closes10():
     # Nから10件+label分を引いた行数
     assert lag.df.shape[0] == N - 11
     # ohlcvと結合前と結合後で行数が変わらないことを確認
-    assert lag.df_merged.shape[0] == lag.df.shape[0]
+    assert lag.df_with_ohlcv.shape[0] == lag.df.shape[0]
 
 
 @pytest.mark.parametrize("n", [1, 10, 100])
