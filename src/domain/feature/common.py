@@ -77,12 +77,11 @@ class OhlcvFeature(Dataset):
         """
         ohlcv含めてカラムを特徴量のみに絞って返す。
         バックテストで使われるのはこちらが想定される。
+
+        WARN: メモリ使用量
+            dropはコピーを作成するため、
+            大きなデータフレームではメモリ問題が起こるかもしれない。
         """
-        return concat(
-            [
-                self.ohlcv.df,
-                self.df.loc[:, self.field.feature_names],
-            ],
-            axis=1,
-            join="inner",
+        return self.df_with_ohlcv.drop(
+            columns=self.field.label_exclude_names,
         )
