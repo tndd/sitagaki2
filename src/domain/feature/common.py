@@ -64,10 +64,25 @@ class OhlcvFeature(Dataset):
     def df_with_ohlcv(self) -> DataFrame:
         """
         自身の特徴量dfとohlcv.dfを結合して返す。
-        結合しないとバックテストで使えない。
+        labelもexcludeも除外されずそのまま結合されるので注意。
         """
         return concat(
             [self.ohlcv.df, self.df],
+            axis=1,
+            join="inner",
+        )
+
+    @property
+    def df_feature_with_ohlcv(self) -> DataFrame:
+        """
+        ohlcv含めてカラムを特徴量のみに絞って返す。
+        バックテストで使われるのはこちらが想定される。
+        """
+        return concat(
+            [
+                self.ohlcv.df,
+                self.df.loc[:, self.field.feature_names],
+            ],
             axis=1,
             join="inner",
         )
