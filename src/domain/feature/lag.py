@@ -44,10 +44,11 @@ def derive_lag_df_from_ohlcv(ohlcv: Ohlcv, n: int) -> DataFrame:
 
     nが0以下の場合:
         空のDataFrameを返す仕様とする。
+        インデックスもから何もかも完全な空。
     """
     if n <= 0:
         # nが0以下なら、インデックスだけ持つ空のDataFrameを返す
-        return DataFrame(index=ohlcv.df.index)
+        return DataFrame()
     # nが1以上なら、雛形を作って返す
     columns_to_add = {f"l{i}": float("nan") for i in range(n + 1)}
     feature_df = DataFrame(columns_to_add, index=ohlcv.df.index)

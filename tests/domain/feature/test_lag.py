@@ -60,14 +60,11 @@ def test_derive_lag_df_from_ohlcv_abnormal(n_lags):
     """
     ohlcvからlag特徴量を抽出する機能のテスト。
     ここでは異常系を検証する。(n_lags<=0)
+
+    異常系の入力には空のDataFrameが帰ってくることが期待される。
     """
-    n_cols = 1000
-    ohlcv = factory_ohlcv_random_walk(n_cols)
+    ohlcv = factory_ohlcv_random_walk()
     lag_df = derive_lag_df_from_ohlcv(ohlcv, n_lags)
     assert isinstance(lag_df, DataFrame)
-    # 行数については異常系でもNの数だけ作られる
-    assert lag_df.shape[0] == n_cols
-    # 異常系においてはlagは１つも作られない。indexのみとなる
-    assert lag_df.shape[1] == 0
-    # dropnaのせいで厳密一致することはないが、最新のindexは一致する
-    assert lag_df.index[-100:].equals(ohlcv.df.index[-100:])
+    # 空のDataFrameであることを確認
+    assert lag_df.shape == (0, 0)
