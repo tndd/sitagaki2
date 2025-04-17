@@ -11,7 +11,8 @@ def test_lag_closes10():
     lag特徴量の基本的な性質を検証するテスト
     indexやlabel、カラム名が設定されているかという最低限の確認内容
     """
-    lag = factory_lag_closes10()
+    N = 1000
+    lag = factory_lag_closes10(N)
     # スキーマの定義チェック
     assert lag.field.index == "Date"
     assert lag.field.label == ["l0"]
@@ -29,6 +30,12 @@ def test_lag_closes10():
         "l9",
         "l10",
     ]
+    # 10件+label分の列数
+    assert lag.df.shape[1] == 11
+    # Nから10件+label分を引いた行数
+    assert lag.df.shape[0] == N - 11
+    # ohlcvと結合前と結合後で行数が変わらないことを確認
+    assert lag.df_merged.shape[0] == lag.df.shape[0]
 
 
 @pytest.mark.parametrize("n", [1, 10, 100])
