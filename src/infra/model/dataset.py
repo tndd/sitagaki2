@@ -164,6 +164,16 @@ class Field:
         return list(self.definition.keys())
 
     @property
+    def col_names_exclude_label(self) -> list[str]:
+        """
+        学習対象のカラム名を返す。
+        つまりインデックスとラベル、さらに除外指定されたカラムも除外される。
+        """
+        # TODO: 未検証
+        exclude_cols = set(self.label + self.exclude)
+        return [col for col in self.definition if col not in exclude_cols]
+
+    @property
     def schema(self) -> DataFrameSchema:
         """
         スキーマ検証用のためのDataFrameSchemaを返す。
