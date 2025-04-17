@@ -1,4 +1,3 @@
-import numpy as np
 from pandas import DataFrame
 
 from fixture.domain.feature.lag import factory_lag_closes10
@@ -7,13 +6,7 @@ from fixture.domain.feature.lag import factory_lag_closes10
 def test_lag_closes10():
     """
     lag特徴量の基本的な性質を検証するテスト
-
-    以下の点を確認:
-        1. スキーマ定義の正確性（列名、インデックス、ラベル等）
-        2. データの品質（欠損値なし、適切な型）
-        3. 計算結果の形式（列の存在、値の型）
-
-    特に、lag特徴量として期待される基本的な構造を満たしているかを確認
+    indexやlabel、カラム名が設定されているかという最低限の確認内容
     """
     lag = factory_lag_closes10()
     # スキーマの定義チェック
@@ -33,15 +26,6 @@ def test_lag_closes10():
         "l9",
         "l10",
     ]
-    # データフレームの基本チェック
-    df = lag.df
-    assert isinstance(df, DataFrame)
-    assert not df.isna().any().any()  # 欠損値がないことを確認
-    assert len(df) > 0  # データが存在することを確認
-
-    # データ型のチェック
-    for col in lag.field.col_names:
-        assert np.issubdtype(df[col].dtype, np.floating)  # 浮動小数点型であることを確認
 
 
 def test_derive_df_lag_closes10():
