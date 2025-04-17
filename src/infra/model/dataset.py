@@ -62,9 +62,7 @@ class Dataset:
         elif len(self.field.label) == 1:
             # ラベルが１次元の場合
             return LabeledTensor(
-                X=self.df.drop(
-                    columns=self.field.label + self.field.exclude
-                ).to_numpy(),
+                X=self.df.drop(columns=self.field.label_exclude_names).to_numpy(),
                 y=self.df[self.field.label]
                 .to_numpy()
                 .ravel(),  # 1dラベルと確定しているので、ravelで警告を抑制
@@ -165,12 +163,19 @@ class Field:
         return list(self.definition.keys())
 
     @property
+    def label_exclude_names(self) -> list[str]:
+        """
+        ラベルと除外指定されたカラム名を返す。
+        """
+        return self.label + self.exclude
+
+    @property
     def feature_names(self) -> list[str]:
         """
         学習対象である特徴量に当たる部分のカラム名を返す。
         つまりインデックスとラベル、さらに除外指定されたカラムも除外される。
         """
-        exclude_cols = set(self.label + self.exclude)
+        exclude_cols = set(self.label_exclude_names)
         return [col for col in self.definition if col not in exclude_cols]
 
     @property

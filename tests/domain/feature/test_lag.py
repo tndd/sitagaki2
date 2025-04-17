@@ -17,6 +17,7 @@ def test_lag_closes10():
     assert lag.field.index == "Date"
     assert lag.field.label == ["l0"]
     assert lag.field.exclude == []
+    assert lag.field.label_exclude_names == ["l0"]
     assert lag.field.names == [
         "l0",
         "l1",
