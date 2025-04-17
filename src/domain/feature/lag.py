@@ -47,8 +47,8 @@ def derive_lag_df_from_ohlcv(ohlcv: Ohlcv, n: int) -> DataFrame:
     """
     # ohlcvとインデックスを同じくする新たな特徴量のDataFrameを作成
     feature_df = DataFrame(index=ohlcv.df.index)
+    # nが0以下の場合は空のDataFrameを返す
     if n <= 0:
-        # nが0以下の場合は空のDataFrameを返す
         return feature_df
     # 対数差分の計算
     close = ohlcv.df["Close"]
