@@ -50,16 +50,16 @@ def show_feature_importance():
         print(f"{name}: {imp}")
 
     # 可視化
-    plt.figure(figsize=(10, 6))
-    indices = np.argsort(importance)[::-1]
-    plt.barh(range(len(importance)), importance[indices], align="center")
-    plt.yticks(range(len(importance)), [feature_names[i] for i in indices])
-    plt.title("Feature Importance")
-    plt.xlabel("Importance")
-    plt.ylabel("Features")
-    plt.tight_layout()
-    plt.savefig("feature_importance.png")
-    print("特徴量の重要度を 'feature_importance.png' に保存しました")
+    # plt.figure(figsize=(10, 6))
+    # indices = np.argsort(importance)[::-1]
+    # plt.barh(range(len(importance)), importance[indices], align="center")
+    # plt.yticks(range(len(importance)), [feature_names[i] for i in indices])
+    # plt.title("Feature Importance")
+    # plt.xlabel("Importance")
+    # plt.ylabel("Features")
+    # plt.tight_layout()
+    # plt.savefig("feature_importance.png")
+    # print("特徴量の重要度を 'feature_importance.png' に保存しました")
 
 
 # データ準備
