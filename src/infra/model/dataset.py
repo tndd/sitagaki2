@@ -9,7 +9,7 @@ from infra.model.tensor import LabeledTensor, SplitLabeledTensor
 class Dataset:
     """
     dataframeを扱うための抽象クラス
-    スキーマ定義と親の情報を持つ。
+    ラベル付きデータセットとそうでないデータセット両方を想定してる。
 
     Properties:
         df: DataFrame
