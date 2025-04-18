@@ -5,6 +5,15 @@ from sklearn.model_selection import train_test_split
 
 from infra.model.tensor import LabeledTensor, SplitLabeledTensor
 
+"""
+TODO: ラベル付きとそうでないデータセットの分離
+    今のところ、Datasetはラベル付きデータセットとそうでないもの両方を想定してる。
+    だが通常のデータセットの時には、get_split系の関数が全て無駄になるしエラーにもなる。
+    だからこそ、データセットというのは種類ごとに独立させるべきだろう。
+    それに伴ってFieldもラベル付きとそうでないものを分離させる必要が出てくる。
+    今のところはまだすぐには修正を加えず、全体のプロトタイプが完成してから要請に従い修正する方針で。
+"""
+
 
 class Dataset:
     """
