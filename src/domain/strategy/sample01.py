@@ -1,3 +1,5 @@
+import matplotlib.pyplot as plt
+import numpy as np
 from backtesting import Backtest
 from backtesting import Strategy as BacktestStrategy
 
@@ -36,6 +38,30 @@ class PredictStrategy(BacktestStrategy):
             self.sell(size=0.2)  # 資金の20%を使用
 
 
+def show_feature_importance():
+    # 特徴量の重要度を表示
+    feature_names = lag_feature.df_feature.columns.tolist()
+    importance = lgbm_model.feature_importance(importance_type="gain")
+
+    # 数値として表示
+    importance_dict = dict(zip(feature_names, importance))
+    print("\n--- 特徴量の重要度 ---")
+    for name, imp in sorted(importance_dict.items(), key=lambda x: x[1], reverse=True):
+        print(f"{name}: {imp}")
+
+    # 可視化
+    plt.figure(figsize=(10, 6))
+    indices = np.argsort(importance)[::-1]
+    plt.barh(range(len(importance)), importance[indices], align="center")
+    plt.yticks(range(len(importance)), [feature_names[i] for i in indices])
+    plt.title("Feature Importance")
+    plt.xlabel("Importance")
+    plt.ylabel("Features")
+    plt.tight_layout()
+    plt.savefig("feature_importance.png")
+    print("特徴量の重要度を 'feature_importance.png' に保存しました")
+
+
 # データ準備
 lag_feature = factory_lag_closes10()
 lgbm_model = train_model_lgbm_ohlcv_feature(lag_feature)
@@ -47,6 +73,9 @@ df["predict"] = predicts
 
 # 結果表示
 print(f"予測結果を含むデータフレーム（先頭5行）:\n{df.head()}")
+
+# 特徴量の重要度を表示
+show_feature_importance()
 
 # バックテスト実行
 print("バックテスト実行中...")
