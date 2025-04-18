@@ -18,9 +18,7 @@ class PredictStrategy(BacktestStrategy):
     SELL_THRESHOLD = -0.0001  # この値より小さい予測値で売り
 
     def init(self):
-        # 予測値をインジケーターとして登録
-        # self.dataはバックテストのデータフレームで、predictカラムがある前提
-        self.prediction = self.data.predict
+        pass
 
     def next(self):
         # 前回のポジションがあれば解消
@@ -28,7 +26,7 @@ class PredictStrategy(BacktestStrategy):
             self.position.close()
 
         # 予測値に基づいた売買判断
-        current_predict = self.prediction[-1]  # 現在の予測値
+        current_predict = self.data.predict[-1]  # 現在の予測値
 
         if current_predict > self.BUY_THRESHOLD:
             # 予測値が閾値より大きい場合は買い
