@@ -69,7 +69,7 @@ print("----------------------")
 
 # プロット表示
 try:
-    backtest.plot()
+    # backtest.plot()
     print("バックテストのプロットを表示しました。")
 except Exception as e:
     print(f"プロット表示エラー: {e}")
