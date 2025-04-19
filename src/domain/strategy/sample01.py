@@ -63,6 +63,30 @@ def show_feature_importance(
         print("特徴量の重要度を 'feature_importance.png' に保存しました")
 
 
+def run_backtest(df, strategy, is_plot=False):
+    print("バックテスト実行中...")
+    backtest = Backtest(
+        df,  # 予測値を含むデータフレーム
+        strategy,  # 作成した戦略クラス
+        cash=100000,  # 初期資金
+        commission=0.002,  # 取引手数料
+        exclusive_orders=True,  # 排他的注文
+        trade_on_close=True,  # 終値で取引
+    )
+    stats = backtest.run()
+    print("\n--- バックテスト結果 ---")
+    print(stats)
+    print("----------------------")
+    # プロット表示
+    if is_plot:
+        try:
+            backtest.plot()
+            print("バックテストのプロットを表示しました。")
+        except Exception as e:
+            print(f"プロット表示エラー: {e}")
+            print("プロットを表示するには、適切なグラフィカル環境が必要です。")
+
+
 if __name__ == "__main__":
     # データ準備
     lag_feature = factory_lag_closes10()
@@ -75,23 +99,4 @@ if __name__ == "__main__":
     # 特徴量の重要度を表示
     show_feature_importance(lag_feature, lgbm_model)
     # バックテスト実行
-    print("バックテスト実行中...")
-    backtest = Backtest(
-        df,  # 予測値を含むデータフレーム
-        PredictStrategy,  # 作成した戦略クラス
-        cash=100000,  # 初期資金
-        commission=0.002,  # 取引手数料
-        exclusive_orders=True,  # 排他的注文
-        trade_on_close=True,  # 終値で取引
-    )
-    stats = backtest.run()
-    print("\n--- バックテスト結果 ---")
-    print(stats)
-    print("----------------------")
-    # プロット表示
-    # try:
-    #     backtest.plot()
-    #     print("バックテストのプロットを表示しました。")
-    # except Exception as e:
-    #     print(f"プロット表示エラー: {e}")
-    #     print("プロットを表示するには、適切なグラフィカル環境が必要です。")
+    run_backtest(df, PredictStrategy)
