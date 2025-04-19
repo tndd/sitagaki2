@@ -63,6 +63,13 @@ def show_feature_importance(
         print("特徴量の重要度を 'feature_importance.png' に保存しました")
 
 
+def gen_feature_df_with_predict(feature, lgbm_model):
+    df = feature.df_feature_with_ohlcv.copy()
+    predicts = lgbm_model.predict(feature.df_feature)
+    df["predict"] = predicts
+    return df
+
+
 def run_backtest(df, strategy, is_plot=False):
     print("バックテスト実行中...")
     backtest = Backtest(
@@ -92,9 +99,7 @@ if __name__ == "__main__":
     lag_feature = factory_lag_closes10()
     lgbm_model = train_model_lgbm_ohlcv_feature(lag_feature)
     # モデルの予測結果をデータフレームに追加
-    df = lag_feature.df_feature_with_ohlcv.copy()
-    predicts = lgbm_model.predict(lag_feature.df_feature)
-    df["predict"] = predicts
+    df = gen_feature_df_with_predict(lag_feature, lgbm_model)
     print(f"予測結果を含むデータフレーム（先頭5行）:\n{df.head()}")
     # 特徴量の重要度を表示
     show_feature_importance(lag_feature, lgbm_model)
