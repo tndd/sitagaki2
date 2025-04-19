@@ -42,6 +42,9 @@ def show_feature_importance(
     is_plot=False,
 ):
     # 特徴量の重要度を表示
+    print(
+        f"予測結果を含むデータフレーム（先頭5行）:\n{feature.df_feature_with_ohlcv.head()}"
+    )
     feature_names = feature.df_feature.columns.tolist()
     importance = lgbm_model.feature_importance(importance_type="gain")
     # 数値として表示
@@ -100,7 +103,6 @@ if __name__ == "__main__":
     lgbm_model = train_model_lgbm_ohlcv_feature(lag_feature)
     # モデルの予測結果をデータフレームに追加
     df = gen_feature_df_with_predict(lag_feature, lgbm_model)
-    print(f"予測結果を含むデータフレーム（先頭5行）:\n{df.head()}")
     # 特徴量の重要度を表示
     show_feature_importance(lag_feature, lgbm_model)
     # バックテスト実行
