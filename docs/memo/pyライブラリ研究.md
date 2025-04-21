@@ -1,6 +1,7 @@
-# カスタムシグナル
+# Backtesting
+## カスタムシグナル
 
-```py
+```python
 from backtesting import Backtest, Strategy
 import pandas as pd
 
@@ -36,9 +37,9 @@ print(stats)
 bt.plot()
 ```
 
-# 外部関数としてシグナル定義
+## 外部関数としてシグナル定義
 
-```py
+```python
 from backtesting import Backtest, Strategy
 import pandas as pd
 
@@ -75,14 +76,14 @@ print(stats)
 bt.plot()
 ```
 
-# カスタムインジケーターの登録方法
+## カスタムインジケーターの登録方法
 backtesting.py では、self.I() メソッドを使用してカスタムインジケーターを登録できます。これにより、インジケーターが自動的にバックテストエンジンに統合され、next() メソッド内で利用可能になります。
 
 ポイント
 self.I() は、インジケーターをベクトル化して計算するため、高速に動作します。
 Pandas のメソッドや NumPy の関数を活用して、効率的なインジケーターを作成できます。
 
-# 複雑なインジケーターの実装例
+## 複雑なインジケーターの実装例
 例えば、「RSIが30以下でかつ短期移動平均線が長期移動平均線を上抜けた場合」のような複雑な条件をシグナルとして定義することも可能です。
 
 注意点:
@@ -93,7 +94,7 @@ Pandas のメソッドや NumPy の関数を活用して、効率的なインジ
   - カスタムインジケーターの計算が遅い場合、全体のバックテスト速度に影響を与える可能性があります。
   - 特に大規模データセットを扱う場合は、NumPy や Pandas のベクトル化処理を活用しましょう。
 
-```py
+```python
 from backtesting import Backtest, Strategy
 from backtesting.lib import crossover
 import pandas as pd
@@ -142,3 +143,14 @@ print(stats)
 # 結果の可視化
 bt.plot()
 ```
+
+---
+
+
+# Utils
+## Print
+- rich
+- icecream(ic)
+
+## graph
+- plotly
