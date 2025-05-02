@@ -79,7 +79,7 @@ class MultiLabeledDataset(Dataset):
     WARN: 未使用クラス
 
     教師ありデータセットを表す抽象クラス
-    教師ラベルは単数であるという前提
+    教師ラベルは複数であるという前提
 
     Props:
         df: Dataframe
