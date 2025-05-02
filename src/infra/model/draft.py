@@ -47,33 +47,56 @@ class Dataset:
 class LabeledDataset(Dataset):
     """
     教師ありデータセットを表す抽象クラス
+    教師ラベルは単数であるという前提
 
     Props:
         df: Dataframe
         definition: dict
         index: str
-        label: list[str]
-            どれが教師データであるかはここで指定する。
-            教師データは基本的には単数を想定してるが、複数もあり得るためリスト形式
+        label: str
     """
 
     def __init__(
         self,
         df: DataFrame,
         definition: dict[str, PanderaType],
+        label: str,
         index: str | None = None,
-        label: str | list[str] | None = None,
     ) -> None:
         super().__init__(df, definition, index)
-        # labelは必ず、list[str]の形式に変換される
-        if label is None:
-            self.label = []
-        elif isinstance(label, str):
-            self.label = [label]
-        elif isinstance(label, list):
-            self.label = label
-        else:
-            raise TypeError(f"不正なlabel => {label}")
+        self.label = label
+
+    @property
+    def non_label_columns(self) -> list[str]:
+        """
+        教師ラベル部分を除いたカラム名のリスト
+        """
+        return [col for col in self.columns if col != self.label]
+
+
+class MultiLabelsDataset(Dataset):
+    """
+    WARN: 未使用クラス
+
+    教師ありデータセットを表す抽象クラス
+    教師ラベルは単数であるという前提
+
+    Props:
+        df: Dataframe
+        definition: dict
+        index: str
+        labels: list[str]
+    """
+
+    def __init__(
+        self,
+        df: DataFrame,
+        definition: dict[str, PanderaType],
+        labels: list[str],
+        index: str | None = None,
+    ) -> None:
+        super().__init__(df, definition, index)
+        self.labels = labels
 
     @property
     def non_label_columns(self) -> list[str]:

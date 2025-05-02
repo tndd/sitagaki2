@@ -3,6 +3,8 @@ from dataclasses import dataclass
 from lightgbm import Dataset
 from numpy import ndarray
 
+from infra.model.draft import LabeledDataset
+
 
 @dataclass
 class LabeledTensor:
@@ -45,3 +47,15 @@ class SplitLabeledTensor:
             reference=lgb_train,
         )
         return lgb_train, lgb_test
+
+
+def adapt_labeled_dataset_to_tensor(dataset: LabeledDataset) -> LabeledTensor:
+    """
+    教師ありデータのtensorに変換して返す
+    """
+    return LabeledTensor(
+        X=dataset.df.drop(columns=dataset.non_label_columns).to_numpy(),
+        y=dataset.df[dataset.label]
+        .to_numpy()
+        .ravel(),  # 1dラベルと確定しているので、ravelで警告を抑制
+    )
