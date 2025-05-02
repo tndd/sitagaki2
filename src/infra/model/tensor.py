@@ -49,7 +49,7 @@ class SplitLabeledTensor:
         return lgb_train, lgb_test
 
 
-def adapt_labeled_dataset_to_tensor(dataset: LabeledDataset) -> LabeledTensor:
+def convert_labeled_dataset_to_tensor(dataset: LabeledDataset) -> LabeledTensor:
     """
     教師ありデータのtensorに変換して返す
     """
