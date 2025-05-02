@@ -74,7 +74,7 @@ class LabeledDataset(Dataset):
         return [col for col in self.columns if col != self.label]
 
 
-class MultiLabelsDataset(Dataset):
+class MultiLabeledDataset(Dataset):
     """
     WARN: 未使用クラス
 
