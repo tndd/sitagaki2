@@ -103,4 +103,4 @@ class MultiLabelsDataset(Dataset):
         """
         教師ラベル部分を除いたカラム名のリスト
         """
-        return [col for col in self.columns if col not in self.label]
+        return [col for col in self.columns if col not in self.labels]
