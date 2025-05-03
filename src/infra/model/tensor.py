@@ -2,6 +2,7 @@ from dataclasses import dataclass
 
 from lightgbm import Dataset
 from numpy import ndarray
+from sklearn.model_selection import train_test_split
 
 from infra.model.draft import LabeledDataset
 
@@ -58,4 +59,32 @@ def convert_labeled_dataset_to_tensor(dataset: LabeledDataset) -> LabeledTensor:
         y=dataset.df[dataset.label]
         .to_numpy()
         .ravel(),  # 1dラベルと確定しているので、ravelで警告を抑制
+    )
+
+
+def convert_labeled_dataset_to_split_tensor(
+    dataset: LabeledDataset,
+    test_size: int = 0.2,
+    shuffle: bool = False,
+    random_state: int = 42,
+) -> SplitLabeledTensor:
+    """
+    訓練用とテスト用に分割された、教師ありtensorを返す
+
+    基本設定:
+        テストサイズは20%。
+        時系列データが渡されることを考慮し、デフォルトではシャッフルはしない。
+    """
+    dssv = convert_labeled_dataset_to_tensor(dataset)
+    # 時系列を考慮したデータ分割
+    X_train, X_test, y_train, y_test = train_test_split(
+        dssv.X,
+        dssv.y,
+        test_size=test_size,
+        shuffle=shuffle,
+        random_state=random_state,
+    )
+    return SplitLabeledTensor(
+        train=LabeledTensor(X=X_train, y=y_train),
+        test=LabeledTensor(X=X_test, y=y_test),
     )
