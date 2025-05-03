@@ -1,45 +1,27 @@
 from pandas import DataFrame, to_datetime
 
-from infra.model.dataset import Dataset
+from infra.model.draft import Dataset
 
 
 class DatasetImpl(Dataset):
-    SCHEMA = {
-        "Date": "INDEX:datetime",
-        "Open": float,
-        "High": float,
-        "Low": float,
-        "Close": float,
-        "Volume": int,
-    }
-
     def __init__(
         self,
         df: DataFrame,
-        label: str | list[str] | None = None,
-        exclude: str | list[str] | None = None,
     ) -> None:
-        """
-        IndexはDateで固定
-        """
         super().__init__(
             df,
+            definition={
+                "Open": float,
+                "High": float,
+                "Low": float,
+                "Close": float,
+                "Volume": int,
+            },
             index="Date",
-            label=label,
-            exclude=exclude,
         )
 
 
 class DatasetImplV2(Dataset):
-    SCHEMA = {
-        "Date": "INDEX:datetime",
-        "D0": float,
-        "D1": float,
-        "D2": float,
-        "D3": float,
-        "D4": float,
-    }
-
     def __init__(
         self,
         df: DataFrame,
@@ -48,9 +30,14 @@ class DatasetImplV2(Dataset):
     ) -> None:
         super().__init__(
             df,
+            definition={
+                "D0": float,
+                "D1": float,
+                "D2": float,
+                "D3": float,
+                "D4": float,
+            },
             index="Date",
-            label=label,
-            exclude=exclude,
         )
 
 
@@ -80,11 +67,7 @@ def factory_dataset_impl(
             "Volume": [1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000],
         }
     )
-    return DatasetImpl(
-        df=df,
-        label=label,
-        exclude=exclude,
-    )
+    return DatasetImpl(df)
 
 
 def factory_dataset_impl_v2(
@@ -113,8 +96,4 @@ def factory_dataset_impl_v2(
             "D4": [0.4, 1.4, 2.4, 3.4, 4.4, 5.4, 6.4, 7.4, 8.4],
         }
     )
-    return DatasetImplV2(
-        df=df,
-        label=label,
-        exclude=exclude,
-    )
+    return DatasetImplV2(df)
