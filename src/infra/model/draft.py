@@ -10,7 +10,7 @@ class Dataset:
 
     Props:
         df:             dataframeはここに格納される。
-        definition:     カラム定義
+        definition:     カラム定義。単なるpythonの普遍的な型。
         index:          インデックスがあるならここで指定
     """
 
@@ -33,11 +33,16 @@ class Dataset:
     def pandera_schema(self) -> DataFrameSchema:
         """
         スキーマ検証用のためのDataFrameSchemaを返す。
+
+        definitionは定義時点では単なるpythonの型。
+        だがこの関数は、それをpannderaのカラム型に変換してDataFrameSchemaに加工して返す。
         """
-        schema_dict = {
-            column_name: Column(dtype) for column_name, dtype in self.definition.items()
-        }
-        return DataFrameSchema(schema_dict)
+        return DataFrameSchema(
+            {
+                name: Column(dtype)
+                for name, dtype in self.definition.items()
+            }
+        )
 
     @property
     def columns(self) -> list[str]:
