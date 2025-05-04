@@ -39,6 +39,25 @@ class DatasetImplV2(Dataset):
         )
 
 
+class LabeledDatasetImpl(Dataset):
+    def __init__(
+        self,
+        df: DataFrame,
+    ) -> None:
+        super().__init__(
+            df,
+            definition={
+                "F0": float,
+                "F1": float,
+                "F2": float,
+                "F3": float,
+                "L": float,
+            },
+            index="Date",
+            label="L",
+        )
+
+
 def factory_dataset_impl(
     label: str | list[str] | None = None,
     exclude: str | list[str] | None = None,
