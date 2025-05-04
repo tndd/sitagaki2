@@ -1,198 +1,108 @@
 from pandas import DataFrame
 from pandera import Column, DataFrameSchema
-from pandera.api.pandas.types import PandasDtypeInputTypes as PdType
-from sklearn.model_selection import train_test_split
-
-from infra.model.tensor import LabeledTensor, SplitLabeledTensor
-
-"""
-TODO: ラベル付きとそうでないデータセットの分離
-    今のところ、Datasetはラベル付きデータセットとそうでないもの両方を想定してる。
-    だが通常のデータセットの時には、get_split系の関数が全て無駄になるしエラーにもなる。
-    だからこそ、データセットというのは種類ごとに独立させるべきだろう。
-    それに伴ってFieldもラベル付きとそうでないものを分離させる必要が出てくる。
-    今のところはまだすぐには修正を加えず、全体のプロトタイプが完成してから要請に従い修正する方針で。
-"""
+from pandera.api.pandas.types import PandasDtypeInputTypes as PanderaType
 
 
 class Dataset:
     """
-    dataframeを扱うための抽象クラス
-    ラベル付きデータセットとそうでないデータセット両方を想定してる。
+    dataframeを扱うための抽象クラス。
+    dataframeごとの違いを明示的に扱うため。
 
-    Properties:
-        df: DataFrame
-            dataframeはここに格納される。
-
-        field: Field
-            フィールド定義を管理する。
-
-    ClassProperties:
-        SCHEMA: dict[str, PdType]
-            フィールド定義を管理する。
-            indexはスキーマ情報には含めない。
+    Props:
+        df:             dataframeはここに格納される。
+        definition:     カラム定義。単なるpythonの普遍的な型。
+        index:          インデックスがあるならここで指定
     """
-
-    SCHEMA: dict[str, PdType]
 
     def __init__(
         self,
         df: DataFrame,
+        definition: dict[str, PanderaType],
         index: str | None = None,
-        label: str | list[str] | None = None,
-        exclude: str | list[str] | None = None,
     ) -> None:
-        """
-        注意: labelとexcludeの入力型について
-            入力の段階では、str, list, Noneの3つを取り得るが、
-            内部的(Fieldクラス)は一貫してlistとして扱う。
-        """
-        # スキーマの定義と検証
-        self.field = Field(
-            definition=self.__class__.SCHEMA,
-            index=index,
-            label=label,
-            exclude=exclude,
-        )
-        self.field.schema.validate(df)
-        # 検証されたDataFrameを受け入れ
-        self.df: DataFrame = df
+        self.definition = definition
+        self.index = index
+        # スキーマ評価とdfの保持
+        self.pandera_schema.validate(df)
+        self.df = df
         # 指定のインデックスが指定されてなければ、indexを設定する
         if isinstance(index, str) and self.df.index.name != index:
             self.df = self.df.set_index(index)
 
-    def get_labeled_tensor(self) -> LabeledTensor:
+    @property
+    def pandera_schema(self) -> DataFrameSchema:
         """
-        教師ありデータのtensorに変換して返す
-        """
-        if len(self.field.label) == 0:
-            # labels未定義状態で、この関数を呼んだ場合はエラーで落とす
-            raise ValueError("There is no label in this schema.")
-        elif len(self.field.label) == 1:
-            # ラベルが１次元の場合
-            return LabeledTensor(
-                X=self.df.drop(columns=self.field.label_exclude_names).to_numpy(),
-                y=self.df[self.field.label]
-                .to_numpy()
-                .ravel(),  # 1dラベルと確定しているので、ravelで警告を抑制
-            )
-        else:
-            # 多次元ラベルの場合
-            raise ValueError("WIP: Labelが複数の場合の動作は未定義")
+        スキーマ検証用のためのDataFrameSchemaを返す。
 
-    def get_split_labeled_tensor(
-        self,
-        test_size: int = 0.2,
-        shuffle: bool = False,
-        random_state: int = 42,
-    ) -> SplitLabeledTensor:
+        definitionは定義時点では単なるpythonの型。
+        だがこの関数は、それをpannderaのカラム型に変換してDataFrameSchemaに加工して返す。
         """
-        訓練用とテスト用にデータが分割された、
-        教師ありデータのtensorを返す
-
-        テストサイズは20%。
-        時系列データが渡されることを考慮し、デフォルトではシャッフルはしない。
-        """
-        dssv = self.get_labeled_tensor()
-        # 時系列を考慮したデータ分割
-        X_train, X_test, y_train, y_test = train_test_split(
-            dssv.X,
-            dssv.y,
-            test_size=test_size,
-            shuffle=shuffle,
-            random_state=random_state,
-        )
-        return SplitLabeledTensor(
-            train=LabeledTensor(X=X_train, y=y_train),
-            test=LabeledTensor(X=X_test, y=y_test),
+        return DataFrameSchema(
+            {name: Column(dtype) for name, dtype in self.definition.items()}
         )
 
+    @property
+    def columns(self) -> list[str]:
+        return list(self.definition.keys())
 
-class Field:
+
+class LabeledDataset(Dataset):
     """
-    Dataframeのフィールド定義を管理するクラス
-    dict型の定義を受け取り、カラム名やschemaなど柔軟な形式で返す。
+    教師ありデータセットを表す抽象クラス
+    教師ラベルは単数であるという前提
 
-    注意:
-        indexについてはdefinitionから除外される。
-
-    Properties:
-        index: str | None
-            インデックス名を指定する。
-            インデックスがない場合は、Noneを指定する。
-
-        label: list[str]
-            教師データの名前を指定する。
-            基本的には単数だが、複数指定にも対応。
-
-        exclude: list[str]
-            特徴量としては含めない項目を指定する。
-            想定としては、Dateのような日付データなど。
+    Props:
+        df: Dataframe
+        definition: dict
+        index: str
+        label: str
     """
 
     def __init__(
         self,
-        definition: dict[str, PdType],
+        df: DataFrame,
+        definition: dict[str, PanderaType],
+        label: str,
         index: str | None = None,
-        label: str | list[str] | None = None,
-        exclude: str | list[str] | None = None,
     ) -> None:
-        # indexが指定されている場合、definitionから除外
-        self.definition: dict[str, PdType] = {
-            k: v for k, v in definition.items() if k != index
-        }
-        # Index: Noneが設定される場合もある
-        self.index = index
-        # Label: list[str]の形式に変換される
-        if label is None:
-            self.label = []
-        elif isinstance(label, str):
-            self.label = [label]
-        elif isinstance(label, list):
-            self.label = label
-        else:
-            raise TypeError(f"不正なlabel => {label}")
-        # Exclude: list[str]の形式に変換される
-        if exclude is None:
-            self.exclude = []
-        elif isinstance(exclude, str):
-            self.exclude = [exclude]
-        elif isinstance(exclude, list):
-            self.exclude = exclude
-        else:
-            raise TypeError(f"不正なexclude => {exclude}")
+        super().__init__(df, definition, index)
+        self.label = label
 
     @property
-    def names(self) -> list[str]:
+    def non_label_columns(self) -> list[str]:
         """
-        フィールド定義のカラム名を返す。
-        definitionからindexのみ除外される。
-        テーブルの全カラム名一覧を取得するイメージ。
+        教師ラベル部分を除いたカラム名のリスト
         """
-        return list(self.definition.keys())
+        return [col for col in self.columns if col != self.label]
+
+
+class MultiLabeledDataset(Dataset):
+    """
+    WARN: 未使用クラス
+
+    教師ありデータセットを表す抽象クラス
+    教師ラベルは複数であるという前提
+
+    Props:
+        df: Dataframe
+        definition: dict
+        index: str
+        labels: list[str]
+    """
+
+    def __init__(
+        self,
+        df: DataFrame,
+        definition: dict[str, PanderaType],
+        labels: list[str],
+        index: str | None = None,
+    ) -> None:
+        super().__init__(df, definition, index)
+        self.labels = labels
 
     @property
-    def label_exclude_names(self) -> list[str]:
+    def non_label_columns(self) -> list[str]:
         """
-        ラベルと除外指定されたカラム名を返す。
+        教師ラベル部分を除いたカラム名のリスト
         """
-        return self.label + self.exclude
-
-    @property
-    def feature_names(self) -> list[str]:
-        """
-        学習対象である特徴量に当たる部分のカラム名を返す。
-        つまりインデックスとラベル、さらに除外指定されたカラムも除外される。
-        """
-        exclude_cols = set(self.label_exclude_names)
-        return [col for col in self.definition if col not in exclude_cols]
-
-    @property
-    def schema(self) -> DataFrameSchema:
-        """
-        スキーマ検証用のためのDataFrameSchemaを返す。
-        """
-        schema_dict = {
-            column_name: Column(dtype) for column_name, dtype in self.definition.items()
-        }
-        return DataFrameSchema(schema_dict)
+        return [col for col in self.columns if col not in self.labels]

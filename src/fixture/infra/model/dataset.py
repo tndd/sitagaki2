@@ -1,6 +1,6 @@
 from pandas import DataFrame, to_datetime
 
-from infra.model.draft import Dataset, LabeledDataset
+from infra.model.dataset import Dataset, LabeledDataset
 
 
 class DatasetImpl(Dataset):

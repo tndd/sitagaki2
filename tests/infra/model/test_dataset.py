@@ -4,7 +4,7 @@ from fixture.infra.model.dataset import (
     factory_dataset_impl,
     factory_labeled_dataset_impl,
 )
-from infra.model.draft import Dataset, LabeledDataset
+from infra.model.dataset import Dataset, LabeledDataset
 
 
 def test_dataset():

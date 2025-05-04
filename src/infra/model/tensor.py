@@ -4,7 +4,7 @@ from lightgbm import Dataset
 from numpy import ndarray
 from sklearn.model_selection import train_test_split
 
-from infra.model.draft import LabeledDataset
+from infra.model.dataset import LabeledDataset
 
 
 @dataclass
