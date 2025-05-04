@@ -25,8 +25,6 @@ class DatasetImplV2(Dataset):
     def __init__(
         self,
         df: DataFrame,
-        label: str | list[str] | None = None,
-        exclude: str | list[str] | None = None,
     ) -> None:
         super().__init__(
             df,
