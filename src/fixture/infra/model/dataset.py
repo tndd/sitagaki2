@@ -51,7 +51,7 @@ class LabeledDatasetImpl(Dataset):
                 "F1": float,
                 "F2": float,
                 "F3": float,
-                "L": float,
+                "L": bool,
             },
             index="Date",
             label="L",
@@ -111,3 +111,30 @@ def factory_dataset_impl_v2(
         }
     )
     return DatasetImplV2(df)
+
+
+def factory_labeled_dataset_impl() -> LabeledDatasetImpl:
+    df = DataFrame(
+        {
+            "Date": to_datetime(
+                [
+                    "2021-01-01",
+                    "2021-01-02",
+                    "2021-01-03",
+                    "2021-01-04",
+                    "2021-01-05",
+                    "2021-01-06",
+                    "2021-01-07",
+                    "2021-01-08",
+                    "2021-01-09",
+                    "2021-01-10",
+                ]
+            ),
+            "F0": [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0],
+            "F1": [1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 2.0],
+            "F2": [2.1, 2.2, 2.3, 2.4, 2.5, 2.6, 2.7, 2.8, 2.9, 3.0],
+            "F3": [3.1, 3.2, 3.3, 3.4, 3.5, 3.6, 3.7, 3.8, 3.9, 4.0],
+            "L": [0, 1, 0, 1, 0, 1, 0, 1, 0, 1],
+        }
+    )
+    return LabeledDatasetImpl(df)
