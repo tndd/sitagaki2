@@ -54,8 +54,8 @@ class LabeledDatasetImpl(Dataset):
                 "L": bool,
             },
             index="Date",
-            label="L",
         )
+        self.label = "L"
 
 
 def factory_dataset_impl() -> DatasetImpl:
@@ -134,7 +134,7 @@ def factory_labeled_dataset_impl() -> LabeledDatasetImpl:
             "F1": [1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 2.0],
             "F2": [2.1, 2.2, 2.3, 2.4, 2.5, 2.6, 2.7, 2.8, 2.9, 3.0],
             "F3": [3.1, 3.2, 3.3, 3.4, 3.5, 3.6, 3.7, 3.8, 3.9, 4.0],
-            "L": [0, 1, 0, 1, 0, 1, 0, 1, 0, 1],
+            "L": [False, True, False, True, False, True, False, True, False, True],
         }
     )
     return LabeledDatasetImpl(df)
