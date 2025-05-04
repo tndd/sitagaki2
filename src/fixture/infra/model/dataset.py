@@ -1,6 +1,6 @@
 from pandas import DataFrame, to_datetime
 
-from infra.model.draft import Dataset
+from infra.model.draft import Dataset, LabeledDataset
 
 
 class DatasetImpl(Dataset):
@@ -39,7 +39,7 @@ class DatasetImplV2(Dataset):
         )
 
 
-class LabeledDatasetImpl(Dataset):
+class LabeledDatasetImpl(LabeledDataset):
     def __init__(
         self,
         df: DataFrame,
@@ -53,9 +53,9 @@ class LabeledDatasetImpl(Dataset):
                 "F3": float,
                 "L": bool,
             },
+            label="L",
             index="Date",
         )
-        self.label = "L"
 
 
 def factory_dataset_impl() -> DatasetImpl:
