@@ -58,10 +58,7 @@ class LabeledDatasetImpl(Dataset):
         )
 
 
-def factory_dataset_impl(
-    label: str | list[str] | None = None,
-    exclude: str | list[str] | None = None,
-) -> DatasetImpl:
+def factory_dataset_impl() -> DatasetImpl:
     df = DataFrame(
         {
             "Date": to_datetime(
