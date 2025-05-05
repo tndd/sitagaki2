@@ -38,7 +38,8 @@ class Dataset:
         だがこの関数は、それをpannderaのカラム型に変換してDataFrameSchemaに加工して返す。
         """
         return DataFrameSchema(
-            {name: Column(dtype) for name, dtype in self.definition.items()}
+            {name: Column(dtype) for name, dtype in self.definition.items()},
+            strict=False,  # Falseは蛇足カラムを許す設定
         )
 
     @property

@@ -1,6 +1,7 @@
 from pandera import DataFrameSchema
 
 from fixture.infra.model.dataset import (
+    DatasetImpl,
     factory_dataset_impl,
     factory_labeled_dataset_impl,
 )
@@ -21,8 +22,13 @@ def test_dataset_undefined_column():
     """
     未定義のカラムを持つdfを渡した場合の挙動のテスト
     """
-    # TODO: 実装
-    pass
+    dataset_df = factory_dataset_impl().df
+    # 蛇足カラムの追加
+    dataset_df["undefined_col"] = 0
+    assert "undefined_col" in dataset_df.columns
+    # 蛇足ありのdfでDatasetImplを生成してもエラーは発生しない
+    # TODO: ここの挙動は要検討
+    DatasetImpl(dataset_df)
 
 
 def test_labeled_dataset():
