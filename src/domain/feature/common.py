@@ -1,5 +1,9 @@
+from functools import cached_property
+
 from pandas import DataFrame
-from pandera.api.pandas.types import PandasDtypeInputTypes as PanderaType
+from pandera.api.pandas.types import (
+    PandasDtypeInputTypes as PanderaType,
+)
 
 from domain.dataset.ohlcv import OHLCV_DEFINITION
 from infra.model.dataset import LabeledDataset
@@ -12,37 +16,20 @@ class OhlcvFeature(LabeledDataset):
     Props:
         df:
             ohlcvと特徴量のカラムを持つデータフレーム。
+            definitionに従ったカラムのDFが返される。
         definition:
-            dfのカラムの型定義。
-            ただしここは特徴量の定義のみを含む。
-            ohlcvの定義については含んではいない。
+            dfのカラム型定義。
+            クラスとしての基本的なdefinitionにはohlcvを含める。
+
+            *definition_feature:
+                dfの特徴量カラム型定義。
+                ohlcvを除きたい場合もあるために用意されている。
         label:
             dfのラベルカラム名。
-
 
     ohlcvを要素として持つ理由:
         バックテストで特徴量のパフォーマンスの検証を行うため。
         ohlcvが無いと、具体的な価格の推移を計算できないから。
-
-    TODO: dfのカラム検討
-        今のところdfのカラムはデフォルトでは特徴量の分しか持っていない。
-        だが本当はohlcvのものもデフォルトで持たせて、
-        必要に応じて特徴量のみに制限するという運用の方が適切ではないだろうか？
-
-    MEMO: 設計方針
-        > dfにはohlcvのものも含める。
-        ただし、特徴量のみのdfを返すメソッドを用意しておく。
-        ohlcvのカラムは決まったものであるため、それの実現は容易だ。
-
-        これによってdf生成メソッドのややこしさ問題を回避できるだろう。
-        それを考えることなく、完成済みのdfを受け取るだけで話が済む。
-
-        > definitionの中身について
-        デフォルトではohlcvのものも含めることとする。
-
-        definitionとfeature_definitionを分ける。
-        definitionにohlcvのものを追加する。
-        feature_definitionを従来のものとして保存する。
     """
 
     def __init__(
@@ -51,12 +38,32 @@ class OhlcvFeature(LabeledDataset):
         definition: dict[str, PanderaType],
         label: str,
     ) -> None:
+        self.definition_feature = definition
         super().__init__(
             df=df,
-            definition=definition,
+            definition=OHLCV_DEFINITION | definition,
             label=label,
             index="Date",
         )
+
+    @property
+    def feature_and_label_columns(self) -> list[str]:
+        """
+        特徴量とラベルのカラム名を返す。
+        """
+        return list(self.definition_feature.keys())
+
+    @cached_property
+    def feature_columns(self) -> list[str]:
+        """
+        特徴量のみのカラム名を返す。
+        毎回ループ処理が走らないよう、念の為cached_propertyを使う。
+        """
+        return [
+            col
+            for col in self.definition_feature.keys()
+            if col != self.label
+        ]
 
     @property
     def feature_df(self) -> DataFrame:
@@ -64,13 +71,4 @@ class OhlcvFeature(LabeledDataset):
         特徴量のみのデータフレームを返す。
         学習済みのモデルに与えるための値として使う。
         """
-        return self.df.loc[:, self.columns]
-
-    @property
-    def df(self) -> DataFrame:
-        """
-        特徴量とohlcvのデータフレームを返す。
-        それ以外の余計なカラムは返さない。
-        """
-        ohlcv_columns = list(OHLCV_DEFINITION.keys())
-        return self.origin_df.loc[:, ohlcv_columns + self.columns]
+        return self.df.loc[:, self.feature_columns]
