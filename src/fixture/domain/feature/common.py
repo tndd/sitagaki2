@@ -1,38 +1,35 @@
 from pandas import DataFrame
 
-from domain.dataset.ohlcv import Ohlcv
 from domain.feature.common import OhlcvFeature
+
+OHLCV_FEATURE_IMPL_DEFINITION = {
+    "OF0": float,  # Label
+    "OF1": float,
+    "OF2": float,
+    "OF3": float,
+    "OF4": float,
+    "OF5": float,
+    "OF6": float,
+}
 
 
 class OhlcvFeatureImpl(OhlcvFeature):
-    SCHEMA = {
-        "Date": "INDEX:datetime",
-        "OF0": float,  # Label
-        "OF1": float,
-        "OF2": float,
-        "OF3": float,
-        "OF4": float,
-        "OF5": float,
-        "OF6": float,
-    }
-
-    def __init__(self, ohlcv: Ohlcv) -> None:
+    def __init__(self, df: DataFrame) -> None:
+        # インデックス指定なし
         super().__init__(
-            ohlcv,
-            "Date",
-            "OF0",
-            ["OF5", "OF6"],
+            df=df,
+            definition=OHLCV_FEATURE_IMPL_DEFINITION,
+            label="OF0",
         )
 
-    @staticmethod
-    def _feature_df_source(ohlcv: Ohlcv) -> DataFrame:
-        """
-        ohlcv.dfのインデックスを維持しつつ、
-        SCHEMAで定義されたカラム（Dateを除く）を1で埋めたDataFrameを返す
-        """
-        feature_cols = [col for col in OhlcvFeatureImpl.SCHEMA if col != "Date"]
-        return DataFrame(
-            1.0,
-            index=ohlcv.df.index,
-            columns=feature_cols,
-        )
+
+def factory_ohlcv_feature_impl() -> OhlcvFeatureImpl:
+    """
+    OhlcvFeatureImplを作成する。
+    データの中身は1.0で埋められただけのもの。
+    """
+    df = DataFrame(
+        1.0,
+        columns=list(OHLCV_FEATURE_IMPL_DEFINITION.keys()),
+    )
+    return OhlcvFeatureImpl(df)

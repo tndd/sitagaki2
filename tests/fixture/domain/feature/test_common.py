@@ -1,12 +1,9 @@
-from fixture.domain.dataset.ohlcv import factory_ohlcv
-from fixture.domain.feature.common import OhlcvFeatureImpl
+from fixture.domain.feature.common import (
+    OhlcvFeatureImpl,
+    factory_ohlcv_feature_impl,
+)
 
 
 def test_factory_ohlcv_feature_impl():
-    """
-    OhlcvFeatureImplのファクトリのテスト
-    テスト内容はインスタンスが作れているか最低限のみ
-    """
-    ohlcv = factory_ohlcv()
-    ohlcv_feature = OhlcvFeatureImpl(ohlcv)
+    ohlcv_feature = factory_ohlcv_feature_impl()
     assert isinstance(ohlcv_feature, OhlcvFeatureImpl)
