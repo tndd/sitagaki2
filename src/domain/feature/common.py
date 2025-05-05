@@ -1,11 +1,28 @@
+from typing import Protocol
+
 from pandas import DataFrame, concat
-from pandera.api.pandas.types import PandasDtypeInputTypes as PdType
+from pandera.api.pandas.types import PandasDtypeInputTypes as PanderaType
 
 from domain.dataset.ohlcv import Ohlcv
-from infra.model.dataset import Dataset
+from infra.model.dataset import LabeledDataset
 
 
-class OhlcvFeature(Dataset):
+class OhlcvFeatureGenerator(Protocol):
+    """
+    ohlcvを元に特徴量を生成するための抽象クラス。
+
+    ohlcv以外にも引数を受け取ることも想定しているため、
+    クラス変数を取り得るので注意。
+    """
+
+    def generate(self, ohlcv: Ohlcv) -> DataFrame:
+        """
+        ohlcvから特徴量を生成する関数。
+        """
+        ...
+
+
+class OhlcvFeature(LabeledDataset):
     """
     ohlcvを元として生成される特徴量を表すクラス。
 
@@ -13,58 +30,34 @@ class OhlcvFeature(Dataset):
         バックテストで特徴量のパフォーマンスの検証を行うため。
         ohlcvが無いと、具体的な価格の推移を計算できないから。
 
-    このクラスの前提条件:
-        生成素材をohlcv"のみ"ということを前提としている。
-        ohlcv以外も素材として特徴量を生成することは十分考えられるが、
-        それはこのクラスの責務外とする。
-
-    Props:
-        ohlcv: Ohlcv
-        df: DataFrame
-    ClsProps:
-        SCHEMA: dict[str, PdType]
+    TODO: dfのカラム検討
+        今のところdfのカラムはデフォルトでは特徴量の分しか持っていない。
+        だが本当はohlcvのものもデフォルトで持たせて、
+        必要に応じて特徴量のみに制限するという運用の方が適切ではないだろうか？
     """
-
-    SCHEMA: dict[str, PdType]
 
     def __init__(
         self,
         ohlcv: Ohlcv,
-        index: str = "Date",
-        label: str | list[str] | None = None,
-        exclude: str | list[str] | None = None,
+        generator: OhlcvFeatureGenerator,
+        definition: dict[str, PanderaType],
+        label: str,
     ) -> None:
         """
         ohlcvを受け取り、特徴量を生成する。
         """
         self.ohlcv = ohlcv
         super().__init__(
-            # OhlcvFeatureのdfは特徴量のみで構成される
-            df=self._feature_df_source(ohlcv),
-            # indexやlabelも特徴量についてのものを設定
-            index=index,
+            df=generator.generate(ohlcv),
+            definition=definition,
             label=label,
-            exclude=exclude,
+            index="Date",
         )
-
-    @staticmethod
-    def _feature_df_source(ohlcv: Ohlcv) -> DataFrame:
-        """
-        抽象メソッド。
-        ohlcvを元に特徴量を生成する。
-        ここで生成されたdfが特徴量のdfとなる。
-
-        setterという命名について:
-            実際は値のセットは行っておらず、生成部分までしかやってない。
-            だが派生クラスから見た場合に役割をわかりやすくするための方便的な命名。
-        """
-        raise NotImplementedError("This method should be implemented by subclass.")
 
     @property
     def df_with_ohlcv(self) -> DataFrame:
         """
         自身の特徴量dfとohlcv.dfを結合して返す。
-        labelもexcludeも除外されずそのまま結合されるので注意。
         """
         return concat(
             [self.ohlcv.df, self.df],
@@ -81,7 +74,7 @@ class OhlcvFeature(Dataset):
         return concat(
             [
                 self.ohlcv.df,
-                self.df.loc[:, self.field.feature_names],
+                self.df.loc[:, self.non_label_columns],
             ],
             axis=1,
             join="inner",
@@ -93,4 +86,4 @@ class OhlcvFeature(Dataset):
         特徴量のみのデータフレームを返す。
         学習済みのモデルに与えるための値として使う。
         """
-        return self.df.loc[:, self.field.feature_names]
+        return self.df.loc[:, self.non_label_columns]
