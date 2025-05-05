@@ -24,10 +24,10 @@ class Dataset:
         self.index = index
         # スキーマ評価とdfの保持
         self.pandera_schema.validate(df)
-        self.df = df
+        self.origin_df = df
         # 指定のインデックスが指定されてなければ、indexを設定する
-        if isinstance(index, str) and self.df.index.name != index:
-            self.df = self.df.set_index(index)
+        if isinstance(index, str) and self.origin_df.index.name != index:
+            self.origin_df = self.origin_df.set_index(index)
 
     @property
     def pandera_schema(self) -> DataFrameSchema:
@@ -45,6 +45,13 @@ class Dataset:
     @property
     def columns(self) -> list[str]:
         return list(self.definition.keys())
+
+    @property
+    def df(self) -> DataFrame:
+        """
+        定義されているカラムのみのデータフレームを返す。
+        """
+        return self.origin_df[self.columns]
 
 
 class LabeledDataset(Dataset):
