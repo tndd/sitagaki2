@@ -26,10 +26,14 @@ class OhlcvFeatureImpl(OhlcvFeature):
 def factory_ohlcv_feature_impl() -> OhlcvFeatureImpl:
     """
     OhlcvFeatureImplを作成する。
-    データの中身は1.0で埋められただけのもの。
+    各カラムの値が'カラム番号.行番号'の形式となる。
     """
-    df = DataFrame(
-        1.0,
-        columns=list(OHLCV_FEATURE_IMPL_DEFINITION.keys()),
-    )
+    data = {
+        col: [
+            f"{list(OHLCV_FEATURE_IMPL_DEFINITION.keys()).index(col)}.{i * 0.1}"
+            for i in range(100)
+        ]
+        for col in OHLCV_FEATURE_IMPL_DEFINITION.keys()
+    }
+    df = DataFrame(data)
     return OhlcvFeatureImpl(df)
