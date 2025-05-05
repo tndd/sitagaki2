@@ -17,6 +17,14 @@ def test_dataset():
     assert all(isinstance(col, str) for col in dsi.columns)
 
 
+def test_dataset_undefined_column():
+    """
+    未定義のカラムを持つdfを渡した場合の挙動のテスト
+    """
+    # TODO: 実装
+    pass
+
+
 def test_labeled_dataset():
     ldsi = factory_labeled_dataset_impl()
     assert isinstance(ldsi, LabeledDataset)
