@@ -5,9 +5,6 @@ from infra.model.dataset import Dataset
 
 class Ohlcv(Dataset):
     def __init__(self, df: DataFrame) -> None:
-        """
-        IndexはDateで固定
-        """
         super().__init__(
             df,
             definition={
