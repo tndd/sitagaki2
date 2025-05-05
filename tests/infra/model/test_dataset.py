@@ -8,13 +8,13 @@ from infra.model.dataset import Dataset, LabeledDataset
 
 
 def test_dataset():
-    dsi = factory_dataset_impl()
-    assert isinstance(dsi, Dataset)
+    dataset = factory_dataset_impl()
+    assert isinstance(dataset, Dataset)
     # pandera
-    assert isinstance(dsi.pandera_schema, DataFrameSchema)
+    assert isinstance(dataset.pandera_schema, DataFrameSchema)
     # columns
-    assert isinstance(dsi.columns, list)
-    assert all(isinstance(col, str) for col in dsi.columns)
+    assert isinstance(dataset.columns, list)
+    assert all(isinstance(col, str) for col in dataset.columns)
 
 
 def test_dataset_undefined_column():
@@ -26,8 +26,8 @@ def test_dataset_undefined_column():
 
 
 def test_labeled_dataset():
-    ldsi = factory_labeled_dataset_impl()
-    assert isinstance(ldsi, LabeledDataset)
+    labeled_dataset = factory_labeled_dataset_impl()
+    assert isinstance(labeled_dataset, LabeledDataset)
     # non_label_columns
-    assert isinstance(ldsi.non_label_columns, list)
-    assert all(isinstance(col, str) for col in ldsi.non_label_columns)
+    assert isinstance(labeled_dataset.non_label_columns, list)
+    assert all(isinstance(col, str) for col in labeled_dataset.non_label_columns)
