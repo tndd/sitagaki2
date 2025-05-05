@@ -54,8 +54,8 @@ class LabeledDataset(Dataset):
     Props:
         df: Dataframe
         definition: dict
-        index: str
         label: str
+        index: str
     """
 
     def __init__(
