@@ -36,4 +36,6 @@ def test_labeled_dataset():
     assert isinstance(labeled_dataset, LabeledDataset)
     # non_label_columns
     assert isinstance(labeled_dataset.non_label_columns, list)
-    assert all(isinstance(col, str) for col in labeled_dataset.non_label_columns)
+    assert all(
+        isinstance(col, str) for col in labeled_dataset.non_label_columns
+    )
