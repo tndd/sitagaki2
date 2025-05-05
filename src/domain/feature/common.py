@@ -1,6 +1,7 @@
 from pandas import DataFrame
 from pandera.api.pandas.types import PandasDtypeInputTypes as PanderaType
 
+from domain.dataset.ohlcv import OHLCV_DEFINITION
 from infra.model.dataset import LabeledDataset
 
 
@@ -29,12 +30,19 @@ class OhlcvFeature(LabeledDataset):
         必要に応じて特徴量のみに制限するという運用の方が適切ではないだろうか？
 
     MEMO: 設計方針
-        dfにはohlcvのものも含める。
+        > dfにはohlcvのものも含める。
         ただし、特徴量のみのdfを返すメソッドを用意しておく。
         ohlcvのカラムは決まったものであるため、それの実現は容易だ。
 
         これによってdf生成メソッドのややこしさ問題を回避できるだろう。
         それを考えることなく、完成済みのdfを受け取るだけで話が済む。
+
+        > definitionの中身について
+        デフォルトではohlcvのものも含めることとする。
+
+        definitionとfeature_definitionを分ける。
+        definitionにohlcvのものを追加する。
+        feature_definitionを従来のものとして保存する。
     """
 
     def __init__(
@@ -56,4 +64,13 @@ class OhlcvFeature(LabeledDataset):
         特徴量のみのデータフレームを返す。
         学習済みのモデルに与えるための値として使う。
         """
-        return self.df.loc[:, list(self.definition.keys())]
+        return self.df.loc[:, self.columns]
+
+    @property
+    def df(self) -> DataFrame:
+        """
+        特徴量とohlcvのデータフレームを返す。
+        それ以外の余計なカラムは返さない。
+        """
+        ohlcv_columns = list(OHLCV_DEFINITION.keys())
+        return self.origin_df.loc[:, ohlcv_columns + self.columns]
