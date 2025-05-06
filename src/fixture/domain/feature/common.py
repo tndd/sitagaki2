@@ -27,6 +27,8 @@ def factory_ohlcv_feature_impl() -> OhlcvFeatureImpl:
     """
     OhlcvFeatureImplを作成する。
     各カラムの値が'カラム番号.行番号'の形式となる。
+
+    # TODO: ohlcvとの結合がうまくいっていない
     """
     data = {
         col: [
