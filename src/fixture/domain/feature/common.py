@@ -28,33 +28,24 @@ def factory_ohlcv_feature_impl() -> OhlcvFeatureImpl:
     """
     OhlcvFeatureImplを作成する。
     各カラムの値が'カラム番号.行番号'の形式となる。
-    ohlcvの値については、float=1.0, int=100, その他=Noneで埋める。
     """
-    # 特徴量のダミーデータを作成
-    feature_columns = list(OHLCV_FEATURE_IMPL_DEFINITION.keys())
-    feature_data = {
-        name: [
-            index + i * 0.1 for i in range(100)
-        ]  # 計算結果を直接floatとして生成
-        for index, name in enumerate(feature_columns)
+    NUM_ROWS = 100
+    columns = list(OHLCV_FEATURE_IMPL_DEFINITION.keys())
+    data = {
+        name: [float(f"{index}.{i + 1}") for i in range(NUM_ROWS)]
+        for index, name in enumerate(columns)
     }
-    feature_df = DataFrame(feature_data)
-    # OHLCVのダミーデータを作成
-    ohlcv_data = {}
-    for name, dtype in OHLCV_DEFINITION.items():
-        if dtype is float:
-            ohlcv_data[name] = [1.0] * 100
-        elif dtype is int:
-            ohlcv_data[name] = [100] * 100
-        else:
-            ohlcv_data[name] = [None] * 100  # その他の型はNoneで埋める
-    ohlcv_df = DataFrame(ohlcv_data)
-    # 特徴量DFとOHLCV DFを結合
-    combined_df = ohlcv_df.join(feature_df)
-    ## 'Date' カラムを追加し、インデックスに設定
-    combined_df["Date"] = date_range(start="2023-01-01", periods=100)
-    combined_df = combined_df.set_index("Date")
-    return OhlcvFeatureImpl(combined_df)
+    # ohlcvカラムとDateカラムを追加
+    ohlcv_data = {
+        "Open": [1.0] * NUM_ROWS,
+        "High": [1.0] * NUM_ROWS,
+        "Low": [1.0] * NUM_ROWS,
+        "Close": [1.0] * NUM_ROWS,
+        "Volume": [1] * NUM_ROWS,
+        "Date": date_range(start="2023-01-01", periods=NUM_ROWS),
+    }
+    df = DataFrame(data | ohlcv_data)
+    return OhlcvFeatureImpl(df)
 
 
 if __name__ == "__main__":
