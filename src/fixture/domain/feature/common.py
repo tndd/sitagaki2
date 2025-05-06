@@ -30,12 +30,10 @@ def factory_ohlcv_feature_impl() -> OhlcvFeatureImpl:
 
     # TODO: ohlcvとの結合がうまくいっていない
     """
+    columns = list(OHLCV_FEATURE_IMPL_DEFINITION.keys())
     data = {
-        col: [
-            f"{list(OHLCV_FEATURE_IMPL_DEFINITION.keys()).index(col)}.{i * 0.1}"
-            for i in range(100)
-        ]
-        for col in OHLCV_FEATURE_IMPL_DEFINITION.keys()
+        name: [f"{index}.{i * 0.1}" for i in range(100)]
+        for index, name in enumerate(columns)
     }
     df = DataFrame(data)
     return OhlcvFeatureImpl(df)
