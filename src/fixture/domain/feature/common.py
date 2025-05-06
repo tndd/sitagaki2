@@ -1,6 +1,5 @@
 from pandas import DataFrame, date_range
 
-from domain.dataset.ohlcv import OHLCV_DEFINITION
 from domain.feature.common import OhlcvFeature
 
 OHLCV_FEATURE_IMPL_DEFINITION = {
