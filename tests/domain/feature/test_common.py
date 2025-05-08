@@ -1,7 +1,10 @@
 from pandas import DataFrame
 
 from domain.dataset.ohlcv import OHLCV_INDEX
-from fixture.domain.feature.common import factory_ohlcv_feature_impl
+from fixture.domain.feature.common import (
+    OHLCV_FEATURE_IMPL_DEFINITION,
+    factory_ohlcv_feature_impl,
+)
 
 
 def test_ohlcv_feature():
@@ -11,7 +14,10 @@ def test_ohlcv_feature():
     """
     ohlcv_feature = factory_ohlcv_feature_impl()
     assert isinstance(ohlcv_feature.df, DataFrame)
+    # インデックスはOHLCVのものがセットされることを確認
     assert ohlcv_feature.index == OHLCV_INDEX
+    # 特徴量定義はdefinitionではなく"definition_feature"にセットされていることを確認
+    assert ohlcv_feature.definition_feature == OHLCV_FEATURE_IMPL_DEFINITION
     # ラベルが設定されてる
     assert ohlcv_feature.label == "OF0"
     # カラムはOF0~6だけでなく、頭にOHLCVのぶんも追加されてることを確認
