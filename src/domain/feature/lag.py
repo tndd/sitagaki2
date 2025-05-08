@@ -4,37 +4,33 @@ from pandas import DataFrame
 from domain.dataset.ohlcv import Ohlcv
 from domain.feature.common import OhlcvFeature
 
+LAG_CLOSES_10_DEFINITION = {
+    "l0": float,  # Label
+    "l1": float,
+    "l2": float,
+    "l3": float,
+    "l4": float,
+    "l5": float,
+    "l6": float,
+    "l7": float,
+    "l8": float,
+    "l9": float,
+    "l10": float,
+}
+LAG_CLOSES_10_LABEL = "l0"
+
 
 class LagCloses10(OhlcvFeature):
     """
     10日分の終値の変化率の特徴量
     """
 
-    SCHEMA = {
-        "Date": "INDEX",
-        "l0": float,  # Label
-        "l1": float,
-        "l2": float,
-        "l3": float,
-        "l4": float,
-        "l5": float,
-        "l6": float,
-        "l7": float,
-        "l8": float,
-        "l9": float,
-        "l10": float,
-    }
-
     def __init__(self, ohlcv: Ohlcv) -> None:
         super().__init__(
-            ohlcv,
-            label="l0",
+            df=derive_lag_df_from_ohlcv(ohlcv, n=10),
+            definition=LAG_CLOSES_10_DEFINITION,
+            label=LAG_CLOSES_10_LABEL,
         )
-
-    @staticmethod
-    def _feature_df_source(ohlcv: Ohlcv) -> DataFrame:
-        # n=10 を指定して汎用関数を呼び出す
-        return derive_lag_df_from_ohlcv(ohlcv, n=10)
 
 
 def derive_lag_df_from_ohlcv(ohlcv: Ohlcv, n: int) -> DataFrame:
