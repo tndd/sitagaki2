@@ -30,6 +30,8 @@ def test_dataset_undefined_column():
     dateset_impl = DatasetImpl(dataset_df)
     # 蛇足カラムはcolumnsに含まれない
     assert dateset_impl.columns == ["Open", "High", "Low", "Close", "Volume"]
+    # だが内部的には蛇足カラムは含まれている
+    assert "undefined_col" in dateset_impl.origin_df.columns
 
 
 def test_labeled_dataset():
