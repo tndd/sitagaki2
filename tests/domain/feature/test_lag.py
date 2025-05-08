@@ -1,7 +1,8 @@
 import pytest
 from pandas import DataFrame
 
-from domain.feature.lag import derive_lag_df_from_ohlcv
+from domain.dataset.ohlcv import OHLCV_INDEX
+from domain.feature.lag import LAG_CLOSES_LABEL, derive_lag_df_from_ohlcv
 from fixture.domain.dataset.ohlcv import factory_ohlcv_random_walk
 from fixture.domain.feature.lag import factory_lag_closes10
 
@@ -14,11 +15,9 @@ def test_lag_closes10():
     N = 1000
     lag = factory_lag_closes10(N)
     # スキーマの定義チェック
-    assert lag.field.index == "Date"
-    assert lag.field.label == ["l0"]
-    assert lag.field.exclude == []
-    assert lag.field.label_exclude_names == ["l0"]
-    assert lag.field.names == [
+    assert lag.index == OHLCV_INDEX
+    assert lag.label == LAG_CLOSES_LABEL
+    assert lag.feature_and_label_columns == [
         "l0",
         "l1",
         "l2",
