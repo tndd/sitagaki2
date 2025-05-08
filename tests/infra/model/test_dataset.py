@@ -27,8 +27,9 @@ def test_dataset_undefined_column():
     dataset_df["undefined_col"] = 0
     assert "undefined_col" in dataset_df.columns
     # 蛇足ありのdfでDatasetImplを生成してもエラーは発生しない
-    # TODO: ここの挙動は要検討
-    DatasetImpl(dataset_df)
+    dateset_impl = DatasetImpl(dataset_df)
+    # 蛇足カラムはcolumnsに含まれない
+    assert dateset_impl.columns == ["Open", "High", "Low", "Close", "Volume"]
 
 
 def test_labeled_dataset():
