@@ -47,17 +47,20 @@ class OhlcvFeature(LabeledDataset):
         )
 
     @property
-    def columns_feature_and_label(self) -> list[str]:
+    def columns_feature(self) -> list[str]:
         """
-        特徴量とラベルのカラム名を返す。
+        OHLCVカラムを除いた、定義されているカラム名を返す。
+        特徴量+ラベルという構成。
         """
         return list(self.definition_feature.keys())
 
     @cached_property
-    def columns_feature(self) -> list[str]:
+    def columns_feature_exclude_label(self) -> list[str]:
         """
         特徴量のみのカラム名を返す。
-        毎回ループ処理が走らないよう、念の為cached_propertyを使う。
+        ラベルカラムは除外されている。
+
+        MEMO: 毎回ループ処理が走らないよう、念の為cached_propertyを使う。
         """
         return [
             col
@@ -71,4 +74,4 @@ class OhlcvFeature(LabeledDataset):
         特徴量のみのデータフレームを返す。
         学習済みのモデルに与えるための値として使う。
         """
-        return self.df.loc[:, self.columns_feature]
+        return self.df.loc[:, self.columns_feature_exclude_label]
