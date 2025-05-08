@@ -5,7 +5,7 @@ from pandera.api.pandas.types import (
     PandasDtypeInputTypes as PanderaType,
 )
 
-from domain.dataset.ohlcv import OHLCV_DEFINITION
+from domain.dataset.ohlcv import OHLCV_DEFINITION, OHLCV_INDEX
 from infra.model.dataset import LabeledDataset
 
 
@@ -43,7 +43,7 @@ class OhlcvFeature(LabeledDataset):
             df=df,
             definition=OHLCV_DEFINITION | definition,
             label=label,
-            index="Date",
+            index=OHLCV_INDEX,
         )
 
     @property
