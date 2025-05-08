@@ -2,7 +2,10 @@ import numpy as np
 from pandas import DataFrame
 
 from domain.dataset.ohlcv import Ohlcv
-from fixture.domain.dataset.ohlcv import factory_ohlcv, factory_ohlcv_random_walk
+from fixture.domain.dataset.ohlcv import (
+    factory_ohlcv,
+    factory_ohlcv_random_walk,
+)
 
 
 def test_factory_ohlcv():
@@ -37,8 +40,12 @@ def test_factory_ohlcv_random_walk():
 
     # データ型のチェック
     for col in ["Open", "High", "Low", "Close"]:
-        assert np.issubdtype(df[col].dtype, np.floating)  # 浮動小数点型であることを確認
-    assert np.issubdtype(df["Volume"].dtype, np.integer)  # 整数型であることを確認
+        assert np.issubdtype(
+            df[col].dtype, np.floating
+        )  # 浮動小数点型であることを確認
+    assert np.issubdtype(
+        df["Volume"].dtype, np.integer
+    )  # 整数型であることを確認
 
     # データの範囲チェック
     # 対数差分は通常±1000BP以内に収まる
