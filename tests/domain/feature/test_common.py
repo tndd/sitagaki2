@@ -37,7 +37,7 @@ def test_ohlcv_feature():
         "OF6",
     ]
     # 特徴量 + ラベルのカラムについてのみであることを確認
-    assert ohlcv_feature.feature_and_label_columns == [
+    assert ohlcv_feature.columns_feature_and_label == [
         "OF0",
         "OF1",
         "OF2",
@@ -47,7 +47,7 @@ def test_ohlcv_feature():
         "OF6",
     ]
     # 特徴量カラムはOF1~6。OF0はラベルカラムのため含まれない
-    assert ohlcv_feature.feature_columns == [
+    assert ohlcv_feature.columns_feature == [
         "OF1",
         "OF2",
         "OF3",

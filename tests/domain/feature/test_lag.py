@@ -17,7 +17,7 @@ def test_lag_closes10():
     # スキーマの定義チェック
     assert lag.index == OHLCV_INDEX
     assert lag.label == LAG_CLOSES_LABEL
-    assert lag.feature_and_label_columns == [
+    assert lag.columns_feature_and_label == [
         "l0",
         "l1",
         "l2",
