@@ -17,7 +17,8 @@ LAG_CLOSES_10_DEFINITION = {
     "l9": float,
     "l10": float,
 }
-LAG_CLOSES_10_LABEL = "l0"
+# LAG特徴量全体のラベルカラムはl0という前提
+LAG_CLOSES_LABEL = "l0"
 
 
 class LagCloses10(OhlcvFeature):
@@ -29,7 +30,7 @@ class LagCloses10(OhlcvFeature):
         super().__init__(
             df=derive_lag_df_from_ohlcv(ohlcv, n=10),
             definition=LAG_CLOSES_10_DEFINITION,
-            label=LAG_CLOSES_10_LABEL,
+            label=LAG_CLOSES_LABEL,
         )
 
 
