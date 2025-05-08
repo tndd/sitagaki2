@@ -30,8 +30,8 @@ def test_lag_closes10():
         "l9",
         "l10",
     ]
-    # feature_namesからはnamesからlabelであるl0が除外される
-    assert lag.field.feature_names == [
+    # columns_featureはlabelのl0が除かれている
+    assert lag.columns_feature == [
         "l1",
         "l2",
         "l3",
@@ -43,14 +43,14 @@ def test_lag_closes10():
         "l9",
         "l10",
     ]
-    # 10件+label分の列数
-    assert lag.df.shape[1] == 11
-    # Nから10件+label分を引いた行数
+    # dfのカラム数は10件+label分 + ohlcvのカラム数５件
+    assert lag.df.shape[1] == 16
+    # df_featureのカラム数は10件 (注意:labelは含まれていない)
+    assert lag.df_feature.shape[1] == 10
+    # 行数はNから10件+label分を引いた行数
     assert lag.df.shape[0] == N - 11
-    # ohlcvと結合前と結合後で行数が変わらないことを確認
-    assert lag.df_with_ohlcv.shape[0] == lag.df.shape[0]
-    # ohlcv含めてカラムを特徴量のみに絞っても行数は変わらないことを確認
-    assert lag.df_feature_with_ohlcv.shape[0] == lag.df.shape[0]
+    # ohlcvカラムの有無に関わらず、行数は変わらないことを確認
+    assert lag.df_feature.shape[0] == lag.df.shape[0]
 
 
 @pytest.mark.parametrize("n_lags", [1, 10, 100])
