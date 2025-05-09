@@ -8,11 +8,7 @@ from domain.feature.common import OhlcvFeature
 from infra.model.tensor import convert_labeled_dataset_to_split_tensor
 
 
-# --- モデル訓練関数 ---
-def train_model_lgbm_ohlcv_feature(dataset: OhlcvFeature) -> Booster:
-    """
-    lgbmモデルをohlcv_featureデータセットを使って訓練する
-    """
+def train_lgbm_with_ohlcv_feature(dataset: OhlcvFeature) -> Booster:
     params = {
         "objective": "regression",  # 回帰問題として解く
         "metric": "rmse",  # 評価指標

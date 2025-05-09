@@ -3,7 +3,7 @@ import numpy as np
 from backtesting import Backtest
 from backtesting import Strategy as BacktestStrategy
 
-from domain.model.lgbm import train_model_lgbm_ohlcv_feature
+from domain.model.lgbm import train_lgbm_with_ohlcv_feature
 from fixture.domain.feature.lag import factory_lag_closes10
 
 
@@ -50,14 +50,18 @@ def show_feature_importance(
     # 数値として表示
     importance_dict = dict(zip(feature_names, importance))
     print("\n--- 特徴量の重要度 ---")
-    for name, imp in sorted(importance_dict.items(), key=lambda x: x[1], reverse=True):
+    for name, imp in sorted(
+        importance_dict.items(), key=lambda x: x[1], reverse=True
+    ):
         print(f"{name}: {imp}")
     # 可視化
     if is_plot:
         plt.figure(figsize=(10, 6))
         indices = np.argsort(importance)[::-1]
         plt.barh(range(len(importance)), importance[indices], align="center")
-        plt.yticks(range(len(importance)), [feature_names[i] for i in indices])
+        plt.yticks(
+            range(len(importance)), [feature_names[i] for i in indices]
+        )
         plt.title("Feature Importance")
         plt.xlabel("Importance")
         plt.ylabel("Features")
@@ -94,13 +98,15 @@ def run_backtest(df, strategy, is_plot=False):
             print("バックテストのプロットを表示しました。")
         except Exception as e:
             print(f"プロット表示エラー: {e}")
-            print("プロットを表示するには、適切なグラフィカル環境が必要です。")
+            print(
+                "プロットを表示するには、適切なグラフィカル環境が必要です。"
+            )
 
 
 if __name__ == "__main__":
     # データ準備
     lag_feature = factory_lag_closes10()
-    lgbm_model = train_model_lgbm_ohlcv_feature(lag_feature)
+    lgbm_model = train_lgbm_with_ohlcv_feature(lag_feature)
     # モデルの予測結果をデータフレームに追加
     df = gen_feature_df_with_predict(lag_feature, lgbm_model)
     # 特徴量の重要度を表示
