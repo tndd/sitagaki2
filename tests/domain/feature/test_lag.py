@@ -62,8 +62,8 @@ def test_derive_lag_df_from_ohlcv_normal(n_lags):
     ohlcv = factory_ohlcv_random_walk()
     lag_df = derive_lag_df_from_ohlcv(ohlcv, n_lags)
     assert isinstance(lag_df, DataFrame)
-    # label分の1を加えた0~nまでの個数
-    assert lag_df.shape[1] == n_lags + 1
+    # lag数 + label + ohlcv(5)
+    assert lag_df.shape[1] == n_lags + 5 + 1
     # dropnaのせいで厳密一致することはないが、最新のindexは一致する
     assert lag_df.index[-100:].equals(ohlcv.df.index[-100:])
     # 特徴量dfの長さは0でない

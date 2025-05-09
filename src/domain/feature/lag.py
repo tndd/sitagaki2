@@ -39,12 +39,12 @@ def derive_lag_df_from_ohlcv(ohlcv: Ohlcv, n: int) -> DataFrame:
     n日分の終値の対数差分の特徴量を生成し、元のOHLCVカラムを残したDataFrameを返す。
     インデックスは元のOHLCVデータから引き継ぎ、欠損値を含む行は削除する。
 
-    nが0以下の場合の挙動:
-        ohlcv.df をそのまま返す。
+    異常系:
+        nが0以下の場合、空のDataFrameを返す。
     """
     if n <= 0:
-        # nが0以下なら、元のDataFrameをそのまま返す
-        return ohlcv.df
+        # nが0以下なら、空のDataFrameを返す
+        return DataFrame()
     # nが1以上なら、雛形を作って返す
     columns_to_add = {f"l{i}": float("nan") for i in range(n + 1)}
     feature_df = DataFrame(columns_to_add, index=ohlcv.df.index)
