@@ -5,6 +5,7 @@ from lightgbm import (
 )
 
 from domain.feature.common import OhlcvFeature
+from infra.model.tensor import convert_labeled_dataset_to_split_tensor
 
 
 # --- モデル訓練関数 ---
@@ -23,8 +24,8 @@ def train_model_lgbm_ohlcv_feature(dataset: OhlcvFeature) -> Booster:
         "bagging_freq": 5,  # バギングの頻度
         "verbose": -1,  # ログを非表示
     }
-    slt = dataset.get_split_labeled_tensor()
-    lgb_train, lgb_test = slt.get_lgb_train_test()
+    split_labeled_tensor = convert_labeled_dataset_to_split_tensor(dataset)
+    lgb_train, lgb_test = split_labeled_tensor.get_lgb_train_test()
     return train(
         params,
         lgb_train,
